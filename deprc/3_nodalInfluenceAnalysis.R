@@ -1,14 +1,3 @@
-####
-if(Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m'){
-  source('~/Research/NetworkEvolution/Code/setup.R') }
-####  
-
-####  
-# Load lsdm results
-pick=list.files(outPath)[grepl('.rda',list.files(outPath))]
-load( paste0(outPath, 'LSMDN_matlCoop2_quarterly.rda' ) ) 
-####  
-
 ####  
 # ran 268000 iterations before crashing
 N = 268000

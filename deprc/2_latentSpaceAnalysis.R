@@ -1,28 +1,3 @@
-####
-if(Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m'){
-  source('~/Research/NetworkEvolution/Code/setup.R') }
-####  
-
-####
-# quarterly or yearly output?
-quarterly=FALSE
-####
-
-####  
-# Load lsdm results
-if(quarterly){
-  load( paste0(outPath, "LSMDN_matlCoop_quarterly.rda") ) 
-  graphicsPath=paste0(graphicsPath,'quarterly/')
-  write.csv(char(dimnames(Y)[[2]]), file=paste0(outPath, 'cntriesQly.csv'))
-  write.csv(char(dimnames(Y)[[3]]), file=paste0(outPath, 'timeQly.csv'))  
-  } else {
-  load( paste0(outPath, "LSMDN_matlCoop_yearly.rda") )  
-  graphicsPath=paste0(graphicsPath,'yearly/')
-  write.csv(char(dimnames(Y)[[2]]), file=paste0(outPath, 'cntriesYly.csv'))
-  write.csv(char(dimnames(Y)[[3]]), file=paste0(outPath, 'timeYly.csv'))
-}
-####  
-
 ####  
 # Organize lat space array
 EX = array(0,dim=c(p,TT,n))
@@ -33,15 +8,6 @@ dimnames(EX) = list(NULL, dimnames(Y)[[3]], dimnames(Y)[[1]])
 if(quarterly){
   save(EX, file=paste0(outPath,'EX_Qly.rda')) } else {
   save(EX, file=paste0(outPath,'EX_Yly.rda')) }
-####  
-
-####  
-# Gen colors for countries
-genCntryMap=FALSE ; mapFileName=paste0(graphicsPath,'map.pdf')
-cntries=dimnames(Y)[[1]]
-source(paste0(rFuncs, 'genColors.R')) # returns ccols
-if(quarterly){ write.csv(ccols, file=paste0(outPath, 'ccols_Qly.csv')) } else {
-  write.csv(ccols, file=paste0(outPath, 'ccols_Yly.csv')) }
 ####  
 
 ####  

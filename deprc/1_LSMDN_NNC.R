@@ -1,38 +1,5 @@
-####
-if(Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m'){
-  source('~/Research/NetworkEvolution/Code/setup.R') }
-####  
-if(Sys.info()['user']=='maxgallop'){
-  source('~/Documents/NetworkEvolution/Code/setup.R') }
- 
-if(Sys.info()['user']=='cassydorff'){
-  source('~/ProjectsGit/NetworkEvolution/Code/setup.R') }
- 
-
-
-####
-# quarterly or yearly output?
-quarterly=FALSE
-####
-
-###
-###Y should be of dimension nxnxT
-if(quarterly){
-  load(paste0(inPath, 'matlCoop_quarterly.rda'))
-  outFileName = "LSMDN_matlCoop_quarterly.rda"
-  } else {
-  load(paste0(inPath, 'matlCoop_yearly.rda'))
-  outFileName = "LSMDN_matlCoop_yearly.rda" }
-
-Y = matlCoopArr
-###
-
-###
-###Set the following parameters
-###
-
 #Number of MCMC iterations
-N=20000
+N=1000000
 #Dimension of the Euclidean latent space
 p=2
 #Use log likelihood approximation (BOOLEAN)?
@@ -61,14 +28,12 @@ burnin = round(N/10)
 lsmdnPkgs = c('igraph', 'MCMCpack', 'inline',
   'RcppArmadillo','vegan')
 loadPkg(lsmdnPkgs)
-source(paste0(rFuncs, "functions.R"))
-source(paste0(rFuncs, "initialize.R"))
+source(paste0(rFuncs, "functions_NNC.R"))
+source(paste0(rFuncs, "initialize_NNC.R"))
 
 ###
 ###Run MCMC
 ###
-
-
 pb <- txtProgressBar(min=2,max=N,style=3)
 system.time({
   set.seed(1)
@@ -96,7 +61,7 @@ system.time({
       Draws <- c.update1(X[[it-1]],c(n,p,TT,1),tuneX,Y,
                          Bin[it-1],Bout[it-1],tuneBIO,w[,it-1],
                          t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
-                         nuOut,CAUCHY=0,RN,RNBIO)
+                         nuOut,CAUCHY=0,RN,RNBIO, g2[it-1])
     }
     X[[it]] <- Draws[[1]]
     Bin[it] <- Draws[[2]]
@@ -132,11 +97,18 @@ system.time({
                             ELOUT,ELIN,SUBSEQ,DEGREE)
     }else{
       Draws2 <- c.WAccProb1(X[[it]],c(n,p,TT,1),Y,
-                            Bin[it],Bout[it],Kappa,w[,it-1],w[,it])
+                            Bin[it],Bout[it],Kappa,w[,it-1],w[,it], g2[it - 1])
     }
     w[,it] <- Draws2[[1]]
     AccRate[3] <- AccRate[3] + Draws2[[2]]
     
+    #------------------Step 3.5--------------------------------
+    g2[it] = rinvgamma(1,shape=shapeG2,scale=scaleG2)
+    Draws3 = c.GammaAccProb1(X[[it]],c(n,p,TT,1),Y,
+            Bin[it],Bout[it],shapeG2,scaleG2,
+            w[,it-1],g2[it - 1], g2[it])
+    g2[it] = Draws3[[1]]
+    AccRate[4] = AccRate[4] + Draws3[[2]]
     #------------------Step 4--------------------------------
     
     if(MissData){
@@ -146,12 +118,11 @@ system.time({
       }
     }
     
-    if(it%%1000==0) save.image(paste0(outPath, outFileName))
+    if(it%%1000==0) save.image(outFileName)
     
     setTxtProgressBar(pb,it)
   }
   close(pb)
 })
-AccRate[1:3]/(it-1)
+AccRate[1:4]/(it-1)
 summary(AccRate[-c(1:3)]/(it-1))
-

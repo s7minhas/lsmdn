@@ -1,24 +1,3 @@
-####
-if(Sys.info()['user']=='janus829' | Sys.info()['user']=='s7m'){
-  source('~/Research/NetworkEvolution/Code/setup.R') }
-####  
-
-####
-# quarterly or yearly output?
-quarterly=FALSE
-####
-
-####  
-# Load lsdm results
-if(quarterly){
-  load( paste0(outPath, "LSMDN_matlCoop_quarterly.rda") ) 
-  graphicsPath=paste0(graphicsPath,'quarterly/')
-  } else {
-  load( paste0(outPath, "LSMDN_matlCoop_yearly.rda") )  
-  graphicsPath=paste0(graphicsPath,'yearly/')
-}
-####  
-
 #----------------------------------------------------
 printTrace = FALSE
 
