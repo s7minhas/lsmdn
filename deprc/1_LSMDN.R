@@ -1,3 +1,15 @@
+rm(list=ls())
+setwd('~/Research/software/lsmdn/')
+load('data/matlCoop_yearly.rda')
+Y = matlCoopArrList[[1]]
+rowActive = names(sort(apply(apply(Y, 3, rowSums), 1, mean),decreasing=TRUE))[1:25]
+colActive = names(sort(apply(apply(Y, 3, colSums), 1, mean),decreasing=TRUE))[1:25]
+toKeep = unique(c(rowActive,colActive))
+yNorm = Y[toKeep,toKeep,]
+yBin = (yNorm>mean(yNorm)) + 0
+rm(list=ls()[-which(  ls() %in% c('yNorm','yBin')  )])
+
+
 #Number of MCMC iterations
 N=20000
 #Dimension of the Euclidean latent space
