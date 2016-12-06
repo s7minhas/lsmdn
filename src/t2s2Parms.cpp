@@ -6,7 +6,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 List cT2s2Parms(
-	arma::cube X, arma::vec, dims, double thetaT, 
+	arma::cube X, arma::vec dims, double thetaT, 
 	double thetaS, double phiT, double phiS 
 	) {
 	

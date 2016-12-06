@@ -11,9 +11,9 @@ List cUpdate2(
   arma::colvec ww, double t2, double s2,
   double xiBin, double xiBout, double nuBin,
   double nuBout, int Cauchy,
-  arma::vec rnormsVec, arma::colvec rnormsBIO,
+  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO,
   arma::cube ELout, arma::cube ELin, 
-  arma::mat subseq, arma::cube degr
+  Rcpp::IntegerMatrix subseq, arma::cube degr
   ) {
 
   arma::cube Xold(Xitm1);
@@ -36,86 +36,98 @@ List cUpdate2(
   arma::colvec muit = arma::zeros(dims[1],1);
   arma::colvec AccRate = arma::zeros(dims(0)*dims(2)+3,1);
 
-	//-------------------- Latent Positions-------------------
+//-------------------- Latent Positions-------------------
 
-  for(int tt=0;tt < dims[2]; tt++) {
-	  for(int i=0;i<dims[0];i++) {
-			AccProb=0;
-			if(Cauchy<0.5) {
-			//---Normal Random Walk---
-			//  Xnew.slice(i).col(tt) = Xold.slice(i).col(tt) + tunex*arma::randn(dims(1),1);
-				Xnew.slice(i).col(tt) = Xold.slice(i).col(tt) + tunex*rnorms.slice(i).col(tt);
-			} else {
-			//---Cauchy Random Walk---
-			  for(int ell=0;ell<dims(1);ell++) {
-			    uu = arma::randu();
-			    Xnew.slice(i)(ell,tt) = Xold.slice(i)(ell,tt) + tunex*tan(PI*(uu-0.5));
-			  }
-			}
+  for(int tt=0;tt < dims[2]; tt++)
+{
+  for(int i=0;i<dims[0];i++)
+{
+  AccProb=0;
+if(Cauchy<0.5)
+{
+//---Normal Random Walk---
+//  Xnew.slice(i).col(tt) = Xold.slice(i).col(tt) + tunex*arma::randn(dims(1),1);
+  Xnew.slice(i).col(tt) = Xold.slice(i).col(tt) + tunex*rnorms.slice(i).col(tt);
+}else{
+//---Cauchy Random Walk---
+  for(int ell=0;ell<dims(1);ell++)
+  {
+    uu = arma::randu();
+    Xnew.slice(i)(ell,tt) = Xold.slice(i)(ell,tt) + tunex*tan(PI*(uu-0.5));
+  }
+}
 
-		//IN edges
-		if(degr(i,0,tt)>0) {
-			for(int j=0;j<degr(i,0,tt);j++) {
-			  dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(ELin(i,j,tt)-1).col(tt),2);
-			  dx = arma::norm(Xold.slice(i).col(tt)-Xnew.slice(ELin(i,j,tt)-1).col(tt),2);
-			  AccProb += (dx-dz)*(BIN/ww(i)+BOUT/ww(ELin(i,j,tt)-1));
-			}
-		}
+//IN edges
+if(degr(i,0,tt)>0)
+{
+for(int j=0;j<degr(i,0,tt);j++)
+{
+  dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(ELin(i,j,tt)-1).col(tt),2);
+  dx = arma::norm(Xold.slice(i).col(tt)-Xnew.slice(ELin(i,j,tt)-1).col(tt),2);
+  AccProb += (dx-dz)*(BIN/ww(i)+BOUT/ww(ELin(i,j,tt)-1));
+}
+}
+//OUT edges
+if(degr(i,1,tt)>0)
+{
+for(int j=0;j<degr(i,1,tt);j++)
+{
+  dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(ELout(i,j,tt)-1).col(tt),2);
+  dx = arma::norm(Xold.slice(i).col(tt)-Xnew.slice(ELout(i,j,tt)-1).col(tt),2);
+  AccProb += (dx-dz)*(BIN/ww(ELout(i,j,tt)-1)+BOUT/ww(i));
+}
+}
+//Control estimate
 
-		//OUT edges
-		if(degr(i,1,tt)>0) {
-		for(int j=0;j<degr(i,1,tt);j++) {
-		  dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(ELout(i,j,tt)-1).col(tt),2);
-		  dx = arma::norm(Xold.slice(i).col(tt)-Xnew.slice(ELout(i,j,tt)-1).col(tt),2);
-		  AccProb += (dx-dz)*(BIN/ww(ELout(i,j,tt)-1)+BOUT/ww(i));
-			}
-		}
+contrOld=0;contrNew=0;
+for(int j=0;j<n0;j++)
+{
+  dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(subseq(i,j)-1).col(tt),2);
+  dx = arma::norm(Xold.slice(i).col(tt)-Xnew.slice(subseq(i,j)-1).col(tt),2);
+  contrNew += log(1+exp(BIN*(1-dz/ww(i))+BOUT*(1-dz/ww(subseq(i,j)-1))))+
+              log(1+exp(BIN*(1-dz/ww(subseq(i,j)-1))+BOUT*(1-dz/ww(i))));
+  contrOld += log(1+exp(BIN*(1-dx/ww(i))+BOUT*(1-dx/ww(subseq(i,j)-1))))+
+              log(1+exp(BIN*(1-dx/ww(subseq(i,j)-1))+BOUT*(1-dx/ww(i))));
+}
+  AccProb += (dims(0)-1)/n0*(contrOld-contrNew);
 
-		//Control estimate
-		contrOld=0;contrNew=0;
-		for(int j=0;j<n0;j++) {
-		  dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(subseq(i,j)-1).col(tt),2);
-		  dx = arma::norm(Xold.slice(i).col(tt)-Xnew.slice(subseq(i,j)-1).col(tt),2);
-		  contrNew += log(1+exp(BIN*(1-dz/ww(i))+BOUT*(1-dz/ww(subseq(i,j)-1))))+
-		              log(1+exp(BIN*(1-dz/ww(subseq(i,j)-1))+BOUT*(1-dz/ww(i))));
-		  contrOld += log(1+exp(BIN*(1-dx/ww(i))+BOUT*(1-dx/ww(subseq(i,j)-1))))+
-		              log(1+exp(BIN*(1-dx/ww(subseq(i,j)-1))+BOUT*(1-dx/ww(i))));
-		}
-		AccProb += (dims(0)-1)/n0*(contrOld-contrNew);
 
-		if(tt==0) {
-			insides = trans(Xnew.slice(i).col(tt))*(Xnew.slice(i).col(tt))/t2;
-			AccProb += -0.5*insides(0,0);
-			insides = trans(Xold.slice(i).col(tt))*(Xold.slice(i).col(tt))/t2;
-			AccProb -= -0.5*insides(0,0);
-		}
-		if(tt>0) {
-		  muit = Xnew.slice(i).col(tt-1);
-		  insides = trans(Xnew.slice(i).col(tt)-muit)*(Xnew.slice(i).col(tt)-muit)/s2;
-		  AccProb += -0.5*insides(0,0);
-		  insides = trans(Xold.slice(i).col(tt)-muit)*(Xold.slice(i).col(tt)-muit)/s2;
-		  AccProb -= -0.5*insides(0,0);  
-		}
-		
-		if(tt <dims[2]-1) {
-		  muit = Xnew.slice(i).col(tt);
-		  insides = trans(Xnew.slice(i).col(tt+1)-muit)*(Xnew.slice(i).col(tt+1)-muit)/s2;
-		  AccProb += -0.5*insides(0,0);
-		  muit = Xold.slice(i).col(tt);
-		  insides = trans(Xnew.slice(i).col(tt+1)-muit)*(Xnew.slice(i).col(tt+1)-muit)/s2;
-		  AccProb -= -0.5*insides(0,0);  
-		}
-		  
-		uu= arma::randu();
-		
-		if(uu<exp(AccProb)) {
-		  AccRate(3+tt*dims(0)+i) = 1;
-		} else {
-		  Xnew.slice(i).col(tt) = Xold.slice(i).col(tt);
-		}
+  if(tt==0)
+{
+  insides = trans(Xnew.slice(i).col(tt))*(Xnew.slice(i).col(tt))/t2;
+  AccProb += -0.5*insides(0,0);
+  insides = trans(Xold.slice(i).col(tt))*(Xold.slice(i).col(tt))/t2;
+  AccProb -= -0.5*insides(0,0);
+}
+  if(tt>0)
+{
+  muit = Xnew.slice(i).col(tt-1);
+  insides = trans(Xnew.slice(i).col(tt)-muit)*(Xnew.slice(i).col(tt)-muit)/s2;
+  AccProb += -0.5*insides(0,0);
+  insides = trans(Xold.slice(i).col(tt)-muit)*(Xold.slice(i).col(tt)-muit)/s2;
+  AccProb -= -0.5*insides(0,0);  
+}
+  if(tt <dims[2]-1)
+{
+  muit = Xnew.slice(i).col(tt);
+  insides = trans(Xnew.slice(i).col(tt+1)-muit)*(Xnew.slice(i).col(tt+1)-muit)/s2;
+  AccProb += -0.5*insides(0,0);
+  muit = Xold.slice(i).col(tt);
+  insides = trans(Xnew.slice(i).col(tt+1)-muit)*(Xnew.slice(i).col(tt+1)-muit)/s2;
+  AccProb -= -0.5*insides(0,0);  
+}
+  
+  uu= arma::randu();
+  if(uu<exp(AccProb))
+{
+  AccRate(3+tt*dims(0)+i) = 1;
+}else
+{
+  Xnew.slice(i).col(tt) = Xold.slice(i).col(tt);
+}
 
-		}
-	}
+}
+}
 
 /*---Centering---*/
 for(int i=0;i<dims(0);i++)
@@ -242,7 +254,6 @@ if(uu<exp(AccProb))
 {
   BoutNew = BOUT;
 }
-
 
   return(Rcpp::List::create(Xnew,BinNew,BoutNew,AccRate));
 }

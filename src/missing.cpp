@@ -7,11 +7,11 @@ using namespace Rcpp;
 
 arma::cube cMissing(
   arma::cube X, arma::vec dims, arma::vec MM, 
-  arma::cube Y, int ttt, 
+  arma::cube Y, int Ttt, 
   double BIN, double BOUT, arma::colvec ww
   ) {
 
-  int ttt = ttt-1;  
+  int ttt = Ttt-1;  
   double dx=0, uu=0, Prob=0;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
