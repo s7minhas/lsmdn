@@ -1,14 +1,14 @@
-c.prediction <- cxxfunction(
-  signature(EX="numeric",SIG2="numeric",X1T="numeric",X2T="numeric",BIN="numeric",BOUT="numeric",WW="numeric"),
-  body='
+#include <RcppArmadillo.h>
+using namespace arma; 
+using namespace Rcpp; 
 
-  Rcpp::NumericMatrix Ex(EX);
-  Rcpp::NumericMatrix x1(X1T);
-  Rcpp::NumericMatrix x2(X2T);
-  Rcpp::NumericMatrix ww(WW);
-  Rcpp::NumericVector sig2(SIG2);
-  Rcpp::NumericVector Bin(BIN);
-  Rcpp::NumericVector Bout(BOUT);
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::export]]
+
+arma::vec cPrediction(
+	arma::mat Ex, arma::vec sig2, arma::mat x1, arma::mat x2,
+	arma::vec Bin, arma::vec Bout, arma::mat ww
+	) {
   
   int nrows = Ex.nrow();
   int nIter = x1.ncol();
@@ -39,5 +39,5 @@ c.prediction <- cxxfunction(
 }
 }
   
-  return yhat;
-  ',plugin="Rcpp")
+  return(yhat);
+}

@@ -1,15 +1,15 @@
-c.postzeroprob <- cxxfunction(
-  signature(Xi1="numeric",Xi2="numeric",Xj1="numeric",Xj2="numeric",SS2="numeric",LAM="numeric",PP0="numeric"),
-  body='
-  
-  
-  double lam = Rcpp::as<double>(LAM);
-  double pp0 = Rcpp::as<double>(PP0);
-  Rcpp::NumericMatrix xi1(Xi1);
-  Rcpp::NumericMatrix xi2(Xi2);
-  Rcpp::NumericMatrix xj1(Xj1);
-  Rcpp::NumericMatrix xj2(Xj2);
-  Rcpp::NumericVector ss2(SS2);
+#include <RcppArmadillo.h>
+using namespace arma; 
+using namespace Rcpp; 
+
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::export]]
+
+arma::vec cPostzeroprob(
+	arma::mat xi1, arma::mat xi2, arma::mat xj1, arma::mat xj2,
+	arma::vec ss2, double lam, double pp0
+	) {
+
   Rcpp::NumericVector normCDF(1);
   Rcpp::NumericVector temp1(1);
   Rcpp::NumericVector ret(1);
@@ -34,6 +34,5 @@ c.postzeroprob <- cxxfunction(
 }
   ret = ret*(1-pp0)/(ncols*pp0*lam);
   
-  return Rcpp::wrap(ret);
-  ', 
-  plugin="Rcpp")
+  return(ret);
+}
