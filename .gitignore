@@ -20,9 +20,6 @@
 *.fdb_latexmk
 *.bib.bak
 *.synctex.gz
-*.lb
-*.DS_Store
-*.Rapp.history
 *.toc
 *.snm
 *.nav
@@ -30,3 +27,4 @@
 *.o
 *.so
 *.dll
+inst/doc

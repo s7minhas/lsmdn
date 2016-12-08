@@ -11,6 +11,7 @@
 #' \item{betaOutInit}{Initial value for beta out}
 #' \item{xLatPos}{Scaled latent space}
 #' @export getStartingValues
+#' 
 
 initBetaInOut <- function(Y, xLatPos, p, w){
 
