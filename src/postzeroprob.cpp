@@ -17,8 +17,9 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 arma::vec postZeroProb(
-	arma::mat xi1, arma::mat xi2, arma::mat xj1, arma::mat xj2,
-	arma::vec ss2, double lam, double pp0
+	Rcpp::NumericMatrix xi1, Rcpp::NumericMatrix xi2, 
+  Rcpp::NumericMatrix xj1, Rcpp::NumericMatrix xj2,
+	Rcpp::NumericVector ss2, double lam, double pp0
 	) {
 
   Rcpp::NumericVector normCDF(1);

@@ -86,7 +86,7 @@ lsmdn <- function(
     s2<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
     n0<-tmp$n0 ; accRate<-tmp$accRate
 
-    if( family='nonNegNormal' ){
+    if( family=='nonNegNormal' ){
       g2<-tmp$g2 ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
 
     if( llApprox & family=='binomial' ){

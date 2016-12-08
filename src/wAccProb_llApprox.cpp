@@ -27,7 +27,7 @@ List wAccProb_llApprox(
 	arma::cube X, arma::vec dims, arma::cube Y, 
 	double BIN, double BOUT, double tuneW,
 	arma::colvec wwOld, arma::colvec wwNew,
-	arma::cube ELout, arma::cube ELin, arma::mat subseq, 
+	arma::cube ELout, arma::cube ELin, Rcpp::IntegerMatrix subseq, 
 	arma::cube degr
 	) {
   

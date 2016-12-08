@@ -4,9 +4,9 @@ Version: 0.0.0.9000
 Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
 Maintainer: Shahryar Minhas <shahryar.minhas@duke.edu>
 Description: What the package does (one paragraph).
-Depends:
+Depends: 
 	R (>= 3.3.1)
-Imports:
+Imports: 
 	igraph,
 	MCMCpack,
 	inline,
@@ -19,3 +19,4 @@ LinkingTo:
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 5.0.1.9000

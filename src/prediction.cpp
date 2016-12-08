@@ -16,9 +16,11 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 
-arma::vec prediction(
-	arma::mat Ex, arma::vec sig2, arma::mat x1, arma::mat x2,
-	arma::vec Bin, arma::vec Bout, arma::mat ww
+Rcpp::NumericMatrix prediction(
+	Rcpp::NumericMatrix Ex, Rcpp::NumericVector sig2, 
+  Rcpp::NumericMatrix x1, Rcpp::NumericMatrix x2,
+	Rcpp::NumericVector Bin, Rcpp::NumericVector Bout, 
+  Rcpp::NumericMatrix ww
 	) {
   
   int nrows = Ex.nrow();
