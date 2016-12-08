@@ -27,7 +27,8 @@
 #' @param N number of MCMC iterations.
 #' @param seed random seed
 #' @param startVals Fitted result from previous model run.
-#' @param savePoints percent indicating intervals to save at
+#' @param savePoints chain intervals to save at 
+#' @param fileName "lsmdn" something
 #' @usage lsmdn( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6886) 
 #' @return returns list of starting values:
 #' \item{w}{weights}
@@ -37,6 +38,7 @@
 #' \item{nuIn}
 #' \item{nuOut}
 #' \item{xiIn}
+#' \item{xiOut}
 #' \item{t2}
 #' \item{shapeT2}
 #' \item{scaleT2}
@@ -57,9 +59,15 @@
 lsmdn <- function(
   Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, 
   tuneX=0.0075, tuneBIO=0.1, kappa=175000, burnin=round(N/10),
-  s2Init=NULL, t2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
+  s2Init=NULL, t2Init=NULL, g2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
   nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
-  shapeS2=NULL, scaleS2=NULL, N=1000, seed=6886, startVals=NULL, savePoints=.10){
+  shapeS2=NULL, scaleS2=NULL, shapeG2=NULL, scaleG2=NULL, 
+  N=1000, seed=6886, startVals=NULL, 
+  savePoints=.10, fileName='lsmdnModel'){
+
+  # add in some warnings
+  ## llApprox only works for binomial family
+  ## 
 
   #
   set.seed(seed)  
@@ -70,12 +78,15 @@ lsmdn <- function(
   if( is.null( startVals ) ){
     tmp <- getStartingValues(Y, p, family, llAprox, missData, N, seed)
     w<-tmp$w ; X <-tmp$X ; betaIn<-tmp$betaIn ; betaOut<-tmp$betaOut ; nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut
-    xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut ; t2<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
-    s2<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2 ; dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax
+    xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
+    t2<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
+    s2<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
     n0<-tmp$n0 ; accRate<-tmp$accRate
-    if( llApprox ){
-      elOut<-tmp$elOut ; elIn<-tmp$elIn ; degree<-tmp$degree ; edgeList<-tmp$edgeList
-    }
+    if( family='nonNegNormal' ){
+      g2<-tmp$g2 ; shapeS2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
+    if( llApprox & family=='binomial' ){
+      dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax ; elOut<-tmp$elOut ; elIn<-tmp$elIn
+      degree<-tmp$degree ; edgeList<-tmp$edgeList }
     rm(tmp) } else {
       print('stuff')
     }
@@ -88,7 +99,7 @@ lsmdn <- function(
     RNBIO <- rnorm(2)
 
     # Step 1
-    if(llApprox){
+    if(llApprox & family=='binomial'){
       if(it%%100==0){
         subseq <- matrix(0,n,n0)
         for(i in 1:n){
@@ -96,26 +107,29 @@ lsmdn <- function(
           if(length(edgeList[[i]])>0){ nOnes <- max(nOnes,1) }
           set.seed(seed) ; subseq[i,1:nOnes] <- sample(edgeList[[i]],size=nOnes,replace=TRUE) # should replace be false?      
           set.seed(seed) ; subseq[i,(nOnes+1):n0] <- sample(c(1:n)[-c(i,edgeList[[i]])],size=n0-nOnes,replace=TRUE)
-        }
-      }
+        } }
 
       draws <- cUpdate2(
         X[[it-1]],c(n,p,T,dInMax,dOutMax),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
-        nuOut,Cauchy=0,RN,RNBIO,elOut,elIn,subseq,degree )
-    } else {
+        nuOut,Cauchy=0,RN,RNBIO,elOut,elIn,subseq,degree ) }
+
+    if( !llApprox & family=='binomial' ){
       draws <- cUpdate1(X[[it-1]],c(n,p,T,1),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO) }
 
+    if( family=='nonNegNormal' ){
+      draws <- cUpdate1_nnc(X[[it-1]],c(n,p,T,1),tuneX,Y, 
+        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
+        t2[it-1],s2[it-1],g2[it-1],xiIn,xiOut,nuIn,
+        nuOut,Cauchy=0,RN,RNBIO) }
+
     #
-    X[[it]] <- draws[[1]]
-    betaIn[it] <- draws[[2]]
-    betaOut[it] <- draws[[3]]
-    accRate <- accRate + draws[[4]]    
-    rm(draws)
+    X[[it]] <- draws[[1]] ; betaIn[it] <- draws[[2]] ; betaOut[it] <- draws[[3]]
+    accRate <- accRate + draws[[4]] ; rm(draws)
 
     #
     if(it==burnin){
@@ -132,23 +146,39 @@ lsmdn <- function(
 
     # Step 2
     draws2 <- cT2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
-    set.seed(seed) ; t2[it] <- rinvgamma(1,shape=draws2[[1]],scale=draws2[[2]])
-    set.seed(seed) ; s2[it] <- rinvgamma(1,shape=draws2[[3]],scale=draws2[[4]])  
-    rm(draws2)
+    shapeT2<-draws2[[1]] ; scaleT2<-draws2[[1]]
+    shapeS2<-draws2[[3]] ; scaleS2<-draws2[[4]] ; rm(draws2)
+    set.seed(seed) ; t2[it] <- rinvgamma(1,shape=shapeT2,scale=scaleT2)
+    set.seed(seed) ; s2[it] <- rinvgamma(1,shape=shapeS2,scale=scaleS2)  
 
     # Step 3
     set.seed(seed) ; w[,it] <- rdirichlet(1,alpha=kappa*w[,it-1])
-    if(llApprox){
+    if(llApprox & family=='binomial'){
       draws3 <- cWAccProb2(X[[it]],c(n,p,T,dInMax,dOutMax),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[it],
-        elOut, elIn, subseq, degree )
-    } else {
+        elOut, elIn, subseq, degree ) }
+
+    if( !llApprox & family=='binomial' ){
       draws3 <- cWAccProb1(X[[it]],c(n,p,T),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[,it]) }
+
+    if( family=='nonNegNormal' ){
+      draws3 <- cWAccProb1_nnc(X[[it]],c(n,p,T),Y,
+        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]) }
+
 
     w[,it] <- draws3[[1]]
     accRate[3] <- accRate[3] + draws3[[2]]
     rm(draws3)
+
+    if( family=='nonNegNormal' ){
+      g2[it] = rinvgamma(1,shape=shapeG2,scale=scaleG2)
+      draws3 = cGammaAccProb1(X[[it]],c(n,p,TT,1),Y, 
+        Bin[it],Bout[it],shapeG2,scaleG2, 
+        w[,it-1],g2[it - 1], g2[it])
+      g2[it] = draws3[[1]]
+      AccRate[4] = AccRate[4] + draws3[[2]] ; rm(draws3)
+    }
 
     # Step 4
     if(missData){
@@ -158,12 +188,19 @@ lsmdn <- function(
       }
     }
 
-    # save intermediate results
-    if( it %in% round(quantile(1:N, probs=seq(0,1,savePoints))[-1] ) ){
-      save( list(
-        Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2,
-        w=w, accRate=accRate
-        ) ) }
+    # save results
+    if(it > burnin){
+      if( it %in% round(quantile(1:(N-burnin), probs=seq(0,1,savePoints))[-1] ) ){
+        save( list(
+          Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2,
+          shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
+          nuIn=nuIn, nuOut=nuOut, xiIn=xiIn, xiOut=xiOut, 
+          w=w, accRate=accRate,
+          file=paste0(fileName,'.rda')
+          ) )
+      }      
+    }
+
   }
 
 }

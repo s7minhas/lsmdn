@@ -52,7 +52,8 @@ getStartingValues <- function(
 	Y, p=2, family='binomial', llAprox=FALSE, missData=FALSE, 
 	s2Init=NULL, t2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
 	nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
-	shapeS2=NULL, scaleS2=NULL, N=1000, seed=6886){
+	shapeS2=NULL, scaleS2=NULL, g2=NULL, shapeG2=NULL, scaleG2=NULL, 
+	N=1000, seed=6886){
 
 	# Starting values for parameters
 	n <- dim(Y)[1]
@@ -74,14 +75,20 @@ getStartingValues <- function(
 	w <- initWeights(Y, N)
 
 	# Initial latent space positions via Sarkar & Moore 2005
-	X <- gmds( Y )
+	X <- gmds( Y, w, family )
 
 	# initial values for betaIn and betaOut
-	tmp <- initBetaInOut(Y, xLatPos=X[[1]], p=p, w=w)
-	X[[1]] <- tmp$'xLatPos'
-	betaIn[1] <- tmp$'betaInInit'
-	betaOut[1] <- tmp$'betaOutInit'
-	rm(tmp)
+	if( family=='binomial' ){
+		tmp <- initBetaInOut(Y, xLatPos=X[[1]], p=p, w=w)
+		X[[1]] <- tmp$'xLatPos'
+		betaIn[1] <- tmp$'betaInInit'
+		betaOut[1] <- tmp$'betaOutInit'
+		rm(tmp)
+	} else { # could condition this on dist
+		X[[1]] <- X[[1]]/n
+		betaIn[1] <- 10
+		betaOut[1] <- 10
+	}
 
 	# Priors and further initializations
 	nuIn <- betaIn[1]
@@ -98,8 +105,15 @@ getStartingValues <- function(
 	shapeS2 <- 9
 	scaleS2 <- 1.5	
 
+	#Gamma^2
+	if(family=='nonNegNormal'){
+		g2 <- numeric(N)
+		g2[1] <- 25
+		shapeG2 <- 2.05
+		scaleG2 <- (1.05)*25 }
+
 	# init values for log-likelihood approximation subsampling
-	if(llAprox){
+	if( llAprox & family=='binomial' ){
 		tmp <- initLogLikeApprox(Y, n0, seed)
 		return( 
 			list(
@@ -111,16 +125,18 @@ getStartingValues <- function(
 				edgeList=tmp$edgeList, accRate=tmp$accRate
 				)
 			)
+	} else { # could condition this on dist
+		return(
+			list(
+				w=w, X=X, betaIn=betaIn, betaOut=betaOut, nuIn=nuIn, nuOut=nuOut,
+				xiIn=xiIn, xiOut=xiOut,
+				t2=t2, shapeT2=shapeT2, scaleT2=scaleT2,
+				s2=s2, shapeS2=shapeS2, scaleS2=scaleS2, 
+				g2=g2, shapeG2=shapeG2, scaleG2=scaleG2, 
+				dInMax=tmp$dInMax, dOutMax=tmp$dOutMax, n0=tmp$n0, accRate=tmp$accRate
+				)
+			)
 	}
 
-	#
-	return(
-		list(
-			w=w, X=X, betaIn=betaIn, betaOut=betaOut, nuIn=nuIn, nuOut=nuOut,
-			xiIn=xiIn, xiOut=xiOut, t2=t2, shapeT2=shapeT2, scaleT2=scaleT2,
-			s2=s2, shapeS2=shapeS2, scaleS2=scaleS2, 
-			dInMax=tmp$dInMax, dOutMax=tmp$dOutMax, n0=tmp$n0, accRate=tmp$accRate
-			)
-		)
 }
 

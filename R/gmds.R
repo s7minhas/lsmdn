@@ -1,19 +1,37 @@
 #' Initial Latent Positions (GMDS, Sarkar and Moore, 2005)
 #' 
 #' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+#' @param w weights
+#' @param family type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'. 
 #' @usage gmds( Y ) 
 #' @return Latent positions of actors based on Sarkar and Moore
 #' @export
 
 ###
-gmds <- function(Y){
+gmds <- function(Y, w, family){
 	#
 	n <- dim(Y)[1]
 	T <- dim(Y)[3]	
 
 	dissim <- array(0,dim=dim(Y))
-	for(t in 1:T){ dissim[,,t] <- igraph::shortest.paths(graph=igraph::graph.adjacency(Y[,,t]),mode="all") }
-	dissim[which(dissim==Inf,arr.ind=TRUE)] <- max(c(dissim[which(dissim!=Inf,arr.ind=TRUE)]))
+	if(family=='binomial'){
+		for(t in 1:T){ dissim[,,t] <- igraph::shortest.paths(graph=igraph::graph.adjacency(Y[,,t]),mode="all") }
+		dissim[which(dissim==Inf,arr.ind=TRUE)] <- max(c(dissim[which(dissim!=Inf,arr.ind=TRUE)]))
+	} else {
+		Ybin = Y > 0 
+		dsim = function(i,j,t, Y, w ){
+			con = Y[i,j,t] + Y[j,i,t]
+			if(con == 2){ret = min(w[i], w[j])/2}
+			if(con == 1){ret = (w[i] + w[j])/2}
+			if(con == 0){ret = 3*(w[i] + w[j])/2}
+			return(ret)	
+		}
+
+		i = 1:dim(Y)[1] ; j = 1:dim(Y)[2]
+		for(t in 1:T){
+			dissim[,,t] = sapply(i, function(i){ sapply(j, dsim, i = i, t = t, Y = Ybin, w = w[,1]) } )
+			diag(dissim[,,tt]) = 0 }
+	}
 	
 	X <- list()
 	X[[1]] <- array(0,c(p,T,n))
