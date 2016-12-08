@@ -7,6 +7,19 @@
 #' @param llApprox logical indicating whether or not to utilize log-likelihood 
 #' approximationg. Only available for binomial model types.
 #' @param missData logical indicating whether to impute missing data.
+#' @param s2Init starting value for s2
+#' @param t2Init starting value for t2
+#' @param xLatPos starting actor positions in latent space
+#' @param betaInInit starting value for betaIn
+#' @param betaOutInit starting value for betaOut
+#' @param nuIn starting value for nuIn
+#' @param nuOut starting value for nuOut
+#' @param xiIn starting value for xiIn
+#' @param xiOut starting value for xiOut
+#' @param shapeT2 shape parameter for t2
+#' @param scaleT2 scale parameter for t2
+#' @param shapeS2 shape parameter for s2
+#' @param scaleS2 shape parameter for s2
 #' @param N number of MCMC iterations.
 #' @param seed random seed
 #' @usage getStartingValues( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6886) 
@@ -30,27 +43,32 @@
 #' \item{n0}
 #' \item{elOut}
 #' \item{elIn}
-#' \item{subseq}
 #' \item{degree}
 #' \item{edgeList}
 #' @export lsmdn
 #' 
 
-getStartingValues <- function(Y, p=2, family='binomial', llAprox=FALSE, missData=FALSE, N=1000, seed=6886){
+getStartingValues <- function(
+	Y, p=2, family='binomial', llAprox=FALSE, missData=FALSE, 
+	s2Init=NULL, t2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
+	nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
+	shapeS2=NULL, scaleS2=NULL, N=1000, seed=6886){
 
 	# Starting values for parameters
 	n <- dim(Y)[1]
 	T <- dim(Y)[3]		
 	betaOut <- betaIn <- numeric(N)
 	s2 <- t2 <- numeric(N)
-	AccRate <- numeric(3+n*T)
-	names(AccRate) <- c("betaIn","betaOut","weights", paste("X",rep(1:n,T),rep(1:T,each=n),sep=","))
+	accRate <- numeric(3+n*T)
+	names(accRate) <- c("betaIn","betaOut","weights", paste("X",rep(1:n,T),rep(1:T,each=n),sep=","))
 
 	# init values for missingness in Y
-	tmp = which(is.na(Y),arr.ind=TRUE)
-	missing <- lapply( 1:T, function(t){ return( unique(tmp[which(tmp[,3]==t),1]) ) } )
-	Y[tmp] = 0; rm(tmp)			
-	if(missData){ Y <- initNetMissVals( Y, missing ) }
+	if(missData){
+		tmp = which(is.na(Y),arr.ind=TRUE)
+		missing <- lapply( 1:T, function(t){ return( unique(tmp[which(tmp[,3]==t),1]) ) } )
+		Y[tmp] = 0; rm(tmp)					
+		Y <- initNetMissVals( Y, missing )
+	}
 
 	# Weights
 	w <- initWeights(Y, N)
@@ -89,8 +107,8 @@ getStartingValues <- function(Y, p=2, family='binomial', llAprox=FALSE, missData
 				xiIn=xiIn, xiOut=xiOut, t2=t2, shapeT2=shapeT2, scaleT2=scaleT2,
 				s2=s2, shapeS2=shapeS2, scaleS2=scaleS2, 
 				dInMax=tmp$dInMax, dOutMax=tmp$dOutMax, n0=tmp$n0, 
-				elOut=tmp$elOut, elIn=tmp$elIn, subseq=tmp$subseq, degree=tmp$degree,
-				edgeList=tmp$edgeList
+				elOut=tmp$elOut, elIn=tmp$elIn, degree=tmp$degree,
+				edgeList=tmp$edgeList, accRate=tmp$accRate
 				)
 			)
 	}
@@ -101,7 +119,7 @@ getStartingValues <- function(Y, p=2, family='binomial', llAprox=FALSE, missData
 			w=w, X=X, betaIn=betaIn, betaOut=betaOut, nuIn=nuIn, nuOut=nuOut,
 			xiIn=xiIn, xiOut=xiOut, t2=t2, shapeT2=shapeT2, scaleT2=scaleT2,
 			s2=s2, shapeS2=shapeS2, scaleS2=scaleS2, 
-			dInMax=tmp$dInMax, dOutMax=tmp$dOutMax, n0=tmp$n0			
+			dInMax=tmp$dInMax, dOutMax=tmp$dOutMax, n0=tmp$n0, accRate=tmp$accRate
 			)
 		)
 }

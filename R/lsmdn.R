@@ -1,239 +1,169 @@
 #' LSMDN model fitting routine for longitudinal network data
 #' 
-#' An MCMC routine providing a fit to a latent space model  
-#' for dynamic networks (LSMDN) to longitudinal relational
-#' data. 
-#' 
-#' This command provides posterior inference for parameters in AME models of
-#' independent replicated relational data, assuming one of six possible data
-#' types/models:
-#' 
-#' "gaussian": A normal AME model.
-#' 
-#' "non-negative gaussian": A binary probit AME model.
-#' 
-#' "poisson": An ordinal probit AME model. An intercept is not identifiable in this
-#' model.
-#' 
-#' "binomial": An AME model for censored binary data.  The value of 'odmax'
-#' specifies the maximum number of links each row may have.
-#' 
-#' "frn": An AME model for fixed rank nomination networks. A higher value of
-#' the rank indicates a stronger relationship. The value of 'odmax' specifies
-#' the maximum number of links each row may have.
-#' 
-#' @usage lsmdn(Y,Xdyad=NULL, Xrow=NULL, Xcol=NULL, rvar = !(model=="rrl")
-#' , cvar = TRUE, dcor = !symmetric, nvar=TRUE,  R = 0, model="nrm",
-#' intercept=!is.element(model,c("rrl","ord")),
-#' symmetric=FALSE,
-#' odmax=rep(max(apply(Y>0,c(1,3),sum,na.rm=TRUE)),nrow(Y[,,1])), seed = 1,
-#' nscan = 10000, burn = 500, odens = 25, plot=TRUE, print = TRUE, gof=TRUE)
-#' @param Y an n x n x T array of relational matrix, where the third dimension correponds to replicates (over time, for example). See
-#' model below for various data types.
-#' @param Xdyad an n x n x pd x T array of covariates
-#' @param Xrow an n x pr x T array of nodal row covariates
-#' @param Xcol an n x pc x T array of nodal column covariates
-#' @param rvar logical: fit row random effects (asymmetric case)?
-#' @param cvar logical: fit column random effects (asymmetric case)? 
-#' @param dcor logical: fit a dyadic correlation (asymmetric case)?
-#' @param nvar logical: fit nodal random effects (symmetric case)? 
-#' @param R integer: dimension of the multiplicative effects (can be zero)
-#' @param model character: one of "nrm","bin","ord","cbin","frn","rrl" - see
-#' the details below
-#' @param intercept logical: fit model with an intercept?
-#' @param symmetric logical: Is the sociomatrix symmetric by design?
-#' @param odmax a scalar integer or vector of length n giving the maximum
-#' number of nominations that each node may make - used for "frn" and "cbin"
-#' models
+#' @param Y an n x n x T array of relational matrices, 
+#' where the third dimension corresponds to different time periods.
+#' @param p number of latent dimensions
+#' @param family type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'. 
+#' @param llApprox logical indicating whether or not to utilize log-likelihood 
+#' approximationg. Only available for binomial model types.
+#' @param missData logical indicating whether to impute missing data.
+#' @param tuneX tuneX
+#' @param tuneBIO tuneBIO
+#' @param kappa kappa
+#' @param s2Init starting value for s2
+#' @param t2Init starting value for t2
+#' @param xLatPos starting actor positions in latent space
+#' @param betaInInit starting value for betaIn
+#' @param betaOutInit starting value for betaOut
+#' @param nuIn starting value for nuIn
+#' @param nuOut starting value for nuOut
+#' @param xiIn starting value for xiIn
+#' @param xiOut starting value for xiOut
+#' @param shapeT2 shape parameter for t2
+#' @param scaleT2 scale parameter for t2
+#' @param shapeS2 shape parameter for s2
+#' @param scaleS2 shape parameter for s2
+#' @param burnin burnin
+#' @param N number of MCMC iterations.
 #' @param seed random seed
-#' @param nscan number of iterations of the Markov chain (beyond burn-in)
-#' @param burn burn in for the Markov chain
-#' @param odens output density for the Markov chain
-#' @param plot logical: plot results while running?
-#' @param print logical: print results while running?
-#' @param gof logical: calculate goodness of fit statistics?
-#' @return \item{BETA}{posterior samples of regression coefficients}
-#' \item{VC}{posterior samples of the variance parameters}
-#' \item{APM}{posterior mean of additive row effects a} \item{BPM}{posterior
-#' mean of additive column effects b} \item{U}{posterior mean of multiplicative
-#' row effects u} 
-#' \item{V}{posterior mean of multiplicative column effects v (asymmetric case)}
-#' \item{UVPM}{posterior mean of UV}
-#' \item{ULUPM}{posterior mean of ULU (symmetric case)} 
-#' \item{L}{posterior mean of L (symmetric case)} 
-#'  \item{EZ}{estimate of expectation of Z
-#' matrix} \item{YPM}{posterior mean of Y (for imputing missing values)}
-#' \item{GOF}{observed (first row) and posterior predictive (remaining rows)
-#' values of four goodness-of-fit statistics}
-#' @author Daniel Sewell, Yuguo Chen
-#' @examples
-#' 
-#' data(YX_bin_long) 
-#' fit<-lsmdn(YX_bin_long$Y,YX_bin_long$X,burn=5,nscan=5,odens=1,model="bin")
-#' # you should run the Markov chain much longer than this
-#' 
-#' @export lsmdn
-
-# Load pkgs and functions
-lsmdnPkgs = c(
-	'igraph', 'MCMCpack', 'inline',
-  'Rcpp', 'RcppArmadillo','vegan'
-  )
-loadPkg(lsmdnPkgs)
-source(paste0(rFuncs, "functions.R"))
+#' @param startVals Fitted result from previous model run.
+#' @param savePoints percent indicating intervals to save at
+#' @usage lsmdn( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6886) 
+#' @return returns list of starting values:
+#' \item{w}{weights}
+#' \item{X}{initial actor latent space positions calculated via GMDS}
+#' \item{betaIn}
+#' \item{betaOut}
+#' \item{nuIn}
+#' \item{nuOut}
+#' \item{xiIn}
+#' \item{t2}
+#' \item{shapeT2}
+#' \item{scaleT2}
+#' \item{s2}
+#' \item{shapeS2}
+#' \item{scaleS2}
+#' if llApprox=TRUE, also returns
+#' \item{dInMax}
+#' \item{dOutMax}
+#' \item{n0}
+#' \item{elOut}
+#' \item{elIn}
+#' \item{degree}
+#' \item{edgeList}
+#' @export
+#'
 
 lsmdn <- function(
-	x
-	){
+  Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, 
+  tuneX=0.0075, tuneBIO=0.1, kappa=175000, burnin=round(N/10),
+  s2Init=NULL, t2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
+  nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
+  shapeS2=NULL, scaleS2=NULL, N=1000, seed=6886, startVals=NULL, savePoints=.10){
 
+  #
+  set.seed(seed)  
+  n <- dim(Y)[1]
+  T <- dim(Y)[3]    
 
-return(object)
-}
+  # get init values if no fitted values provided
+  if( is.null( startVals ) ){
+    tmp <- getStartingValues(Y, p, family, llAprox, missData, N, seed)
+    w<-tmp$w ; X <-tmp$X ; betaIn<-tmp$betaIn ; betaOut<-tmp$betaOut ; nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut
+    xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut ; t2<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
+    s2<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2 ; dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax
+    n0<-tmp$n0 ; accRate<-tmp$accRate
+    if( llApprox ){
+      elOut<-tmp$elOut ; elIn<-tmp$elIn ; degree<-tmp$degree ; edgeList<-tmp$edgeList
+    }
+    rm(tmp) } else {
+      print('stuff')
+    }
 
-
-#Number of MCMC iterations
-N=20000
-#Dimension of the Euclidean latent space
-p=2
-#Use log likelihood approximation (BOOLEAN)?
-#If TRUE, how large a subsample n0?
-llApprox = FALSE
-if(llApprox) n0 = 100
-#Are there missing edges?
-MissData = FALSE
-
-#If TRUE, construct Missing: Missing[[tt]]= c(1,2,3) => at time tt we have no row data on actors 1,2&3 
-if(MissData){
-  Missing <- list() #Enter as list manually, or if NAs are in data run the following:
-  temp = which(is.na(Y),arr.ind=TRUE)
-  for(tt in 1:dim(Y)[3]){
-    Missing[[tt]] = unique(temp[which(temp[,3]==tt),1])
-  }
-  Y[temp] = 0;rm(temp)
-}
-
-#MCMC tuning parameters
-tuneX <-   0.0075
-tuneBIO <- 0.1
-Kappa <-   175000
-burnin = round(N/10)
-
-# Get initial values if starting values not specified
-
-###
-###Run MCMC
-###
-
-
-RN <- rnorm(n*TT*p) # this doesnt need to be in the loop
-pb <- txtProgressBar(min=2,max=N,style=3)
-system.time({
-  set.seed(seed)
+  # start mcmc
   for(it in 2:N){
-      
+
+    #
+    RN <- rnorm(n*T*p)
     RNBIO <- rnorm(2)
+
+    # Step 1
     if(llApprox){
       if(it%%100==0){
-        SUBSEQ = matrix(0,n,n0)
+        subseq <- matrix(0,n,n0)
         for(i in 1:n){
-          nOnes <- round(length(edgeList[[i]])/n*n0) #stratified sampling
+          nOnes <- round(length(edgeList[[ii]])/n+n0) # stratified sampling
           if(length(edgeList[[i]])>0){ nOnes <- max(nOnes,1) }
-          SUBSEQ[i,1:nOnes] <- sample(edgeList[[i]],size=nOnes,replace=FALSE)
-          SUBSEQ[i,(nOnes+1):n0] <- sample(c(1:n)[-c(i,edgeList[[i]])],size=n0-nOnes,replace=FALSE)
+          set.seed(seed) ; subseq[i,1:nOnes] <- sample(edgeList[[i]],size=nOnes,replace=TRUE) # should replace be false?      
+          set.seed(seed) ; subseq[i,(nOnes+1):n0] <- sample(c(1:n)[-c(i,edgeList[[i]])],size=n0-nOnes,replace=TRUE)
         }
       }
-    }
-    if(llApprox){
-      Draws <- c.update2(X[[it-1]],c(n,p,TT,dinmax,doutmax),tuneX,Y,
-                         Bin[it-1],Bout[it-1],tuneBIO,w[,it-1],
-                         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
-                         nuOut,CAUCHY=0,RN,RNBIO,ELOUT,ELIN, SUBSEQ,DEGREE)
-    }else{
-      Draws <- c.update1(X[[it-1]],c(n,p,TT,1),tuneX,Y,
-                         Bin[it-1],Bout[it-1],tuneBIO,w[,it-1],
-                         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
-                         nuOut,CAUCHY=0,RN,RNBIO)
-    }
-    X[[it]] <- Draws[[1]]
-    Bin[it] <- Draws[[2]]
-    Bout[it] <- Draws[[3]]
-    AccRate <- AccRate + Draws[[4]]
-    
-    if(it==burnin){
-      Xit0 <- t(X[[it]][,1,])
-      for(tt in 2:TT) Xit0 <- rbind(Xit0,t(X[[it]][,tt,]))
-    }
-    if(it>burnin){
-      XitCentered <- t(X[[it]][,1,])
-      for(tt in 2:TT) XitCentered <- rbind(XitCentered,t(X[[it]][,tt,]))
-      procr <- vegan::procrustes(X=Xit0,Y=XitCentered,scale=FALSE)$Yrot
-      for(tt in 1:TT){
-        X[[it]][,tt,] <- t(procr[((tt-1)*n+1):(tt*n),])
-      }
-    }
-    if(it < N) X[[it+1]] <- X[[it]]
-    
-    #------------------Step 2--------------------------------
-    Draws1 <- c.t2s2Parms(X[[it]],c(n,p,TT,1),shapeT2,
-                          shapeS2,scaleT2,scaleS2)
-    t2[it] <- rinvgamma(1,shape=Draws1[[1]],scale=Draws1[[2]])
-    s2[it] <- rinvgamma(1,shape=Draws1[[3]],scale=Draws1[[4]])
-    
-    #------------------Step 3--------------------------------
-    
-    w[,it] <- rdirichlet(1,alpha=Kappa*w[,it-1])
-    if(llApprox){
-      Draws2 <- c.WAccProb2(X[[it]],c(n,p,TT,dinmax,doutmax),Y,
-                            Bin[it],Bout[it],Kappa,w[,it-1],w[,it],
-                            ELOUT,ELIN,SUBSEQ,DEGREE)
-    }else{
-      Draws2 <- c.WAccProb1(X[[it]],c(n,p,TT,1),Y,
-                            Bin[it],Bout[it],Kappa,w[,it-1],w[,it])
-    }
-    w[,it] <- Draws2[[1]]
-    AccRate[3] <- AccRate[3] + Draws2[[2]]
-    
-    #------------------Step 4--------------------------------
-    
-    if(MissData){
-      for(tt in 1:TT){
-        Y <- c.missing(X[[it]],c(n,p,TT),MMM=Missing[[tt]]-1,Y,Ttt=tt,
-                       BETAIN=Bin[it],BETAOUT=Bout[it],WW=w[,it])
-      }
-    }
-    
-    if(it%%1000==0) save.image(paste0(outPath, outFileName))
-    
-    setTxtProgressBar(pb,it)
-  }
-  close(pb)
-})
-AccRate[1:3]/(it-1)
-summary(AccRate[-c(1:3)]/(it-1))
 
-# parameters that get updated during mcmc
-		# Y
-		# X
-		# n
-		# p
-		# TT
-		# Missing
-		# tt
-		# Bin
-		# Bout
-		# t2
-		# s2
-		# w
-		# AccRate
-		
-# parameters to save to restore prev model run
-		# tuneX
-		# tuneBIO
-		# Kappa		
-		# n0
-		# p - dimension of latent space
-		# seed
-		
-# some questions
-	# does the value of nuIn and nuOut ever change during the MCMC they seem to be set up in the initilization script and then never get recalculated when running through the mcmc
-	
+      draws <- cUpdate2(
+        X[[it-1]],c(n,p,T,dInMax,dOutMax),tuneX,Y, 
+        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
+        t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
+        nuOut,Cauchy=0,RN,RNBIO,elOut,elIn,subseq,degree )
+    } else {
+      draws <- cUpdate1(X[[it-1]],c(n,p,T,1),tuneX,Y, 
+        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
+        t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
+        nuOut,Cauchy=0,RN,RNBIO) }
+
+    #
+    X[[it]] <- draws[[1]]
+    betaIn[it] <- draws[[2]]
+    betaOut[it] <- draws[[3]]
+    accRate <- accRate + draws[[4]]    
+    rm(draws)
+
+    #
+    if(it==burnin){
+      xIter0 <- t(X[[it]][,1,])
+      for(t in 2:T) xIter0 <- rbind(xIter0,t(X[[it]][,t,])) }
+
+    if(it>burnin){
+      xIterCentered <- t(X[[it]][,1,])
+      for(t in 2:T){ xIterCentered <- rbind(xIterCentered,t(X[[it]][,t,])) }
+      procr <- vegan::procrustes(X=xIter0,Y=xIterCentered,scale=FALSE)$Yrot
+      for(t in 1:T){ X[[it]][,t,] <- t(procr[((t-1)*n+1):(t*n),]) } }
+
+    if(it<N){ X[[it+1]] <- X[[it]] }
+
+    # Step 2
+    draws2 <- cT2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
+    set.seed(seed) ; t2[it] <- rinvgamma(1,shape=draws2[[1]],scale=draws2[[2]])
+    set.seed(seed) ; s2[it] <- rinvgamma(1,shape=draws2[[3]],scale=draws2[[4]])  
+    rm(draws2)
+
+    # Step 3
+    set.seed(seed) ; w[,it] <- rdirichlet(1,alpha=kappa*w[,it-1])
+    if(llApprox){
+      draws3 <- cWAccProb2(X[[it]],c(n,p,T,dInMax,dOutMax),Y,
+        betaIn[it], betaOut[it], kappa, w[,it-1], w[it],
+        elOut, elIn, subseq, degree )
+    } else {
+      draws3 <- cWAccProb1(X[[it]],c(n,p,T),Y,
+        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it]) }
+
+    w[,it] <- draws3[[1]]
+    accRate[3] <- accRate[3] + draws3[[2]]
+    rm(draws3)
+
+    # Step 4
+    if(missData){
+      for(t in 1:T){
+        Y <- cMissing(X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=tt,
+          BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it])
+      }
+    }
+
+    # save intermediate results
+    if( it %in% round(quantile(1:N, probs=seq(0,1,savePoints))[-1] ) ){
+      save( list(
+        Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2,
+        w=w, accRate=accRate
+        ) ) }
+  }
+
+}
