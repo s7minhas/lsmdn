@@ -1,11 +1,22 @@
+//Includes/namespaces
 #include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma; 
 using namespace Rcpp; 
 
-// [[Rcpp::depends(RcppArmadillo)]]
+//' Posterior zero prob
+//' @param xi1 matrix
+//' @param xi2 matrix
+//' @param xj1 matrix
+//' @param xj2 matrix
+//' @param ss2 vector
+//' @param lam
+//' @param pp0
+//' @return stuff
+//' @export
 // [[Rcpp::export]]
 
-arma::vec cPostzeroprob(
+arma::vec postZeroProb(
 	arma::mat xi1, arma::mat xi2, arma::mat xj1, arma::mat xj2,
 	arma::vec ss2, double lam, double pp0
 	) {

@@ -1,11 +1,37 @@
+//Includes/namespaces
 #include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma; 
 using namespace Rcpp; 
 
-// [[Rcpp::depends(RcppArmadillo)]]
+//' update lat positions, beta params, and accrate for non-negative normal data
+//' @param Xitm1 data cube
+//' @param dims vector of dims
+//' @param tunex
+//' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+//' @param BIN betaIn value
+//' @param BOUT betaOut value
+//' @param tuneBIO
+//' @param ww vector of weights
+//' @param t2
+//' @param s2
+//' @param g2
+//' @param xiBin
+//' @param xiBout
+//' @param nuBin
+//' @param nuBout
+//' @param Cauchy
+//' @param rnormsVec vector
+//' @param rnormsBIO vector
+//' @return returns list of:
+//' \item{Xnew}
+//' \item{BinNew}
+//' \item{BoutNew}
+//' \item{AccRate}
+//' @export lsmdn
 // [[Rcpp::export]]
 
-List cUpdate1_nnc(
+List update_nnn(
   arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y,
   double BIN, double BOUT, double tuneBIO,
   arma::colvec ww, double t2, double s2, double g2,

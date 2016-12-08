@@ -1,11 +1,22 @@
+//Includes/namespaces
 #include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma; 
 using namespace Rcpp; 
 
-// [[Rcpp::depends(RcppArmadillo)]]
+//' get predictions for yhat
+//' @param Ex matrix
+//' @param sig2 vector
+//' @param x1 matrix
+//' @param x2 matrix
+//' @param Bin betaIn vector
+//' @param Bout betaOut vector
+//' @param ww weights matrix
+//' @return yhat
+//' @export
 // [[Rcpp::export]]
 
-arma::vec cPrediction(
+arma::vec prediction(
 	arma::mat Ex, arma::vec sig2, arma::mat x1, arma::mat x2,
 	arma::vec Bin, arma::vec Bout, arma::mat ww
 	) {

@@ -1,11 +1,26 @@
+//Includes/namespaces
 #include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma; 
 using namespace Rcpp; 
 
-// [[Rcpp::depends(RcppArmadillo)]]
+//' update weights and accprob for non-negative normal data
+//' @param X data cube
+//' @param dims vector of dims
+//' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+//' @param BIN betaIn value
+//' @param BOUT betaOut value
+//' @param tuneW
+//' @param wwOld old vector of weights
+//' @param wwNew new vector of weights
+//' @param g2
+//' @return returns list of:
+//' \item{wwNew}
+//' \item{AccRate}
+//' @export lsmdn
 // [[Rcpp::export]]
 
-List cWAccProb1_nnc(
+List wAccProb_nnn(
 	arma::cube X, arma::vec dims, arma::cube Y, 
 	double BIN, double BOUT, double tuneW,
 	arma::colvec wwOld, arma::colvec wwNew, double g2

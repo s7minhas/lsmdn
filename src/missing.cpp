@@ -1,11 +1,23 @@
+//Includes/namespaces
 #include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma; 
 using namespace Rcpp; 
 
-// [[Rcpp::depends(RcppArmadillo)]]
+//' Impute missingness in Y
+//' @param X data cube
+//' @param dims vector of dims
+//' @param MM 
+//' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+//' @param Ttt
+//' @param BIN betaIn value
+//' @param BOUT betaOut value
+//' @param ww vector of weights
+//' @return Y with imputed values
+//' @export lsmdn
 // [[Rcpp::export]]
 
-arma::cube cMissing(
+arma::cube missing(
   arma::cube X, arma::vec dims, arma::vec MM, 
   arma::cube Y, int Ttt, 
   double BIN, double BOUT, arma::colvec ww

@@ -1,11 +1,27 @@
+//Includes/namespaces
 #include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma; 
 using namespace Rcpp; 
 
-// [[Rcpp::depends(RcppArmadillo)]]
+//' Draw from inv gamma and adjust acceptance rate, for non-negative normal data
+//' @param X data cube
+//' @param dims vector of dims
+//' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+//' @param BIN betaIn value
+//' @param BOUT betaOut value
+//' @param alph
+//' @param bta
+//' @param ww vector of weights
+//' @param g2 current value
+//' @param g2 new value
+//' @return returns list of starting values:
+//' \item{g2New}
+//' \item{AccRate}
+//' @export lsmdn
 // [[Rcpp::export]]
 
-List cGammaAccProb1(
+List gammaAccProb(
   arma::cube X, arma::vec dims, arma::cube Y,
   double BIN, double BOUT, double alph,
   double bta, arma::colvec ww, double g2, double g2new

@@ -1,4 +1,4 @@
-#' Log-likelihood approximation subsampling
+#' Initial parameter values for lsmdn
 #' 
 #' @param Y an n x n x T array of relational matrices, 
 #' where the third dimension corresponds to different time periods.
@@ -117,7 +117,7 @@ getStartingValues <- function(
 		tmp <- initLogLikeApprox(Y, n0, seed)
 		return( 
 			list(
-				w=w, X=X, betaIn=betaIn, betaOut=betaOut, nuIn=nuIn, nuOut=nuOut,
+				Y=Y, w=w, X=X, betaIn=betaIn, betaOut=betaOut, nuIn=nuIn, nuOut=nuOut,
 				xiIn=xiIn, xiOut=xiOut, t2=t2, shapeT2=shapeT2, scaleT2=scaleT2,
 				s2=s2, shapeS2=shapeS2, scaleS2=scaleS2, 
 				dInMax=tmp$dInMax, dOutMax=tmp$dOutMax, n0=tmp$n0, 
@@ -128,12 +128,12 @@ getStartingValues <- function(
 	} else { # could condition this on dist
 		return(
 			list(
-				w=w, X=X, betaIn=betaIn, betaOut=betaOut, nuIn=nuIn, nuOut=nuOut,
+				Y=Y, w=w, X=X, betaIn=betaIn, betaOut=betaOut, nuIn=nuIn, nuOut=nuOut,
 				xiIn=xiIn, xiOut=xiOut,
 				t2=t2, shapeT2=shapeT2, scaleT2=scaleT2,
 				s2=s2, shapeS2=shapeS2, scaleS2=scaleS2, 
 				g2=g2, shapeG2=shapeG2, scaleG2=scaleG2, 
-				dInMax=tmp$dInMax, dOutMax=tmp$dOutMax, n0=tmp$n0, accRate=tmp$accRate
+				accRate=accRate
 				)
 			)
 	}

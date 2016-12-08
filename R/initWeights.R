@@ -1,4 +1,4 @@
-#' Initial \beta_{IN} and \beta_{OUT}; scale latent positions
+#' Initial weights
 #' 
 #' @param Y an n x n x T array of relational matrices, 
 #' where the third dimension corresponds to different time periods.

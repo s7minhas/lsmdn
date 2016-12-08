@@ -1,11 +1,40 @@
+//Includes/namespaces
 #include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma; 
 using namespace Rcpp; 
 
-// [[Rcpp::depends(RcppArmadillo)]]
+//' update lat positions, beta params, and accrate for binomial data using log-likelihood approximation
+//' @param Xitm1 data cube
+//' @param dims vector of dims
+//' @param tunex
+//' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+//' @param BIN betaIn value
+//' @param BOUT betaOut value
+//' @param tuneBIO
+//' @param ww vector of weights
+//' @param t2
+//' @param s2
+//' @param xiBin
+//' @param xiBout
+//' @param nuBin
+//' @param nuBout
+//' @param Cauchy
+//' @param rnormsVec vector
+//' @param rnormsBIO vector
+//' @param ELout array
+//' @param ELin array
+//' @param subseq matrix
+//' @param degr array
+//' @return returns list of:
+//' \item{Xnew}
+//' \item{BinNew}
+//' \item{BoutNew}
+//' \item{AccRate}
+//' @export lsmdn
 // [[Rcpp::export]]
 
-List cUpdate2(
+List update_llApprox(
   arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y,
   double BIN, double BOUT, double tuneBIO,
   arma::colvec ww, double t2, double s2,

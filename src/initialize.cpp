@@ -1,11 +1,21 @@
+//Includes/namespaces
 #include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma; 
 using namespace Rcpp; 
 
-// [[Rcpp::depends(RcppArmadillo)]]
+//' initialize
+//' @param X data cube
+//' @param dims vector of dims
+//' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+//' @param Xscale
+//' @param BIN betaIn value
+//' @param BOUT betaOut value
+//' @param ww vector of weights
+//' @export initBetaInOut
 // [[Rcpp::export]]
 
-double cInitialize1(
+double initialize(
   arma::cube X, arma::vec dims, arma::cube Y, double Xscale, 
   double BIN, double BOUT, arma::colvec ww
   ) {

@@ -1,11 +1,25 @@
+//Includes/namespaces
 #include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 using namespace arma; 
 using namespace Rcpp; 
 
-// [[Rcpp::depends(RcppArmadillo)]]
+//' update t2 and s2
+//' @param X data cube
+//' @param dims vector of dims
+//' @param thetaT shape parameter for t
+//' @param thetaS shape parameter for s
+//' @param phiT scale parameter for t
+//' @param phiS scale parameter for s
+//' @return returns list of:
+//' \item{shapeT}
+//' \item{scaleT}
+//' \item{shapeS}
+//' \item{scaleS}
+//' @export lsmdn
 // [[Rcpp::export]]
 
-List cT2s2Parms(
+List t2s2Parms(
 	arma::cube X, arma::vec dims, double thetaT, 
 	double thetaS, double phiT, double phiS 
 	) {

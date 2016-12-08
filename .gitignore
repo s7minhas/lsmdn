@@ -27,3 +27,6 @@
 *.snm
 *.nav
 *.fls
+*.o
+*.so
+*.dll

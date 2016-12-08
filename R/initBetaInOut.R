@@ -19,13 +19,13 @@ initBetaInOut <- function(Y, xLatPos, p, w){
 	T <- dim(Y)[3]		
 
 	# wrap c++ fns
-	initialize.wrap <- function(x){ 
-		-cInitialize1(xLatPos,c(n,p,T),Y,Xscale=1/n, BIN=x[1],BOUT=x[2],w[,1]) }
-	initialize.grad.wrap <- function(x){ 
-		-cInitialize1Grad(xLatPos,c(n,p,T),Y,Xscale=1/n, BIN=x[1],BOUT=x[2],w[,1])[2:3] }
+	initializeWrap <- function(x){ 
+		-initialize(xLatPos,c(n,p,T),Y,Xscale=1/n, BIN=x[1],BOUT=x[2],w[,1]) }
+	initializeGradWrap <- function(x){ 
+		-initializeGrad(xLatPos,c(n,p,T),Y,Xscale=1/n, BIN=x[1],BOUT=x[2],w[,1])[2:3] }
 
 	# optimize get out results
-	optimInit <- optim(par=c(1,1),fn=initialize.wrap, gr=initialize.grad.wrap,method="BFGS")
+	optimInit <- optim(par=c(1,1), fn=initializeWrap, gr=initializeGradWrap, method="BFGS")
 	xLatPos <- xLatPos/n
 	betaInInit <- max(optimInit$par[1],1e-4)
 	betaOutInit <- max(optimInit$par[2],1e-4)

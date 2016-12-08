@@ -28,7 +28,7 @@
 #' @param seed random seed
 #' @param startVals Fitted result from previous model run.
 #' @param savePoints chain intervals to save at 
-#' @param fileName "lsmdn" something
+#' @param fileName "lsmdn.rda" or wtv you want, make sure to specify a path as well
 #' @usage lsmdn( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6886) 
 #' @return returns list of starting values:
 #' \item{w}{weights}
@@ -63,7 +63,7 @@ lsmdn <- function(
   nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
   shapeS2=NULL, scaleS2=NULL, shapeG2=NULL, scaleG2=NULL, 
   N=1000, seed=6886, startVals=NULL, 
-  savePoints=.10, fileName='lsmdnModel'){
+  savePoints=.10, fileName='lsmdnModel.rda'){
 
   # add in some warnings
   ## llApprox only works for binomial family
@@ -76,20 +76,29 @@ lsmdn <- function(
 
   # get init values if no fitted values provided
   if( is.null( startVals ) ){
+
     tmp <- getStartingValues(Y, p, family, llAprox, missData, N, seed)
-    w<-tmp$w ; X <-tmp$X ; betaIn<-tmp$betaIn ; betaOut<-tmp$betaOut ; nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut
-    xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
+
+    # unpack
+    Y<-tmp$Y ; w<-tmp$w ; X <-tmp$X ; betaIn<-tmp$betaIn ; betaOut<-tmp$betaOut ; 
+    nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
     t2<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
     s2<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
     n0<-tmp$n0 ; accRate<-tmp$accRate
+
     if( family='nonNegNormal' ){
-      g2<-tmp$g2 ; shapeS2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
+      g2<-tmp$g2 ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
+
     if( llApprox & family=='binomial' ){
       dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax ; elOut<-tmp$elOut ; elIn<-tmp$elIn
       degree<-tmp$degree ; edgeList<-tmp$edgeList }
-    rm(tmp) } else {
-      print('stuff')
-    }
+
+    rm(tmp) # cleanup
+  }
+
+  if( !is.null( startVals ) ){
+    print('need to add code for unpacking')
+  }
 
   # start mcmc
   for(it in 2:N){
@@ -109,20 +118,20 @@ lsmdn <- function(
           set.seed(seed) ; subseq[i,(nOnes+1):n0] <- sample(c(1:n)[-c(i,edgeList[[i]])],size=n0-nOnes,replace=TRUE)
         } }
 
-      draws <- cUpdate2(
+      draws <- update_llApprox(
         X[[it-1]],c(n,p,T,dInMax,dOutMax),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO,elOut,elIn,subseq,degree ) }
 
     if( !llApprox & family=='binomial' ){
-      draws <- cUpdate1(X[[it-1]],c(n,p,T,1),tuneX,Y, 
+      draws <- update(X[[it-1]],c(n,p,T,1),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO) }
 
     if( family=='nonNegNormal' ){
-      draws <- cUpdate1_nnc(X[[it-1]],c(n,p,T,1),tuneX,Y, 
+      draws <- update_nnn(X[[it-1]],c(n,p,T,1),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],g2[it-1],xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO) }
@@ -145,8 +154,8 @@ lsmdn <- function(
     if(it<N){ X[[it+1]] <- X[[it]] }
 
     # Step 2
-    draws2 <- cT2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
-    shapeT2<-draws2[[1]] ; scaleT2<-draws2[[1]]
+    draws2 <- t2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
+    shapeT2<-draws2[[1]] ; scaleT2<-draws2[[2]]
     shapeS2<-draws2[[3]] ; scaleS2<-draws2[[4]] ; rm(draws2)
     set.seed(seed) ; t2[it] <- rinvgamma(1,shape=shapeT2,scale=scaleT2)
     set.seed(seed) ; s2[it] <- rinvgamma(1,shape=shapeS2,scale=scaleS2)  
@@ -154,36 +163,32 @@ lsmdn <- function(
     # Step 3
     set.seed(seed) ; w[,it] <- rdirichlet(1,alpha=kappa*w[,it-1])
     if(llApprox & family=='binomial'){
-      draws3 <- cWAccProb2(X[[it]],c(n,p,T,dInMax,dOutMax),Y,
+      draws3 <- wAccProb_llApprox(X[[it]],c(n,p,T,dInMax,dOutMax),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[it],
         elOut, elIn, subseq, degree ) }
 
     if( !llApprox & family=='binomial' ){
-      draws3 <- cWAccProb1(X[[it]],c(n,p,T),Y,
+      draws3 <- wAccProb(X[[it]],c(n,p,T),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[,it]) }
 
     if( family=='nonNegNormal' ){
-      draws3 <- cWAccProb1_nnc(X[[it]],c(n,p,T),Y,
+      draws3 <- wAccProb_nnn(X[[it]],c(n,p,T),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]) }
 
-
-    w[,it] <- draws3[[1]]
-    accRate[3] <- accRate[3] + draws3[[2]]
-    rm(draws3)
+    w[,it] <- draws3[[1]] ; accRate[3] <- accRate[3] + draws3[[2]] ; rm(draws3)
 
     if( family=='nonNegNormal' ){
-      g2[it] = rinvgamma(1,shape=shapeG2,scale=scaleG2)
-      draws3 = cGammaAccProb1(X[[it]],c(n,p,TT,1),Y, 
+      g2[it] <- rinvgamma(1,shape=shapeG2,scale=scaleG2)
+      draws3 <- gammaAccProb(X[[it]],c(n,p,TT,1),Y, 
         Bin[it],Bout[it],shapeG2,scaleG2, 
-        w[,it-1],g2[it - 1], g2[it])
-      g2[it] = draws3[[1]]
-      AccRate[4] = AccRate[4] + draws3[[2]] ; rm(draws3)
+        w[,it-1],g2[it-1], g2[it])
+      g2[it] <- draws3[[1]] ; accRate[4] <- accRate[4] + draws3[[2]] ; rm(draws3)
     }
 
     # Step 4
     if(missData){
       for(t in 1:T){
-        Y <- cMissing(X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=tt,
+        Y <- missing(X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=tt,
           BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it])
       }
     }
@@ -192,11 +197,11 @@ lsmdn <- function(
     if(it > burnin){
       if( it %in% round(quantile(1:(N-burnin), probs=seq(0,1,savePoints))[-1] ) ){
         save( list(
-          Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2,
+          Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
           shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
-          nuIn=nuIn, nuOut=nuOut, xiIn=xiIn, xiOut=xiOut, 
-          w=w, accRate=accRate,
-          file=paste0(fileName,'.rda')
+          shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
+          xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate,
+          file=fileName
           ) )
       }      
     }
