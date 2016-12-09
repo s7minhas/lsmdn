@@ -90,7 +90,7 @@ lsmdn <- function(
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
     t2<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
     s2<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
-    n0<-tmp$n0 ; accRate<-tmp$accRate
+    n0<-tmp$n0 ; accRate<-tmp$accRate ; g2 <- NULL ; shapeG2 <- NULL ; scaleG2 <- NULL
 
     if( family=='nonNegNormal' ){
       g2<-tmp$g2 ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
