@@ -59,7 +59,7 @@
 lsmdn <- function(
   Y, p=2, family, llApprox=FALSE, missData=FALSE, 
   N, seed=6886, burnin=round(N/10),
-  savePoints=.10, fileName='lsmdnModel.rda',
+  saveResults=TRUE, savePoints=.10, fileName='lsmdnModel.rda',
   tuneX=0.0075, tuneBIO=0.1, kappa=175000, 
   startVals=NULL, 
   s2Init=NULL, t2Init=NULL, g2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
@@ -201,12 +201,14 @@ lsmdn <- function(
 
     # save results
     if(it > burnin){
+      if(saveResults){
       if( it %in% round(quantile(1:(N-burnin), probs=seq(0,1,savePoints))[-1] ) ){
         result <- list( Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
           shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
           shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
           xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate )
         save( result , file=fileName ) ; rm(result)
+      }
       }      
     } 
 
