@@ -10,7 +10,7 @@ Authors@R: c(
 Maintainer: Shahryar Minhas <shahryar.minhas@duke.edu>
 Description: simulates latent space models for dynamic networks ...
 Depends:
-	R (>= 3.3.1)
+	R (>= 3.1)
 Imports:
 	igraph,
 	MCMCpack,

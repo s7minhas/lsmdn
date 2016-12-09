@@ -114,8 +114,8 @@ lsmdn <- function(
         for(i in 1:n){
           nOnes <- round(length(edgeList[[ii]])/n+n0) # stratified sampling
           if(length(edgeList[[i]])>0){ nOnes <- max(nOnes,1) }
-          set.seed(seed) ; subseq[i,1:nOnes] <- sample(edgeList[[i]],size=nOnes,replace=TRUE) # should replace be false?      
-          set.seed(seed) ; subseq[i,(nOnes+1):n0] <- sample(c(1:n)[-c(i,edgeList[[i]])],size=n0-nOnes,replace=TRUE)
+          subseq[i,1:nOnes] <- sample(edgeList[[i]],size=nOnes,replace=TRUE) # should replace be false?      
+          subseq[i,(nOnes+1):n0] <- sample(c(1:n)[-c(i,edgeList[[i]])],size=n0-nOnes,replace=TRUE)
         } }
 
       draws <- updateBinomLogLikeApprox(
@@ -157,11 +157,11 @@ lsmdn <- function(
     draws2 <- t2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
     shapeT2<-draws2[[1]] ; scaleT2<-draws2[[2]]
     shapeS2<-draws2[[3]] ; scaleS2<-draws2[[4]] ; rm(draws2)
-    set.seed(seed) ; t2[it] <- MCMCpack::rinvgamma(1,shape=shapeT2,scale=scaleT2)
-    set.seed(seed) ; s2[it] <- MCMCpack::rinvgamma(1,shape=shapeS2,scale=scaleS2)  
+    t2[it] <- MCMCpack::rinvgamma(1,shape=shapeT2,scale=scaleT2)
+    s2[it] <- MCMCpack::rinvgamma(1,shape=shapeS2,scale=scaleS2)  
 
     # Step 3
-    set.seed(seed) ; w[,it] <- MCMCpack::rdirichlet(1,alpha=kappa*w[,it-1])
+    w[,it] <- MCMCpack::rdirichlet(1,alpha=kappa*w[,it-1])
     if(llApprox & family=='binomial'){
       draws3 <- wAccProb_llApprox(X[[it]],c(n,p,T,dInMax,dOutMax),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[it],
