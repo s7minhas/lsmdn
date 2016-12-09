@@ -49,11 +49,11 @@
 #' 
 
 getStartingValues <- function(
-	Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, 
+	Y, p, family, llApprox, missData, N, seed,
 	s2Init=NULL, t2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
 	nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
-	shapeS2=NULL, scaleS2=NULL, g2=NULL, shapeG2=NULL, scaleG2=NULL, 
-	N=1000, seed=6886){
+	shapeS2=NULL, scaleS2=NULL, g2=NULL, shapeG2=NULL, scaleG2=NULL
+	){
 
 	# Starting values for parameters
 	n <- dim(Y)[1]

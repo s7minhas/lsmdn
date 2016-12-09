@@ -57,13 +57,15 @@
 #'
 
 lsmdn <- function(
-  Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, 
-  tuneX=0.0075, tuneBIO=0.1, kappa=175000, burnin=round(N/10),
+  Y, p=2, family, llApprox=FALSE, missData=FALSE, 
+  N, seed=6886, burnin=round(N/10),
+  savePoints=.10, fileName='lsmdnModel.rda',
+  tuneX=0.0075, tuneBIO=0.1, kappa=175000, 
+  startVals=NULL, 
   s2Init=NULL, t2Init=NULL, g2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
   nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
-  shapeS2=NULL, scaleS2=NULL, shapeG2=NULL, scaleG2=NULL, 
-  N=1000, seed=6886, startVals=NULL, 
-  savePoints=.10, fileName='lsmdnModel.rda'){
+  shapeS2=NULL, scaleS2=NULL, shapeG2=NULL, scaleG2=NULL
+  ){
 
   # add in some warnings
   ## llApprox only works for binomial family
@@ -77,7 +79,11 @@ lsmdn <- function(
   # get init values if no fitted values provided
   if( is.null( startVals ) ){
 
-    tmp <- getStartingValues(Y, p, family, llApprox, missData, N, seed)
+    tmp <- getStartingValues(
+      Y=Y, p=p, family=family, 
+      llApprox=llApprox, missData=missData, 
+      N=N, seed=seed
+      )
 
     # unpack
     Y<-tmp$Y ; w<-tmp$w ; X <-tmp$X ; betaIn<-tmp$betaIn ; betaOut<-tmp$betaOut ; 

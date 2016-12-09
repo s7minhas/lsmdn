@@ -4,7 +4,7 @@ Version: 0.0.1.0000
 Authors@R: c(
 	person('Daniel', 'Sewell',role=c('aut'), email='daniel-sewell@uiowa.edu'),
 	person('Cassy', 'Dorff', role=c('ctb')),
-	person('Max', 'Gallop', role=c('ctb')),
+	person('Max', 'Gallop', role=c('ctb'), email='max.gallop@strath.ac.uk'),
 	person('Shahryar', 'Minhas',role=c('ctb','cre'), email='sfm12@duke.edu')
 	)
 Maintainer: Shahryar Minhas <shahryar.minhas@duke.edu>
