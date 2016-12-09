@@ -14,6 +14,9 @@ where the third dimension corresponds to different time periods.}
 
 \item{family}{type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'.}
 
+\item{llApprox}{logical indicating whether or not to utilize log-likelihood 
+approximationg. Only available for binomial model types.}
+
 \item{missData}{logical indicating whether to impute missing data.}
 
 \item{s2Init}{starting value for s2}
@@ -45,33 +48,30 @@ where the third dimension corresponds to different time periods.}
 \item{N}{number of MCMC iterations.}
 
 \item{seed}{random seed}
-
-\item{llApprox}{logical indicating whether or not to utilize log-likelihood 
-approximationg. Only available for binomial model types.}
 }
 \value{
 returns list of starting values:
 \item{w}{weights}
 \item{X}{initial actor latent space positions calculated via GMDS}
-\item{betaIn}
-\item{betaOut}
-\item{nuIn}
-\item{nuOut}
-\item{xiIn}
-\item{t2}
-\item{shapeT2}
-\item{scaleT2}
-\item{s2}
-\item{shapeS2}
-\item{scaleS2}
+\item{betaIn}{add desc}
+\item{betaOut}{add desc}
+\item{nuIn}{add desc}
+\item{nuOut}{add desc}
+\item{xiIn}{add desc}
+\item{t2}{add desc}
+\item{shapeT2}{add desc}
+\item{scaleT2}{add desc}
+\item{s2}{add desc}
+\item{shapeS2}{add desc}
+\item{scaleS2}{add desc}
 if llApprox=TRUE, also returns
-\item{dInMax}
-\item{dOutMax}
-\item{n0}
-\item{elOut}
-\item{elIn}
-\item{degree}
-\item{edgeList}
+\item{dInMax}{add desc}
+\item{dOutMax}{add desc}
+\item{n0}{add desc}
+\item{elOut}{add desc}
+\item{elIn}{add desc}
+\item{degree}{add desc}
+\item{edgeList}{add desc}
 }
 \description{
 Initial parameter values for lsmdn

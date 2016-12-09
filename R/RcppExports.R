@@ -13,37 +13,11 @@
 #' @param g2 current value
 #' @param g2 new value
 #' @return returns list of starting values:
-#' \item{g2New}
-#' \item{AccRate}
-#' @export lsmdn
+#' \item{g2New}{new g2 value}
+#' \item{AccRate}{updated accRate}
+#' @export
 gammaAccProb <- function(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new) {
     .Call('lsmdn_gammaAccProb', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new)
-}
-
-#' initialize
-#' @param X data cube
-#' @param dims vector of dims
-#' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
-#' @param Xscale
-#' @param BIN betaIn value
-#' @param BOUT betaOut value
-#' @param ww vector of weights
-#' @export initBetaInOut
-initialize <- function(X, dims, Y, Xscale, BIN, BOUT, ww) {
-    .Call('lsmdn_initialize', PACKAGE = 'lsmdn', X, dims, Y, Xscale, BIN, BOUT, ww)
-}
-
-#' initialize using gradient
-#' @param X data cube
-#' @param dims vector of dims
-#' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
-#' @param Xscale
-#' @param BIN betaIn value
-#' @param BOUT betaOut value
-#' @param ww vector of weights
-#' @export initBetaInOut
-initializeGrad <- function(X, dims, Y, Xscale, BIN, BOUT, ww) {
-    .Call('lsmdn_initializeGrad', PACKAGE = 'lsmdn', X, dims, Y, Xscale, BIN, BOUT, ww)
 }
 
 #' Impute missingness in Y
@@ -56,9 +30,35 @@ initializeGrad <- function(X, dims, Y, Xscale, BIN, BOUT, ww) {
 #' @param BOUT betaOut value
 #' @param ww vector of weights
 #' @return Y with imputed values
-#' @export lsmdn
-missing <- function(X, dims, MM, Y, Ttt, BIN, BOUT, ww) {
-    .Call('lsmdn_missing', PACKAGE = 'lsmdn', X, dims, MM, Y, Ttt, BIN, BOUT, ww)
+#' @export
+imputeMissingNet <- function(X, dims, MM, Y, Ttt, BIN, BOUT, ww) {
+    .Call('lsmdn_imputeMissingNet', PACKAGE = 'lsmdn', X, dims, MM, Y, Ttt, BIN, BOUT, ww)
+}
+
+#' initialize beta values for binomial data
+#' @param X data cube
+#' @param dims vector of dims
+#' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+#' @param Xscale
+#' @param BIN betaIn value
+#' @param BOUT betaOut value
+#' @param ww vector of weights
+#' @export
+initializeBinom <- function(X, dims, Y, Xscale, BIN, BOUT, ww) {
+    .Call('lsmdn_initializeBinom', PACKAGE = 'lsmdn', X, dims, Y, Xscale, BIN, BOUT, ww)
+}
+
+#' initialize beta values for binomial data using gradient
+#' @param X data cube
+#' @param dims vector of dims
+#' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+#' @param Xscale
+#' @param BIN betaIn value
+#' @param BOUT betaOut value
+#' @param ww vector of weights
+#' @export
+initializeBinomGrad <- function(X, dims, Y, Xscale, BIN, BOUT, ww) {
+    .Call('lsmdn_initializeBinomGrad', PACKAGE = 'lsmdn', X, dims, Y, Xscale, BIN, BOUT, ww)
 }
 
 #' Posterior zero prob
@@ -97,13 +97,41 @@ prediction <- function(Ex, sig2, x1, x2, Bin, Bout, ww) {
 #' @param phiT scale parameter for t
 #' @param phiS scale parameter for s
 #' @return returns list of:
-#' \item{shapeT}
-#' \item{scaleT}
-#' \item{shapeS}
-#' \item{scaleS}
-#' @export lsmdn
+#' \item{shapeT}{add desc}
+#' \item{scaleT}{add desc}
+#' \item{shapeS}{add desc}
+#' \item{scaleS}{add desc}
+#' @export
 t2s2Parms <- function(X, dims, thetaT, thetaS, phiT, phiS) {
     .Call('lsmdn_t2s2Parms', PACKAGE = 'lsmdn', X, dims, thetaT, thetaS, phiT, phiS)
+}
+
+#' update lat positions, beta params, and accrate for binomial data
+#' @param Xitm1 data cube
+#' @param dims vector of dims
+#' @param tunex
+#' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
+#' @param BIN betaIn value
+#' @param BOUT betaOut value
+#' @param tuneBIO
+#' @param ww vector of weights
+#' @param t2
+#' @param s2
+#' @param xiBin
+#' @param xiBout
+#' @param nuBin
+#' @param nuBout
+#' @param Cauchy
+#' @param rnormsVec vector
+#' @param rnormsBIO vector
+#' @return returns list of:
+#' \item{Xnew}{add desc}
+#' \item{BinNew}{add desc}
+#' \item{BoutNew}{add desc}
+#' \item{AccRate}{add desc}
+#' @export
+updateBinom <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
+    .Call('lsmdn_updateBinom', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
 }
 
 #' update lat positions, beta params, and accrate for binomial data using log-likelihood approximation
@@ -129,13 +157,13 @@ t2s2Parms <- function(X, dims, thetaT, thetaS, phiT, phiS) {
 #' @param subseq matrix
 #' @param degr array
 #' @return returns list of:
-#' \item{Xnew}
-#' \item{BinNew}
-#' \item{BoutNew}
-#' \item{AccRate}
-#' @export lsmdn
-update_llApprox <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, ELout, ELin, subseq, degr) {
-    .Call('lsmdn_update_llApprox', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, ELout, ELin, subseq, degr)
+#' \item{Xnew}{add desc}
+#' \item{BinNew}{add desc}
+#' \item{BoutNew}{add desc}
+#' \item{AccRate}{add desc}
+#' @export
+updateBinomLogLikeApprox <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, ELout, ELin, subseq, degr) {
+    .Call('lsmdn_updateBinomLogLikeApprox', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, ELout, ELin, subseq, degr)
 }
 
 #' update lat positions, beta params, and accrate for non-negative normal data
@@ -158,41 +186,13 @@ update_llApprox <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s
 #' @param rnormsVec vector
 #' @param rnormsBIO vector
 #' @return returns list of:
-#' \item{Xnew}
-#' \item{BinNew}
-#' \item{BoutNew}
-#' \item{AccRate}
-#' @export lsmdn
-update_nnn <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
-    .Call('lsmdn_update_nnn', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
-}
-
-#' update lat positions, beta params, and accrate for binomial data
-#' @param Xitm1 data cube
-#' @param dims vector of dims
-#' @param tunex
-#' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
-#' @param BIN betaIn value
-#' @param BOUT betaOut value
-#' @param tuneBIO
-#' @param ww vector of weights
-#' @param t2
-#' @param s2
-#' @param xiBin
-#' @param xiBout
-#' @param nuBin
-#' @param nuBout
-#' @param Cauchy
-#' @param rnormsVec vector
-#' @param rnormsBIO vector
-#' @return returns list of:
-#' \item{Xnew}
-#' \item{BinNew}
-#' \item{BoutNew}
-#' \item{AccRate}
-#' @export lsmdn
-update <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
-    .Call('lsmdn_update', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
+#' \item{Xnew}{add desc}
+#' \item{BinNew}{add desc}
+#' \item{BoutNew}{add desc}
+#' \item{AccRate}{add desc}
+#' @export
+updateNonNegNorm <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
+    .Call('lsmdn_updateNonNegNorm', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
 }
 
 #' update weights and accprob for binomial data using log-likelihood approximation
@@ -209,9 +209,9 @@ update <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin,
 #' @param subseq matrix
 #' @param degr array
 #' @return returns list of:
-#' \item{wwNew}
-#' \item{AccRate}
-#' @export lsmdn
+#' \item{wwNew}{add desc}
+#' \item{AccRate}{add desc}
+#' @export
 wAccProb_llApprox <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, ELout, ELin, subseq, degr) {
     .Call('lsmdn_wAccProb_llApprox', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, ELout, ELin, subseq, degr)
 }
@@ -227,9 +227,9 @@ wAccProb_llApprox <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, ELout,
 #' @param wwNew new vector of weights
 #' @param g2
 #' @return returns list of:
-#' \item{wwNew}
-#' \item{AccRate}
-#' @export lsmdn
+#' \item{wwNew}{add desc}
+#' \item{AccRate}{add desc}
+#' @export
 wAccProb_nnn <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2) {
     .Call('lsmdn_wAccProb_nnn', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2)
 }
@@ -244,9 +244,9 @@ wAccProb_nnn <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2) {
 #' @param wwOld old vector of weights
 #' @param wwNew new vector of weights
 #' @return returns list of:
-#' \item{wwNew}
-#' \item{AccRate}
-#' @export lsmdn
+#' \item{wwNew}{add desc}
+#' \item{AccRate}{add desc}
+#' @export
 wAccProb <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew) {
     .Call('lsmdn_wAccProb', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew)
 }

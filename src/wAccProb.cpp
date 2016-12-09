@@ -14,9 +14,9 @@ using namespace Rcpp;
 //' @param wwOld old vector of weights
 //' @param wwNew new vector of weights
 //' @return returns list of:
-//' \item{wwNew}
-//' \item{AccRate}
-//' @export lsmdn
+//' \item{wwNew}{add desc}
+//' \item{AccRate}{add desc}
+//' @export
 // [[Rcpp::export]]
 
 List wAccProb(

@@ -33,26 +33,26 @@
 #' @return returns list of starting values:
 #' \item{w}{weights}
 #' \item{X}{initial actor latent space positions calculated via GMDS}
-#' \item{betaIn}
-#' \item{betaOut}
-#' \item{nuIn}
-#' \item{nuOut}
-#' \item{xiIn}
-#' \item{xiOut}
-#' \item{t2}
-#' \item{shapeT2}
-#' \item{scaleT2}
-#' \item{s2}
-#' \item{shapeS2}
-#' \item{scaleS2}
+#' \item{betaIn}{add desc}
+#' \item{betaOut}{add desc}
+#' \item{nuIn}{add desc}
+#' \item{nuOut}{add desc}
+#' \item{xiIn}{add desc}
+#' \item{xiOut}{add desc}
+#' \item{t2}{add desc}
+#' \item{shapeT2}{add desc}
+#' \item{scaleT2}{add desc}
+#' \item{s2}{add desc}
+#' \item{shapeS2}{add desc}
+#' \item{scaleS2}{add desc}
 #' if llApprox=TRUE, also returns
-#' \item{dInMax}
-#' \item{dOutMax}
-#' \item{n0}
-#' \item{elOut}
-#' \item{elIn}
-#' \item{degree}
-#' \item{edgeList}
+#' \item{dInMax}{add desc}
+#' \item{dOutMax}{add desc}
+#' \item{n0}{add desc}
+#' \item{elOut}{add desc}
+#' \item{elIn}{add desc}
+#' \item{degree}{add desc}
+#' \item{edgeList}{add desc}
 #' @export
 #'
 
@@ -77,7 +77,7 @@ lsmdn <- function(
   # get init values if no fitted values provided
   if( is.null( startVals ) ){
 
-    tmp <- getStartingValues(Y, p, family, llAprox, missData, N, seed)
+    tmp <- getStartingValues(Y, p, family, llApprox, missData, N, seed)
 
     # unpack
     Y<-tmp$Y ; w<-tmp$w ; X <-tmp$X ; betaIn<-tmp$betaIn ; betaOut<-tmp$betaOut ; 
@@ -118,20 +118,20 @@ lsmdn <- function(
           set.seed(seed) ; subseq[i,(nOnes+1):n0] <- sample(c(1:n)[-c(i,edgeList[[i]])],size=n0-nOnes,replace=TRUE)
         } }
 
-      draws <- update_llApprox(
+      draws <- updateBinomLogLikeApprox(
         X[[it-1]],c(n,p,T,dInMax,dOutMax),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO,elOut,elIn,subseq,degree ) }
 
     if( !llApprox & family=='binomial' ){
-      draws <- update(X[[it-1]],c(n,p,T,1),tuneX,Y, 
+      draws <- updateBinom(X[[it-1]],c(n,p,T,1),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO) }
 
     if( family=='nonNegNormal' ){
-      draws <- update_nnn(X[[it-1]],c(n,p,T,1),tuneX,Y, 
+      draws <- updateNonNegNorm(X[[it-1]],c(n,p,T,1),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],g2[it-1],xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO) }
@@ -157,11 +157,11 @@ lsmdn <- function(
     draws2 <- t2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
     shapeT2<-draws2[[1]] ; scaleT2<-draws2[[2]]
     shapeS2<-draws2[[3]] ; scaleS2<-draws2[[4]] ; rm(draws2)
-    set.seed(seed) ; t2[it] <- rinvgamma(1,shape=shapeT2,scale=scaleT2)
-    set.seed(seed) ; s2[it] <- rinvgamma(1,shape=shapeS2,scale=scaleS2)  
+    set.seed(seed) ; t2[it] <- MCMCpack::rinvgamma(1,shape=shapeT2,scale=scaleT2)
+    set.seed(seed) ; s2[it] <- MCMCpack::rinvgamma(1,shape=shapeS2,scale=scaleS2)  
 
     # Step 3
-    set.seed(seed) ; w[,it] <- rdirichlet(1,alpha=kappa*w[,it-1])
+    set.seed(seed) ; w[,it] <- MCMCpack::rdirichlet(1,alpha=kappa*w[,it-1])
     if(llApprox & family=='binomial'){
       draws3 <- wAccProb_llApprox(X[[it]],c(n,p,T,dInMax,dOutMax),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[it],
@@ -178,9 +178,9 @@ lsmdn <- function(
     w[,it] <- draws3[[1]] ; accRate[3] <- accRate[3] + draws3[[2]] ; rm(draws3)
 
     if( family=='nonNegNormal' ){
-      g2[it] <- rinvgamma(1,shape=shapeG2,scale=scaleG2)
-      draws3 <- gammaAccProb(X[[it]],c(n,p,TT,1),Y, 
-        Bin[it],Bout[it],shapeG2,scaleG2, 
+      g2[it] <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
+      draws3 <- gammaAccProb(X[[it]],c(n,p,T,1),Y, 
+        betaIn[it],betaOut[it],shapeG2,scaleG2, 
         w[,it-1],g2[it-1], g2[it])
       g2[it] <- draws3[[1]] ; accRate[4] <- accRate[4] + draws3[[2]] ; rm(draws3)
     }
@@ -188,7 +188,7 @@ lsmdn <- function(
     # Step 4
     if(missData){
       for(t in 1:T){
-        Y <- missing(X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=tt,
+        Y <- imputeMissingNet(X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
           BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it])
       }
     }
@@ -196,16 +196,21 @@ lsmdn <- function(
     # save results
     if(it > burnin){
       if( it %in% round(quantile(1:(N-burnin), probs=seq(0,1,savePoints))[-1] ) ){
-        save( list(
-          Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
+        result <- list( Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
           shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
           shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-          xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate,
-          file=fileName
-          ) )
+          xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate )
+        save( result , file=fileName ) ; rm(result)
       }      
-    }
+    } 
 
-  }
+  } # end mcmc
 
-}
+  # output
+  result <- list(Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2, 
+    shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
+    shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
+    xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate )
+  return( result )
+
+} # end function

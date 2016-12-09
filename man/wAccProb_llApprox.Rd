@@ -32,8 +32,8 @@ wAccProb_llApprox(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, ELout, ELin,
 }
 \value{
 returns list of:
-\item{wwNew}
-\item{AccRate}
+\item{wwNew}{add desc}
+\item{AccRate}{add desc}
 }
 \description{
 update weights and accprob for binomial data using log-likelihood approximation

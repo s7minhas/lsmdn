@@ -1,9 +1,14 @@
 Package: lsmdn
 Title: Latent Space Models for Dynamic Networks
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Version: 0.0.1.0000
+Authors@R: c(
+	person('Daniel', 'Sewell',role=c('aut'), email='daniel-sewell@uiowa.edu'),
+	person('Cassy', 'Dorff', role=c('ctb')),
+	person('Max', 'Gallop', role=c('ctb')),
+	person('Shahryar', 'Minhas',role=c('ctb','cre'), email='sfm12@duke.edu')
+	)
 Maintainer: Shahryar Minhas <shahryar.minhas@duke.edu>
-Description: What the package does (one paragraph).
+Description: simulates latent space models for dynamic networks ...
 Depends:
 	R (>= 3.3.1)
 Imports:

@@ -26,43 +26,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// initialize
-double initialize(arma::cube X, arma::vec dims, arma::cube Y, double Xscale, double BIN, double BOUT, arma::colvec ww);
-RcppExport SEXP lsmdn_initialize(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP XscaleSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP wwSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< double >::type Xscale(XscaleSEXP);
-    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
-    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type ww(wwSEXP);
-    rcpp_result_gen = Rcpp::wrap(initialize(X, dims, Y, Xscale, BIN, BOUT, ww));
-    return rcpp_result_gen;
-END_RCPP
-}
-// initializeGrad
-arma::vec initializeGrad(arma::cube X, arma::vec dims, arma::cube Y, double Xscale, double BIN, double BOUT, arma::colvec ww);
-RcppExport SEXP lsmdn_initializeGrad(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP XscaleSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP wwSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< double >::type Xscale(XscaleSEXP);
-    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
-    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type ww(wwSEXP);
-    rcpp_result_gen = Rcpp::wrap(initializeGrad(X, dims, Y, Xscale, BIN, BOUT, ww));
-    return rcpp_result_gen;
-END_RCPP
-}
-// missing
-arma::cube missing(arma::cube X, arma::vec dims, arma::vec MM, arma::cube Y, int Ttt, double BIN, double BOUT, arma::colvec ww);
-RcppExport SEXP lsmdn_missing(SEXP XSEXP, SEXP dimsSEXP, SEXP MMSEXP, SEXP YSEXP, SEXP TttSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP wwSEXP) {
+// imputeMissingNet
+arma::cube imputeMissingNet(arma::cube X, arma::vec dims, arma::vec MM, arma::cube Y, int Ttt, double BIN, double BOUT, arma::colvec ww);
+RcppExport SEXP lsmdn_imputeMissingNet(SEXP XSEXP, SEXP dimsSEXP, SEXP MMSEXP, SEXP YSEXP, SEXP TttSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP wwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -74,7 +40,41 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
     Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type ww(wwSEXP);
-    rcpp_result_gen = Rcpp::wrap(missing(X, dims, MM, Y, Ttt, BIN, BOUT, ww));
+    rcpp_result_gen = Rcpp::wrap(imputeMissingNet(X, dims, MM, Y, Ttt, BIN, BOUT, ww));
+    return rcpp_result_gen;
+END_RCPP
+}
+// initializeBinom
+double initializeBinom(arma::cube X, arma::vec dims, arma::cube Y, double Xscale, double BIN, double BOUT, arma::colvec ww);
+RcppExport SEXP lsmdn_initializeBinom(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP XscaleSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP wwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type Xscale(XscaleSEXP);
+    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
+    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type ww(wwSEXP);
+    rcpp_result_gen = Rcpp::wrap(initializeBinom(X, dims, Y, Xscale, BIN, BOUT, ww));
+    return rcpp_result_gen;
+END_RCPP
+}
+// initializeBinomGrad
+arma::vec initializeBinomGrad(arma::cube X, arma::vec dims, arma::cube Y, double Xscale, double BIN, double BOUT, arma::colvec ww);
+RcppExport SEXP lsmdn_initializeBinomGrad(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP XscaleSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP wwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type Xscale(XscaleSEXP);
+    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
+    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type ww(wwSEXP);
+    rcpp_result_gen = Rcpp::wrap(initializeBinomGrad(X, dims, Y, Xscale, BIN, BOUT, ww));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -128,9 +128,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// update_llApprox
-List update_llApprox(arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y, double BIN, double BOUT, double tuneBIO, arma::colvec ww, double t2, double s2, double xiBin, double xiBout, double nuBin, double nuBout, int Cauchy, Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO, arma::cube ELout, arma::cube ELin, Rcpp::IntegerMatrix subseq, arma::cube degr);
-RcppExport SEXP lsmdn_update_llApprox(SEXP Xitm1SEXP, SEXP dimsSEXP, SEXP tunexSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneBIOSEXP, SEXP wwSEXP, SEXP t2SEXP, SEXP s2SEXP, SEXP xiBinSEXP, SEXP xiBoutSEXP, SEXP nuBinSEXP, SEXP nuBoutSEXP, SEXP CauchySEXP, SEXP rnormsVecSEXP, SEXP rnormsBIOSEXP, SEXP ELoutSEXP, SEXP ELinSEXP, SEXP subseqSEXP, SEXP degrSEXP) {
+// updateBinom
+List updateBinom(arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y, double BIN, double BOUT, double tuneBIO, arma::colvec ww, double t2, double s2, double xiBin, double xiBout, double nuBin, double nuBout, int Cauchy, arma::vec rnormsVec, arma::colvec rnormsBIO);
+RcppExport SEXP lsmdn_updateBinom(SEXP Xitm1SEXP, SEXP dimsSEXP, SEXP tunexSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneBIOSEXP, SEXP wwSEXP, SEXP t2SEXP, SEXP s2SEXP, SEXP xiBinSEXP, SEXP xiBoutSEXP, SEXP nuBinSEXP, SEXP nuBoutSEXP, SEXP CauchySEXP, SEXP rnormsVecSEXP, SEXP rnormsBIOSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cube >::type Xitm1(Xitm1SEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< double >::type tunex(tunexSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
+    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
+    Rcpp::traits::input_parameter< double >::type tuneBIO(tuneBIOSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type ww(wwSEXP);
+    Rcpp::traits::input_parameter< double >::type t2(t2SEXP);
+    Rcpp::traits::input_parameter< double >::type s2(s2SEXP);
+    Rcpp::traits::input_parameter< double >::type xiBin(xiBinSEXP);
+    Rcpp::traits::input_parameter< double >::type xiBout(xiBoutSEXP);
+    Rcpp::traits::input_parameter< double >::type nuBin(nuBinSEXP);
+    Rcpp::traits::input_parameter< double >::type nuBout(nuBoutSEXP);
+    Rcpp::traits::input_parameter< int >::type Cauchy(CauchySEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type rnormsVec(rnormsVecSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type rnormsBIO(rnormsBIOSEXP);
+    rcpp_result_gen = Rcpp::wrap(updateBinom(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO));
+    return rcpp_result_gen;
+END_RCPP
+}
+// updateBinomLogLikeApprox
+List updateBinomLogLikeApprox(arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y, double BIN, double BOUT, double tuneBIO, arma::colvec ww, double t2, double s2, double xiBin, double xiBout, double nuBin, double nuBout, int Cauchy, Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO, arma::cube ELout, arma::cube ELin, Rcpp::IntegerMatrix subseq, arma::cube degr);
+RcppExport SEXP lsmdn_updateBinomLogLikeApprox(SEXP Xitm1SEXP, SEXP dimsSEXP, SEXP tunexSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneBIOSEXP, SEXP wwSEXP, SEXP t2SEXP, SEXP s2SEXP, SEXP xiBinSEXP, SEXP xiBoutSEXP, SEXP nuBinSEXP, SEXP nuBoutSEXP, SEXP CauchySEXP, SEXP rnormsVecSEXP, SEXP rnormsBIOSEXP, SEXP ELoutSEXP, SEXP ELinSEXP, SEXP subseqSEXP, SEXP degrSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -155,13 +182,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::cube >::type ELin(ELinSEXP);
     Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type subseq(subseqSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type degr(degrSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_llApprox(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, ELout, ELin, subseq, degr));
+    rcpp_result_gen = Rcpp::wrap(updateBinomLogLikeApprox(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, ELout, ELin, subseq, degr));
     return rcpp_result_gen;
 END_RCPP
 }
-// update_nnn
-List update_nnn(arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y, double BIN, double BOUT, double tuneBIO, arma::colvec ww, double t2, double s2, double g2, double xiBin, double xiBout, double nuBin, double nuBout, int Cauchy, arma::vec rnormsVec, arma::colvec rnormsBIO);
-RcppExport SEXP lsmdn_update_nnn(SEXP Xitm1SEXP, SEXP dimsSEXP, SEXP tunexSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneBIOSEXP, SEXP wwSEXP, SEXP t2SEXP, SEXP s2SEXP, SEXP g2SEXP, SEXP xiBinSEXP, SEXP xiBoutSEXP, SEXP nuBinSEXP, SEXP nuBoutSEXP, SEXP CauchySEXP, SEXP rnormsVecSEXP, SEXP rnormsBIOSEXP) {
+// updateNonNegNorm
+List updateNonNegNorm(arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y, double BIN, double BOUT, double tuneBIO, arma::colvec ww, double t2, double s2, double g2, double xiBin, double xiBout, double nuBin, double nuBout, int Cauchy, arma::vec rnormsVec, arma::colvec rnormsBIO);
+RcppExport SEXP lsmdn_updateNonNegNorm(SEXP Xitm1SEXP, SEXP dimsSEXP, SEXP tunexSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneBIOSEXP, SEXP wwSEXP, SEXP t2SEXP, SEXP s2SEXP, SEXP g2SEXP, SEXP xiBinSEXP, SEXP xiBoutSEXP, SEXP nuBinSEXP, SEXP nuBoutSEXP, SEXP CauchySEXP, SEXP rnormsVecSEXP, SEXP rnormsBIOSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -183,34 +210,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type Cauchy(CauchySEXP);
     Rcpp::traits::input_parameter< arma::vec >::type rnormsVec(rnormsVecSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type rnormsBIO(rnormsBIOSEXP);
-    rcpp_result_gen = Rcpp::wrap(update_nnn(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO));
-    return rcpp_result_gen;
-END_RCPP
-}
-// update
-List update(arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y, double BIN, double BOUT, double tuneBIO, arma::colvec ww, double t2, double s2, double xiBin, double xiBout, double nuBin, double nuBout, int Cauchy, arma::vec rnormsVec, arma::colvec rnormsBIO);
-RcppExport SEXP lsmdn_update(SEXP Xitm1SEXP, SEXP dimsSEXP, SEXP tunexSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneBIOSEXP, SEXP wwSEXP, SEXP t2SEXP, SEXP s2SEXP, SEXP xiBinSEXP, SEXP xiBoutSEXP, SEXP nuBinSEXP, SEXP nuBoutSEXP, SEXP CauchySEXP, SEXP rnormsVecSEXP, SEXP rnormsBIOSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cube >::type Xitm1(Xitm1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
-    Rcpp::traits::input_parameter< double >::type tunex(tunexSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
-    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneBIO(tuneBIOSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type ww(wwSEXP);
-    Rcpp::traits::input_parameter< double >::type t2(t2SEXP);
-    Rcpp::traits::input_parameter< double >::type s2(s2SEXP);
-    Rcpp::traits::input_parameter< double >::type xiBin(xiBinSEXP);
-    Rcpp::traits::input_parameter< double >::type xiBout(xiBoutSEXP);
-    Rcpp::traits::input_parameter< double >::type nuBin(nuBinSEXP);
-    Rcpp::traits::input_parameter< double >::type nuBout(nuBoutSEXP);
-    Rcpp::traits::input_parameter< int >::type Cauchy(CauchySEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type rnormsVec(rnormsVecSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type rnormsBIO(rnormsBIOSEXP);
-    rcpp_result_gen = Rcpp::wrap(update(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO));
+    rcpp_result_gen = Rcpp::wrap(updateNonNegNorm(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -5,7 +5,7 @@
 #' @param N number of MCMC iterations
 #' @usage initWeights( Y, N ) 
 #' @return returns n x N matrix of weights
-#' @export getStartingValues
+#' @export
 #' 
 
 initWeights <- function(Y, N){

@@ -5,7 +5,7 @@
 #' @param seed random seed
 #' @usage initNetMissVals( Y ) 
 #' @return Inputted Y network with missingness filled in
-#' @export getStartingValues
+#' @export
 #' 
 
 initNetMissVals <- function(Y, missing, seed=6886){

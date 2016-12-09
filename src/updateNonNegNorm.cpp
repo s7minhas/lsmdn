@@ -24,14 +24,14 @@ using namespace Rcpp;
 //' @param rnormsVec vector
 //' @param rnormsBIO vector
 //' @return returns list of:
-//' \item{Xnew}
-//' \item{BinNew}
-//' \item{BoutNew}
-//' \item{AccRate}
-//' @export lsmdn
+//' \item{Xnew}{add desc}
+//' \item{BinNew}{add desc}
+//' \item{BoutNew}{add desc}
+//' \item{AccRate}{add desc}
+//' @export
 // [[Rcpp::export]]
 
-List update_nnn(
+List updateNonNegNorm(
   arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y,
   double BIN, double BOUT, double tuneBIO,
   arma::colvec ww, double t2, double s2, double g2,

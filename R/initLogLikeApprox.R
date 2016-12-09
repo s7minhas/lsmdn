@@ -7,15 +7,15 @@
 #' @param N number of MCMC iterations
 #' @usage initWeights( Y, N ) 
 #' @return returns list of starting values for log likelihood approximation:
-#' \item{dInMax}
-#' \item{dOutMax}
-#' \item{n0}
-#' \item{elOut}
-#' \item{elIn}
-#' \item{subseq}
-#' \item{degree}
-#' \item{edgeList}
-#' @export getStartingValues
+#' \item{dInMax}{add desc}
+#' \item{dOutMax}{add desc}
+#' \item{n0}{add desc}
+#' \item{elOut}{add desc}
+#' \item{elIn}{add desc}
+#' \item{subseq}{add desc}
+#' \item{degree}{add desc}
+#' \item{edgeList}{add desc}
+#' @export
 #' 
 
 initLogLikeApprox <- function(Y, n0, seed){

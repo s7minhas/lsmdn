@@ -21,10 +21,10 @@ t2s2Parms(X, dims, thetaT, thetaS, phiT, phiS)
 }
 \value{
 returns list of:
-\item{shapeT}
-\item{scaleT}
-\item{shapeS}
-\item{scaleS}
+\item{shapeT}{add desc}
+\item{scaleT}{add desc}
+\item{shapeS}{add desc}
+\item{scaleS}{add desc}
 }
 \description{
 update t2 and s2

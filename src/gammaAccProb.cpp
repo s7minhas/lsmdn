@@ -16,9 +16,9 @@ using namespace Rcpp;
 //' @param g2 current value
 //' @param g2 new value
 //' @return returns list of starting values:
-//' \item{g2New}
-//' \item{AccRate}
-//' @export lsmdn
+//' \item{g2New}{new g2 value}
+//' \item{AccRate}{updated accRate}
+//' @export
 // [[Rcpp::export]]
 
 List gammaAccProb(

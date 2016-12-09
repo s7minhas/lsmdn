@@ -25,8 +25,8 @@ gammaAccProb(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new)
 }
 \value{
 returns list of starting values:
-\item{g2New}
-\item{AccRate}
+\item{g2New}{new g2 value}
+\item{AccRate}{updated accRate}
 }
 \description{
 Draw from inv gamma and adjust acceptance rate, for non-negative normal data

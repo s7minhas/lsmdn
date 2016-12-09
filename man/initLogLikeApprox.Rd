@@ -18,14 +18,14 @@ where the third dimension corresponds to different time periods.}
 }
 \value{
 returns list of starting values for log likelihood approximation:
-\item{dInMax}
-\item{dOutMax}
-\item{n0}
-\item{elOut}
-\item{elIn}
-\item{subseq}
-\item{degree}
-\item{edgeList}
+\item{dInMax}{add desc}
+\item{dOutMax}{add desc}
+\item{n0}{add desc}
+\item{elOut}{add desc}
+\item{elIn}{add desc}
+\item{subseq}{add desc}
+\item{degree}{add desc}
+\item{edgeList}{add desc}
 }
 \description{
 Log-likelihood approximation subsampling

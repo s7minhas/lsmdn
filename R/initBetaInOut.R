@@ -1,4 +1,4 @@
-#' Initial \beta_{IN} and \beta_{OUT}; scale latent positions
+#' Initial betaIn and betaOUT; scale latent positions
 #' 
 #' @param Y an n x n x T array of relational matrices, 
 #' where the third dimension corresponds to different time periods.
@@ -10,7 +10,7 @@
 #' \item{betaInInit}{Initial value for beta in}
 #' \item{betaOutInit}{Initial value for beta out}
 #' \item{xLatPos}{Scaled latent space}
-#' @export getStartingValues
+#' @export
 #' 
 
 initBetaInOut <- function(Y, xLatPos, p, w){
@@ -21,9 +21,9 @@ initBetaInOut <- function(Y, xLatPos, p, w){
 
 	# wrap c++ fns
 	initializeWrap <- function(x){ 
-		-initialize(xLatPos,c(n,p,T),Y,Xscale=1/n, BIN=x[1],BOUT=x[2],w[,1]) }
+		-initializeBinom(xLatPos,c(n,p,T),Y,Xscale=1/n, BIN=x[1],BOUT=x[2],w[,1]) }
 	initializeGradWrap <- function(x){ 
-		-initializeGrad(xLatPos,c(n,p,T),Y,Xscale=1/n, BIN=x[1],BOUT=x[2],w[,1])[2:3] }
+		-initializeBinomGrad(xLatPos,c(n,p,T),Y,Xscale=1/n, BIN=x[1],BOUT=x[2],w[,1])[2:3] }
 
 	# optimize get out results
 	optimInit <- optim(par=c(1,1), fn=initializeWrap, gr=initializeGradWrap, method="BFGS")

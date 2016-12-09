@@ -11,6 +11,8 @@ gmds( Y )
 
 \item{w}{weights}
 
+\item{p}{number of latent dimensions}
+
 \item{family}{type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'.}
 }
 \value{

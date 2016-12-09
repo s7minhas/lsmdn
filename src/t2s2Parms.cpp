@@ -12,11 +12,11 @@ using namespace Rcpp;
 //' @param phiT scale parameter for t
 //' @param phiS scale parameter for s
 //' @return returns list of:
-//' \item{shapeT}
-//' \item{scaleT}
-//' \item{shapeS}
-//' \item{scaleS}
-//' @export lsmdn
+//' \item{shapeT}{add desc}
+//' \item{scaleT}{add desc}
+//' \item{shapeS}{add desc}
+//' \item{scaleS}{add desc}
+//' @export
 // [[Rcpp::export]]
 
 List t2s2Parms(

@@ -23,8 +23,8 @@ wAccProb(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew)
 }
 \value{
 returns list of:
-\item{wwNew}
-\item{AccRate}
+\item{wwNew}{add desc}
+\item{AccRate}{add desc}
 }
 \description{
 update weights and accprob for binomial data

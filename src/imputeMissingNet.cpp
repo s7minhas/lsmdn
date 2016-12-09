@@ -14,10 +14,10 @@ using namespace Rcpp;
 //' @param BOUT betaOut value
 //' @param ww vector of weights
 //' @return Y with imputed values
-//' @export lsmdn
+//' @export
 // [[Rcpp::export]]
 
-arma::cube missing(
+arma::cube imputeMissingNet(
   arma::cube X, arma::vec dims, arma::vec MM, 
   arma::cube Y, int Ttt, 
   double BIN, double BOUT, arma::colvec ww

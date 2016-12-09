@@ -26,30 +26,30 @@
 #' @return returns list of starting values:
 #' \item{w}{weights}
 #' \item{X}{initial actor latent space positions calculated via GMDS}
-#' \item{betaIn}
-#' \item{betaOut}
-#' \item{nuIn}
-#' \item{nuOut}
-#' \item{xiIn}
-#' \item{t2}
-#' \item{shapeT2}
-#' \item{scaleT2}
-#' \item{s2}
-#' \item{shapeS2}
-#' \item{scaleS2}
+#' \item{betaIn}{add desc}
+#' \item{betaOut}{add desc}
+#' \item{nuIn}{add desc}
+#' \item{nuOut}{add desc}
+#' \item{xiIn}{add desc}
+#' \item{t2}{add desc}
+#' \item{shapeT2}{add desc}
+#' \item{scaleT2}{add desc}
+#' \item{s2}{add desc}
+#' \item{shapeS2}{add desc}
+#' \item{scaleS2}{add desc}
 #' if llApprox=TRUE, also returns
-#' \item{dInMax}
-#' \item{dOutMax}
-#' \item{n0}
-#' \item{elOut}
-#' \item{elIn}
-#' \item{degree}
-#' \item{edgeList}
-#' @export lsmdn
+#' \item{dInMax}{add desc}
+#' \item{dOutMax}{add desc}
+#' \item{n0}{add desc}
+#' \item{elOut}{add desc}
+#' \item{elIn}{add desc}
+#' \item{degree}{add desc}
+#' \item{edgeList}{add desc}
+#' @export
 #' 
 
 getStartingValues <- function(
-	Y, p=2, family='binomial', llAprox=FALSE, missData=FALSE, 
+	Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, 
 	s2Init=NULL, t2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
 	nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
 	shapeS2=NULL, scaleS2=NULL, g2=NULL, shapeG2=NULL, scaleG2=NULL, 
@@ -75,7 +75,7 @@ getStartingValues <- function(
 	w <- initWeights(Y, N)
 
 	# Initial latent space positions via Sarkar & Moore 2005
-	X <- gmds( Y, w, family )
+	X <- gmds( Y, w, p, family )
 
 	# initial values for betaIn and betaOut
 	if( family=='binomial' ){
@@ -113,7 +113,7 @@ getStartingValues <- function(
 		scaleG2 <- (1.05)*25 }
 
 	# init values for log-likelihood approximation subsampling
-	if( llAprox & family=='binomial' ){
+	if( llApprox & family=='binomial' ){
 		tmp <- initLogLikeApprox(Y, n0, seed)
 		return( 
 			list(

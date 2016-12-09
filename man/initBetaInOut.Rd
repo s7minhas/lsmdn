@@ -2,7 +2,7 @@
 % Please edit documentation in R/initBetaInOut.R
 \name{initBetaInOut}
 \alias{initBetaInOut}
-\title{Initial \beta_{IN} and \beta_{OUT}; scale latent positions}
+\title{Initial betaIn and betaOUT; scale latent positions}
 \usage{
 gmds( Y )
 }
@@ -23,6 +23,6 @@ returns list:
 \item{xLatPos}{Scaled latent space}
 }
 \description{
-Initial \beta_{IN} and \beta_{OUT}; scale latent positions
+Initial betaIn and betaOUT; scale latent positions
 }
 

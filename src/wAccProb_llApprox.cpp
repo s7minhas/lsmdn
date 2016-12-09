@@ -18,9 +18,9 @@ using namespace Rcpp;
 //' @param subseq matrix
 //' @param degr array
 //' @return returns list of:
-//' \item{wwNew}
-//' \item{AccRate}
-//' @export lsmdn
+//' \item{wwNew}{add desc}
+//' \item{AccRate}{add desc}
+//' @export
 // [[Rcpp::export]]
 
 List wAccProb_llApprox(

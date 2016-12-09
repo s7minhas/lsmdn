@@ -2,13 +2,15 @@
 #' 
 #' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
 #' @param w weights
+#' @param p number of latent dimensions
 #' @param family type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'. 
 #' @usage gmds( Y ) 
 #' @return Latent positions of actors based on Sarkar and Moore
 #' @export
+#' 
 
 ###
-gmds <- function(Y, w, family){
+gmds <- function(Y, w, p, family){
 	#
 	n <- dim(Y)[1]
 	T <- dim(Y)[3]	
@@ -30,7 +32,7 @@ gmds <- function(Y, w, family){
 		i = 1:dim(Y)[1] ; j = 1:dim(Y)[2]
 		for(t in 1:T){
 			dissim[,,t] = sapply(i, function(i){ sapply(j, dsim, i = i, t = t, Y = Ybin, w = w[,1]) } )
-			diag(dissim[,,tt]) = 0 }
+			diag(dissim[,,t]) = 0 }
 	}
 	
 	X <- list()
