@@ -11,7 +11,7 @@
 #' @param bta
 #' @param ww vector of weights
 #' @param g2 current value
-#' @param g2 new value
+#' @param g2new new value
 #' @return returns list of starting values:
 #' \item{g2New}{new g2 value}
 #' \item{AccRate}{updated accRate}

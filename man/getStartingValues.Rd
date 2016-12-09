@@ -19,6 +19,10 @@ approximationg. Only available for binomial model types.}
 
 \item{missData}{logical indicating whether to impute missing data.}
 
+\item{N}{number of MCMC iterations.}
+
+\item{seed}{random seed}
+
 \item{s2Init}{starting value for s2}
 
 \item{t2Init}{starting value for t2}
@@ -44,10 +48,6 @@ approximationg. Only available for binomial model types.}
 \item{shapeS2}{shape parameter for s2}
 
 \item{scaleS2}{shape parameter for s2}
-
-\item{N}{number of MCMC iterations.}
-
-\item{seed}{random seed}
 }
 \value{
 returns list of starting values:

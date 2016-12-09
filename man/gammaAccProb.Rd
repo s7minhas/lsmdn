@@ -21,7 +21,7 @@ gammaAccProb(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new)
 
 \item{g2}{current value}
 
-\item{g2}{new value}
+\item{g2new}{new value}
 }
 \value{
 returns list of starting values:

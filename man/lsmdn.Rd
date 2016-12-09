@@ -21,13 +21,23 @@ approximationg. Only available for binomial model types.}
 
 \item{missData}{logical indicating whether to impute missing data.}
 
+\item{N}{number of MCMC iterations.}
+
+\item{seed}{random seed}
+
+\item{burnin}{burnin}
+
+\item{savePoints}{chain intervals to save at}
+
+\item{fileName}{"lsmdn.rda" or wtv you want, make sure to specify a path as well}
+
 \item{tuneX}{tuneX}
 
 \item{tuneBIO}{tuneBIO}
 
 \item{kappa}{kappa}
 
-\item{burnin}{burnin}
+\item{startVals}{Fitted result from previous model run.}
 
 \item{s2Init}{starting value for s2}
 
@@ -54,16 +64,6 @@ approximationg. Only available for binomial model types.}
 \item{shapeS2}{shape parameter for s2}
 
 \item{scaleS2}{shape parameter for s2}
-
-\item{N}{number of MCMC iterations.}
-
-\item{seed}{random seed}
-
-\item{startVals}{Fitted result from previous model run.}
-
-\item{savePoints}{chain intervals to save at}
-
-\item{fileName}{"lsmdn.rda" or wtv you want, make sure to specify a path as well}
 }
 \value{
 returns list of starting values:
