@@ -20,7 +20,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 List t2s2Parms(
-	arma::cube X, arma::vec dims, double thetaT, 
+	arma::cube X, Rcpp::IntegerVector dims, double thetaT, 
 	double thetaS, double phiT, double phiS 
 	) {
 	
@@ -33,17 +33,18 @@ List t2s2Parms(
   scaleT = phiT;
   shapeS = thetaS + 0.5*dims(0)*dims(1)*(dims(2)-1);
   scaleS = phiS;
-  for(int i =0;i<dims(0);i++) {
-	  insides = 0.5*trans(X.slice(i).col(0))*(X.slice(i).col(0));
-	  scaleT += insides(0,0);
-	  for(int tt=1;tt<dims(2);tt++) {
-		  insides = 0.5*trans(X.slice(i).col(tt)-X.slice(i).col(tt-1))*
-		  (X.slice(i).col(tt)-X.slice(i).col(tt-1));
-		  scaleS += insides(0,0);
-		}
-	}
-  
-  
+  for(int i =0;i<dims(0);i++)
+{
+  insides = 0.5*trans(X.slice(i).col(0))*(X.slice(i).col(0));
+  scaleT += insides(0,0);
+  for(int tt=1;tt<dims(2);tt++)
+{
+  insides = 0.5*trans(X.slice(i).col(tt)-X.slice(i).col(tt-1))*
+  (X.slice(i).col(tt)-X.slice(i).col(tt-1));
+  scaleS += insides(0,0);
+}
+}
+   
  return(Rcpp::List::create(shapeT,scaleT,shapeS,scaleS));
  }
  

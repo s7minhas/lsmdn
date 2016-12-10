@@ -18,7 +18,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 arma::cube imputeMissingNet(
-  arma::cube X, arma::vec dims, arma::vec MM, 
+  arma::cube X, Rcpp::IntegerVector dims, Rcpp::IntegerVector MM, 
   arma::cube Y, int Ttt, 
   double BIN, double BOUT, arma::colvec ww
   ) {

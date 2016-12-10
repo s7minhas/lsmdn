@@ -16,7 +16,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 double initializeBinom(
-  arma::cube X, arma::vec dims, arma::cube Y, double Xscale, 
+  arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double Xscale, 
   double BIN, double BOUT, arma::colvec ww
   ) {
   
@@ -24,17 +24,22 @@ double initializeBinom(
   
   /*---------------------------------------*/
   
-  for(int tt=0; tt<dims(2); tt++) {
-    for(int i = 0; i < dims(0); i++) {
-      for(int j = 0; j < dims(0); j++) {        
-        if(i != j) {
-          dx = Xscale*arma::norm(X.slice(i).col(tt)-X.slice(j).col(tt),2);
-          eta = (BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i)));
-          ret += Y.slice(tt)(i,j)*eta-log(1+exp(eta));
-        }
-      }
-    }
-  }
+  for(int tt=0;tt<dims(2);tt++)
+{
+  for(int i = 0; i < dims(0); i++)
+{
+  for(int j = 0; j < dims(0); j++)
+{
+  if(i != j)
+{
+  dx = Xscale*arma::norm(X.slice(i).col(tt)-X.slice(j).col(tt),2);
+  eta = (BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i)));
+  ret += Y.slice(tt)(i,j)*eta-
+              log(1+exp(eta));
+}
+}
+}
+}
   
 return(ret);
 }

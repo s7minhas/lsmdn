@@ -107,6 +107,7 @@ lsmdn <- function(
   }
 
   # start mcmc
+  set.seed(seed)
   for(it in 2:N){
 
     #
@@ -128,19 +129,24 @@ lsmdn <- function(
         X[[it-1]],c(n,p,T,dInMax,dOutMax),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
-        nuOut,Cauchy=0,RN,RNBIO,elOut,elIn,subseq,degree ) }
+        nuOut,Cauchy=0,RN,RNBIO,elOut,elIn,subseq,degree
+        ) }
 
     if( !llApprox & family=='binomial' ){
-      draws <- updateBinom(X[[it-1]],c(n,p,T,1),tuneX,Y, 
+      draws <- updateBinom(
+        X[[it-1]],c(n,p,T,1),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
-        nuOut,Cauchy=0,RN,RNBIO) }
+        nuOut,Cauchy=0,RN,RNBIO
+        ) }
 
     if( family=='nonNegNormal' ){
-      draws <- updateNonNegNorm(X[[it-1]],c(n,p,T,1),tuneX,Y, 
+      draws <- updateNonNegNorm(
+        X[[it-1]],c(n,p,T,1),tuneX,Y, 
         betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
         t2[it-1],s2[it-1],g2[it-1],xiIn,xiOut,nuIn,
-        nuOut,Cauchy=0,RN,RNBIO) }
+        nuOut,Cauchy=0,RN,RNBIO
+        ) }
 
     #
     X[[it]] <- draws[[1]] ; betaIn[it] <- draws[[2]] ; betaOut[it] <- draws[[3]]
@@ -160,42 +166,50 @@ lsmdn <- function(
     if(it<N){ X[[it+1]] <- X[[it]] }
 
     # Step 2
-    draws2 <- t2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
-    shapeT2<-draws2[[1]] ; scaleT2<-draws2[[2]]
-    shapeS2<-draws2[[3]] ; scaleS2<-draws2[[4]] ; rm(draws2)
-    t2[it] <- MCMCpack::rinvgamma(1,shape=shapeT2,scale=scaleT2)
-    s2[it] <- MCMCpack::rinvgamma(1,shape=shapeS2,scale=scaleS2)  
+    draws <- t2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
+    t2[it] <- MCMCpack::rinvgamma(1,shape=draws[[1]],scale=draws[[2]])
+    s2[it] <- MCMCpack::rinvgamma(1,shape=draws[[3]],scale=draws[[4]]) ; rm(draws)
 
     # Step 3
     w[,it] <- MCMCpack::rdirichlet(1,alpha=kappa*w[,it-1])
     if(llApprox & family=='binomial'){
-      draws3 <- wAccProb_llApprox(X[[it]],c(n,p,T,dInMax,dOutMax),Y,
+      draws <- wAccProb_llApprox(
+        X[[it]],c(n,p,T,dInMax,dOutMax),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[it],
-        elOut, elIn, subseq, degree ) }
+        elOut, elIn, subseq, degree
+        ) }
 
     if( !llApprox & family=='binomial' ){
-      draws3 <- wAccProb(X[[it]],c(n,p,T),Y,
-        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it]) }
+      draws <- wAccProb(
+        X[[it]],c(n,p,T,1),Y,
+        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it]
+        ) }
 
     if( family=='nonNegNormal' ){
-      draws3 <- wAccProb_nnn(X[[it]],c(n,p,T),Y,
-        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]) }
+      draws <- wAccProb_nnn(
+        X[[it]],c(n,p,T),Y,
+        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]
+        ) }
 
-    w[,it] <- draws3[[1]] ; accRate[3] <- accRate[3] + draws3[[2]] ; rm(draws3)
+    w[,it] <- draws[[1]] ; accRate[3] <- accRate[3] + draws[[2]] ; rm(draws)
 
     if( family=='nonNegNormal' ){
       g2[it] <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
-      draws3 <- gammaAccProb(X[[it]],c(n,p,T,1),Y, 
+      draws <- gammaAccProb(
+        X[[it]],c(n,p,T,1),Y, 
         betaIn[it],betaOut[it],shapeG2,scaleG2, 
-        w[,it-1],g2[it-1], g2[it])
-      g2[it] <- draws3[[1]] ; accRate[4] <- accRate[4] + draws3[[2]] ; rm(draws3)
+        w[,it-1],g2[it-1], g2[it]
+        )
+      g2[it] <- draws[[1]] ; accRate[4] <- accRate[4] + draws[[2]] ; rm(draws)
     }
 
     # Step 4
     if(missData){
       for(t in 1:T){
-        Y <- imputeMissingNet(X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
-          BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it])
+        Y <- imputeMissingNet(
+          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
+          BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it]
+          )
       }
     }
 

@@ -27,14 +27,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // imputeMissingNet
-arma::cube imputeMissingNet(arma::cube X, arma::vec dims, arma::vec MM, arma::cube Y, int Ttt, double BIN, double BOUT, arma::colvec ww);
+arma::cube imputeMissingNet(arma::cube X, Rcpp::IntegerVector dims, Rcpp::IntegerVector MM, arma::cube Y, int Ttt, double BIN, double BOUT, arma::colvec ww);
 RcppExport SEXP lsmdn_imputeMissingNet(SEXP XSEXP, SEXP dimsSEXP, SEXP MMSEXP, SEXP YSEXP, SEXP TttSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP wwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type MM(MMSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type MM(MMSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
     Rcpp::traits::input_parameter< int >::type Ttt(TttSEXP);
     Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
@@ -45,13 +45,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // initializeBinom
-double initializeBinom(arma::cube X, arma::vec dims, arma::cube Y, double Xscale, double BIN, double BOUT, arma::colvec ww);
+double initializeBinom(arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double Xscale, double BIN, double BOUT, arma::colvec ww);
 RcppExport SEXP lsmdn_initializeBinom(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP XscaleSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP wwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
     Rcpp::traits::input_parameter< double >::type Xscale(XscaleSEXP);
     Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
@@ -113,13 +113,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // t2s2Parms
-List t2s2Parms(arma::cube X, arma::vec dims, double thetaT, double thetaS, double phiT, double phiS);
+List t2s2Parms(arma::cube X, Rcpp::IntegerVector dims, double thetaT, double thetaS, double phiT, double phiS);
 RcppExport SEXP lsmdn_t2s2Parms(SEXP XSEXP, SEXP dimsSEXP, SEXP thetaTSEXP, SEXP thetaSSEXP, SEXP phiTSEXP, SEXP phiSSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
     Rcpp::traits::input_parameter< double >::type thetaT(thetaTSEXP);
     Rcpp::traits::input_parameter< double >::type thetaS(thetaSSEXP);
     Rcpp::traits::input_parameter< double >::type phiT(phiTSEXP);
@@ -129,13 +129,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // updateBinom
-List updateBinom(arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y, double BIN, double BOUT, double tuneBIO, arma::colvec ww, double t2, double s2, double xiBin, double xiBout, double nuBin, double nuBout, int Cauchy, arma::vec rnormsVec, arma::colvec rnormsBIO);
+List updateBinom(arma::cube Xitm1, Rcpp::IntegerVector dims, double tunex, arma::cube Y, double BIN, double BOUT, double tuneBIO, arma::colvec ww, double t2, double s2, double xiBin, double xiBout, double nuBin, double nuBout, int Cauchy, Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO);
 RcppExport SEXP lsmdn_updateBinom(SEXP Xitm1SEXP, SEXP dimsSEXP, SEXP tunexSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneBIOSEXP, SEXP wwSEXP, SEXP t2SEXP, SEXP s2SEXP, SEXP xiBinSEXP, SEXP xiBoutSEXP, SEXP nuBinSEXP, SEXP nuBoutSEXP, SEXP CauchySEXP, SEXP rnormsVecSEXP, SEXP rnormsBIOSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::cube >::type Xitm1(Xitm1SEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
     Rcpp::traits::input_parameter< double >::type tunex(tunexSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
     Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
@@ -149,7 +149,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type nuBin(nuBinSEXP);
     Rcpp::traits::input_parameter< double >::type nuBout(nuBoutSEXP);
     Rcpp::traits::input_parameter< int >::type Cauchy(CauchySEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type rnormsVec(rnormsVecSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type rnormsVec(rnormsVecSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type rnormsBIO(rnormsBIOSEXP);
     rcpp_result_gen = Rcpp::wrap(updateBinom(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO));
     return rcpp_result_gen;
@@ -256,13 +256,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // wAccProb
-List wAccProb(arma::cube X, arma::vec dims, arma::cube Y, double BIN, double BOUT, double tuneW, arma::colvec wwOld, arma::colvec wwNew);
+List wAccProb(arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double BIN, double BOUT, double tuneW, arma::colvec wwOld, arma::colvec wwNew);
 RcppExport SEXP lsmdn_wAccProb(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneWSEXP, SEXP wwOldSEXP, SEXP wwNewSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
     Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
     Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
