@@ -22,7 +22,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 List gammaAccProb(
-  arma::cube X, arma::vec dims, arma::cube Y,
+  arma::cube X, Rcpp::IntegerVector dims, arma::cube Y,
   double BIN, double BOUT, double alph,
   double bta, arma::colvec ww, double g2, double g2new
   ) {

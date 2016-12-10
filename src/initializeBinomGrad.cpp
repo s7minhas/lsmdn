@@ -16,7 +16,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 arma::vec initializeBinomGrad(
-  arma::cube X, arma::vec dims, arma::cube Y, double Xscale, 
+  arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double Xscale, 
   double BIN, double BOUT, arma::colvec ww  
   ) {
 

@@ -24,7 +24,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 List wAccProb_llApprox(
-	arma::cube X, arma::vec dims, arma::cube Y, 
+	arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, 
 	double BIN, double BOUT, double tuneW,
 	arma::colvec wwOld, arma::colvec wwNew,
 	arma::cube ELout, arma::cube ELin, Rcpp::IntegerMatrix subseq, 

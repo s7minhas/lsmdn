@@ -35,7 +35,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 List updateBinomLogLikeApprox(
-  arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y,
+  arma::cube Xitm1, Rcpp::IntegerVector dims, double tunex, arma::cube Y,
   double BIN, double BOUT, double tuneBIO,
   arma::colvec ww, double t2, double s2,
   double xiBin, double xiBout, double nuBin,

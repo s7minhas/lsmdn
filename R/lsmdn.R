@@ -7,11 +7,20 @@
 #' @param llApprox logical indicating whether or not to utilize log-likelihood 
 #' approximationg. Only available for binomial model types.
 #' @param missData logical indicating whether to impute missing data.
+#' @param N number of MCMC iterations.
+#' @param seed random seed
+#' @param burnin burnin
+#' @param progressBar include progress bar to show mcmc status
+#' @param saveResults save results to rda
+#' @param savePoints chain intervals to save at 
+#' @param fileName "lsmdn.rda" or wtv you want, make sure to specify a path as well
 #' @param tuneX tuneX
 #' @param tuneBIO tuneBIO
 #' @param kappa kappa
+#' @param startVals Fitted result from previous model run.
 #' @param s2Init starting value for s2
 #' @param t2Init starting value for t2
+#' @param t2Init starting value for g2
 #' @param xLatPos starting actor positions in latent space
 #' @param betaInInit starting value for betaIn
 #' @param betaOutInit starting value for betaOut
@@ -23,12 +32,8 @@
 #' @param scaleT2 scale parameter for t2
 #' @param shapeS2 shape parameter for s2
 #' @param scaleS2 shape parameter for s2
-#' @param burnin burnin
-#' @param N number of MCMC iterations.
-#' @param seed random seed
-#' @param startVals Fitted result from previous model run.
-#' @param savePoints chain intervals to save at 
-#' @param fileName "lsmdn.rda" or wtv you want, make sure to specify a path as well
+#' @param shapeG2 shape parameter for g2
+#' @param scaleG2 shape parameter for g2
 #' @usage lsmdn( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6886) 
 #' @return returns list of starting values:
 #' \item{w}{weights}
@@ -59,6 +64,7 @@
 lsmdn <- function(
   Y, p=2, family, llApprox=FALSE, missData=FALSE, 
   N, seed=6886, burnin=round(N/10),
+  progressBar=TRUE,
   saveResults=TRUE, savePoints=.10, fileName='lsmdnModel.rda',
   tuneX=0.0075, tuneBIO=0.1, kappa=175000, 
   startVals=NULL, 
@@ -107,6 +113,8 @@ lsmdn <- function(
   }
 
   # start mcmc
+  pb <- txtProgressBar(min=2,max=N,style=3)
+  system.time({
   set.seed(seed)
   for(it in 2:N){
 
@@ -198,7 +206,7 @@ lsmdn <- function(
       draws <- gammaAccProb(
         X[[it]],c(n,p,T,1),Y, 
         betaIn[it],betaOut[it],shapeG2,scaleG2, 
-        w[,it-1],g2[it-1], g2[it]
+        w[,it],g2[it-1], g2[it]
         )
       g2[it] <- draws[[1]] ; accRate[4] <- accRate[4] + draws[[2]] ; rm(draws)
     }
@@ -226,7 +234,10 @@ lsmdn <- function(
       }      
     } 
 
+  if(progressBar){ setTxtProgressBar(pb,it) }
   } # end mcmc
+  close(pb)
+  })
 
   # output
   result <- list(Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2, 

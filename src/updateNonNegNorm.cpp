@@ -32,12 +32,12 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 List updateNonNegNorm(
-  arma::cube Xitm1, arma::vec dims, double tunex, arma::cube Y,
+  arma::cube Xitm1, Rcpp::IntegerVector dims, double tunex, arma::cube Y,
   double BIN, double BOUT, double tuneBIO,
   arma::colvec ww, double t2, double s2, double g2,
   double xiBin, double xiBout, double nuBin,
   double nuBout, int Cauchy,
-  arma::vec rnormsVec, arma::colvec rnormsBIO
+  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO
   ) {
   
   arma::cube Xold(Xitm1);
