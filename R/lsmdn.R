@@ -195,7 +195,7 @@ lsmdn <- function(
 
     if( family=='nonNegNormal' ){
       draws <- wAccProb_nnn(
-        X[[it]],c(n,p,T),Y,
+        X[[it]],c(n,p,T,1),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]
         ) }
 

@@ -27,6 +27,10 @@ approximationg. Only available for binomial model types.}
 
 \item{burnin}{burnin}
 
+\item{progressBar}{include progress bar to show mcmc status}
+
+\item{saveResults}{save results to rda}
+
 \item{savePoints}{chain intervals to save at}
 
 \item{fileName}{"lsmdn.rda" or wtv you want, make sure to specify a path as well}
@@ -64,6 +68,12 @@ approximationg. Only available for binomial model types.}
 \item{shapeS2}{shape parameter for s2}
 
 \item{scaleS2}{shape parameter for s2}
+
+\item{shapeG2}{shape parameter for g2}
+
+\item{scaleG2}{shape parameter for g2}
+
+\item{t2Init}{starting value for g2}
 }
 \value{
 returns list of starting values:
