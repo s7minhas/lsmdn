@@ -16,7 +16,7 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 
-Rcpp::NumericMatrix predictionBinomial(
+Rcpp::NumericMatrix predictionPoisson(
 	Rcpp::NumericMatrix Ex, Rcpp::NumericVector sig2, 
   Rcpp::NumericMatrix x1, Rcpp::NumericMatrix x2,
 	Rcpp::NumericVector Bin, Rcpp::NumericVector Bout, 
@@ -42,9 +42,9 @@ Rcpp::NumericMatrix predictionBinomial(
   tempX2 = 1/(2*PI*sig2(l))*exp(-1/(2*sig2(l))*(pow(Ex(j,0)-x1(j,l),2)+pow(Ex(j,1)-x2(j,l),2)) );
   sumX = sumX + tempX1*tempX2/nIter;
   
-  tempyhat = tempX1*tempX2/nIter/(1+exp(Bin(l)*(dx/ww(j,l)-1)+Bout(l)*(dx/ww(i,l)-1)));
+  tempyhat = tempX1*tempX2/nIter*exp(Bin(l)*(dx/ww(j,l)-1)+Bout(l)*(dx/ww(i,l)-1));
   yhat(i,j) = yhat(i,j) + tempyhat;
-  tempyhat = tempX1*tempX2/nIter/(1+exp(Bin(l)*(dx/ww(i,l)-1)+Bout(l)*(dx/ww(j,l)-1)));
+  tempyhat = tempX1*tempX2/nIter*exp(Bin(l)*(dx/ww(i,l)-1)+Bout(l)*(dx/ww(j,l)-1));
   yhat(j,i) = yhat(j,i) + tempyhat;
 }
   yhat(i,j) = yhat(i,j)/sumX;

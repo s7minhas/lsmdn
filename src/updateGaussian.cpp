@@ -176,8 +176,6 @@ List updateGaussian(
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
   AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BinNew*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
   AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
-  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (BinNew*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2  ;
 }}
 }
 }
@@ -217,8 +215,6 @@ List updateGaussian(
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
   AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BoutNew*(1 - dx/ww(j)) ),2)/g2 ;
   AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
-  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BoutNew*(1 - dx/ww(i)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2  ;
 }}
 }
 }

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "p=2; family; llApprox=FALSE; missData=FALSE; \nN = 1000; seed=6886; burnin=round(N/10);\nsaveResults=TRUE; savePoints=.10; fileName='lsmdnModel.rda';\ntuneX=0.0075; tuneBIO=0.1; kappa=175000; \nstartVals=NULL; \ns2Init=NULL; t2Init=NULL; g2Init=NULL; xLatPos=NULL; betaInInit=NULL; betaOutInit=NULL;\nnuIn=NULL; nuOut=NULL; xiIn=NULL; xiOut=NULL; shapeT2=NULL; scaleT2=NULL; \nshapeS2=NULL; scaleS2=NULL; shapeG2=NULL; scaleG2=NULL\n\nfamily = \"nonNegNormal\"\n",
+    "created" : 1481303360979.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "1824867623",
+    "id" : "E68A29DD",
+    "lastKnownWriteTime" : 4294967302,
+    "last_content_update" : 1481303437334,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled4"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

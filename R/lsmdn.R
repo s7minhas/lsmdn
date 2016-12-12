@@ -210,13 +210,13 @@ lsmdn <- function(
         ) }
 
     if( family=='nonNegNormal' ){
-      draws <- wAccProb_nnn(
+      draws <- wAccProbNonNegNormal(
         X[[it]],c(n,p,T,1),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]
         ) }
 
     if( family=='gaussian' ){
-      draws <- wAccProb_gaussian(
+      draws <- wAccProbGaussian(
         X[[it]],c(n,p,T,1),Y,
         betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]
         ) }
@@ -252,10 +252,24 @@ lsmdn <- function(
     # Step 4
     if(missData){
       for(t in 1:T){
-        Y <- imputeMissingNet(
+        if(family = 'binomial'){
+        Y <- imputeMissingBinomial(
           X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
           BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it]
-          )
+          )}
+        if(family = 'poisson'){
+        Y <- imputeMissingPoisson(
+          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
+          BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it]
+          )}
+        if(family = 'gaussian'){
+        Y <- imputeMissingGaussian(
+          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
+          BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it], g2 = g2[it]
+          )}
+
+
+
       }
     }
 

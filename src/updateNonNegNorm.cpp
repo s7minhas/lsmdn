@@ -192,18 +192,11 @@ List updateNonNegNorm(
   AccProb += - log(1 - 0.5 * erfc(-1*(BIN*(1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)))/sqrt(g2)*M_SQRT1_2));
 
   }
-  if(Y.slice(tt)(j,i) == 0){
-  AccProb += log(1 - 0.5 * erfc(-(BinNew*(1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)))/sqrt(g2)*M_SQRT1_2)) ;
-  AccProb += - log(1 - 0.5 * erfc(-(BIN*(1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)))/sqrt(g2)*M_SQRT1_2));
-  }
   if(Y.slice(tt)(i,j) > 0){
   AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BinNew*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
   AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
   }
-  if(Y.slice(tt)(j,i) > 0){
-  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (BinNew*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2  ;
-}}
+}
 }
 }
 }
@@ -245,18 +238,11 @@ List updateNonNegNorm(
   AccProb += - log(1 - 0.5 * erfc(-1*(BIN*(1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)))/sqrt(g2)*M_SQRT1_2));
 
   }
-  if(Y.slice(tt)(j,i) == 0){
-  AccProb += log(1 - 0.5 * erfc(-(BIN*(1 - dx/ww(j)) + BoutNew*(1 - dx/ww(i)))/sqrt(g2)*M_SQRT1_2)) ;
-  AccProb += - log(1 - 0.5 * erfc(-(BIN*(1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)))/sqrt(g2)*M_SQRT1_2));
-  }
   if(Y.slice(tt)(i,j) > 0){
   AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BoutNew*(1 - dx/ww(j)) ),2)/g2 ;
   AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
   }
-  if(Y.slice(tt)(j,i) > 0){
-  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BoutNew*(1 - dx/ww(i)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2  ;
-}}
+}
 }
 }
 }

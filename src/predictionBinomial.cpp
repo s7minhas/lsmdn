@@ -44,7 +44,7 @@ Rcpp::NumericMatrix predictionBinomial(
   
   tempyhat = tempX1*tempX2/nIter/(1+exp(Bin(l)*(dx/ww(j,l)-1)+Bout(l)*(dx/ww(i,l)-1)));
   yhat(i,j) = yhat(i,j) + tempyhat;
-  tempyhat = tempX1*tempX2/nIter/(1+exp(Bin(l)*(dx/ww(i,l)-1)+Bout(l)*(dx/ww(j,l)-1)));
+  tempyhat = tempX1*tempX2/nIter/(1 + exp(Bin(l)*(dx/ww(i,l)-1)+Bout(l)*(dx/ww(j,l)-1));
   yhat(j,i) = yhat(j,i) + tempyhat;
 }
   yhat(i,j) = yhat(i,j)/sumX;
