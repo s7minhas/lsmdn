@@ -4,7 +4,7 @@
 using namespace arma; 
 using namespace Rcpp; 
 
-//' update lat positions, beta params, and accrate for binomial data
+//' update lat positions, beta params, and accrate for non-negative normal data
 //' @param Xitm1 data cube
 //' @param dims vector of dims
 //' @param tunex
@@ -15,6 +15,7 @@ using namespace Rcpp;
 //' @param ww vector of weights
 //' @param t2
 //' @param s2
+//' @param g2
 //' @param xiBin
 //' @param xiBout
 //' @param nuBin
@@ -30,10 +31,10 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 
-List updateBinom(
+List updateGaussian(
   arma::cube Xitm1, Rcpp::IntegerVector dims, double tunex, arma::cube Y,
   double BIN, double BOUT, double tuneBIO,
-  arma::colvec ww, double t2, double s2,
+  arma::colvec ww, double t2, double s2, double g2,
   double xiBin, double xiBout, double nuBin,
   double nuBout, int Cauchy,
   Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO
@@ -85,14 +86,12 @@ List updateBinom(
 {
   if(j != i){
   dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
-  dx = arma::norm(Xold.slice(i).col(tt)-Xold.slice(j).col(tt),2);
-  AccProb += (dx-dz)*(Y.slice(tt)(j,i)*(BIN/ww(i)+BOUT/ww(j))+
-  Y.slice(tt)(i,j)*(BIN/ww(j)+BOUT/ww(i)));
-  AccProb += log(1+exp(BIN*(1-dx/ww(i))+BOUT*(1-dx/ww(j))));
-  AccProb += log(1+exp(BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i))));
-  AccProb -= log(1+exp(BIN*(1-dz/ww(i))+BOUT*(1-dz/ww(j))));
-  AccProb -= log(1+exp(BIN*(1-dz/ww(j))+BOUT*(1-dz/ww(i))));
-  }
+  dx = arma::norm(Xold.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
+  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dz/ww(i)) + BOUT*(1 - dz/ww(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
+  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dz/ww(j)) + BOUT*(1 - dz/ww(i)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2  ;
+}
 }
   if(tt==0)
 {
@@ -175,13 +174,14 @@ List updateBinom(
   if(i != j)
 {
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
-  AccProb += Y.slice(tt)(i,j)*(BinNew-BIN)*(1-dx/ww(j)) + 
-  log(1+exp(BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i)))) -
-  log(1+exp(BinNew*(1-dx/ww(j))+BOUT*(1-dx/ww(i))));
+  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BinNew*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
+  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (BinNew*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2  ;
+}}
 }
 }
-}
-}
+
   
   AccProb += -0.5*(BinNew-nuBin)*(BinNew-nuBin)/xiBin;
   AccProb -= -0.5*(BIN-nuBin)*(BIN-nuBin)/xiBin;
@@ -215,13 +215,14 @@ List updateBinom(
   if(i != j)
 {
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
-  AccProb += Y.slice(tt)(i,j)*(BoutNew-BOUT)*(1-dx/ww(i)) + 
-  log(1+exp(BinNew*(1-dx/ww(j))+BOUT*(1-dx/ww(i)))) -
-  log(1+exp(BinNew*(1-dx/ww(j))+BoutNew*(1-dx/ww(i))));
+  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BoutNew*(1 - dx/ww(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
+  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BoutNew*(1 - dx/ww(i)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/ww(j)) + BOUT*(1 - dx/ww(i)) ),2)/g2  ;
+}}
 }
 }
-}
-}
+
   
   AccProb += -0.5*(BoutNew-nuBout)*(BoutNew-nuBout)/xiBout;
   AccProb -= -0.5*(BOUT-nuBout)*(BOUT-nuBout)/xiBout;

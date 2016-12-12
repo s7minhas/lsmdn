@@ -86,7 +86,7 @@ List updateNonNegNorm(
 {
   if(j != i){
   dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
-  dx = arma::norm(Xold.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
+  dx = arma::norm(Xold.slice(i).col(tt)-Xold.slice(j).col(tt),2);
   if(Y.slice(tt)(i,j) == 0){
   AccProb += log(1 - 0.5 * erfc(-1*(BIN*(1 - dz/ww(i)) + BOUT*(1 - dz/ww(j)))/sqrt(g2)*M_SQRT1_2)); 
   AccProb += - log(1 - 0.5 * erfc(-1*(BIN*(1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)))/sqrt(g2)*M_SQRT1_2));

@@ -30,7 +30,7 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 
-List updateBinom(
+List updatePoisson(
   arma::cube Xitm1, Rcpp::IntegerVector dims, double tunex, arma::cube Y,
   double BIN, double BOUT, double tuneBIO,
   arma::colvec ww, double t2, double s2,
@@ -85,13 +85,13 @@ List updateBinom(
 {
   if(j != i){
   dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
-  dx = arma::norm(Xold.slice(i).col(tt)-Xold.slice(j).col(tt),2);
+  dx = arma::norm(Xold.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
   AccProb += (dx-dz)*(Y.slice(tt)(j,i)*(BIN/ww(i)+BOUT/ww(j))+
   Y.slice(tt)(i,j)*(BIN/ww(j)+BOUT/ww(i)));
-  AccProb += log(1+exp(BIN*(1-dx/ww(i))+BOUT*(1-dx/ww(j))));
-  AccProb += log(1+exp(BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i))));
-  AccProb -= log(1+exp(BIN*(1-dz/ww(i))+BOUT*(1-dz/ww(j))));
-  AccProb -= log(1+exp(BIN*(1-dz/ww(j))+BOUT*(1-dz/ww(i))));
+  AccProb -= exp(BIN*(1-dx/ww(i))+BOUT*(1-dx/ww(j)));
+  AccProb -= exp(BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i)));
+  AccProb += exp(BIN*(1-dz/ww(i))+BOUT*(1-dz/ww(j)));
+  AccProb += exp(BIN*(1-dz/ww(j))+BOUT*(1-dz/ww(i)));
   }
 }
   if(tt==0)
@@ -176,8 +176,8 @@ List updateBinom(
 {
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
   AccProb += Y.slice(tt)(i,j)*(BinNew-BIN)*(1-dx/ww(j)) + 
-  log(1+exp(BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i)))) -
-  log(1+exp(BinNew*(1-dx/ww(j))+BOUT*(1-dx/ww(i))));
+  exp(BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i))) -
+  exp(BinNew*(1-dx/ww(j))+BOUT*(1-dx/ww(i)));
 }
 }
 }
@@ -216,8 +216,8 @@ List updateBinom(
 {
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
   AccProb += Y.slice(tt)(i,j)*(BoutNew-BOUT)*(1-dx/ww(i)) + 
-  log(1+exp(BinNew*(1-dx/ww(j))+BOUT*(1-dx/ww(i)))) -
-  log(1+exp(BinNew*(1-dx/ww(j))+BoutNew*(1-dx/ww(i))));
+  exp(BinNew*(1-dx/ww(j))+BOUT*(1-dx/ww(i))) -
+  exp(BinNew*(1-dx/ww(j))+BoutNew*(1-dx/ww(i)));
 }
 }
 }

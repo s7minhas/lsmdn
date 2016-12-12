@@ -156,6 +156,22 @@ lsmdn <- function(
         nuOut,Cauchy=0,RN,RNBIO
         ) }
 
+    if( family=='gaussian' ){
+      draws <- updateGaussian(
+        X[[it-1]],c(n,p,T,1),tuneX,Y, 
+        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
+        t2[it-1],s2[it-1],g2[it-1],xiIn,xiOut,nuIn,
+        nuOut,Cauchy=0,RN,RNBIO
+        ) }
+
+    if( family=='poisson' ){
+      draws <- updatePoisson(
+        X[[it-1]],c(n,p,T,1),tuneX,Y, 
+        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
+        t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
+        nuOut,Cauchy=0,RN,RNBIO
+        ) }
+
     #
     X[[it]] <- draws[[1]] ; betaIn[it] <- draws[[2]] ; betaOut[it] <- draws[[3]]
     accRate <- accRate + draws[[4]] ; rm(draws)
@@ -199,11 +215,33 @@ lsmdn <- function(
         betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]
         ) }
 
+    if( family=='gaussian' ){
+      draws <- wAccProb_gaussian(
+        X[[it]],c(n,p,T,1),Y,
+        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]
+        ) }
+
+    if( family=='poisson' ){
+      draws <- wAccProbPoisson(
+        X[[it]],c(n,p,T,1),Y,
+        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it]
+        ) }
+
     w[,it] <- draws[[1]] ; accRate[3] <- accRate[3] + draws[[2]] ; rm(draws)
 
     if( family=='nonNegNormal' ){
       g2[it] <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
       draws <- gammaAccProb(
+        X[[it]],c(n,p,T,1),Y, 
+        betaIn[it],betaOut[it],shapeG2,scaleG2, 
+        w[,it],g2[it-1], g2[it]
+        )
+      g2[it] <- draws[[1]] ; accRate[4] <- accRate[4] + draws[[2]] ; rm(draws)
+    }
+
+    if( family=='gaussian' ){
+      g2[it] <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
+      draws <- gammaAccProbGaussian(
         X[[it]],c(n,p,T,1),Y, 
         betaIn[it],betaOut[it],shapeG2,scaleG2, 
         w[,it],g2[it-1], g2[it]
