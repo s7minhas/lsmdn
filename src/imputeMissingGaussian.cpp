@@ -17,14 +17,15 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 
-arma::cube imputeMissingNetPoisson(
+arma::cube imputeMissingGaussian(
   arma::cube X, Rcpp::IntegerVector dims, Rcpp::IntegerVector MM, 
   arma::cube Y, int Ttt, 
   double BIN, double BOUT, arma::colvec ww, double g2
   ) {
 
   int ttt = Ttt-1;  
-  double dx=0, uu=0, Mean=0;
+  double dx=0, uu=0;
+  double Mean;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
   
@@ -36,20 +37,7 @@ arma::cube imputeMissingNetPoisson(
 				if(i != j) {
 					dx = arma::norm(X.slice(i).col(ttt)-X.slice(j).col(ttt),2);
 					Mean = BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i));
-					Y(i,j,ttt) = Rcpp::rnorm(1, Prob, sqrt(g2));
-  /*  if(std::find(MM.begin(),MM.end(),j) ==MM.end())
-{
-  Prob = BIN*(1-dx/ww(i))+BOUT*(1-dx/ww(j));
-  Prob = 1/(1+exp(-Prob));
-  uu= arma::randu();
-  if(uu<Prob)
-{
-  Y(j,i,ttt) = 1;
-}else{
-  Y(j,i,ttt) = 0;
-}
-}*/
-  
+					Y(i,j,ttt) = Rcpp::rnorm(1, Mean, sqrt(g2))[0];
 				}
 			}
 		}

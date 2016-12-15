@@ -17,7 +17,7 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 
-arma::cube imputeMissingNetPoisson(
+arma::cube imputeMissingBinomial(
   arma::cube X, Rcpp::IntegerVector dims, Rcpp::IntegerVector MM, 
   arma::cube Y, int Ttt, 
   double BIN, double BOUT, arma::colvec ww
@@ -36,26 +36,13 @@ arma::cube imputeMissingNetPoisson(
 				if(i != j) {
 					dx = arma::norm(X.slice(i).col(ttt)-X.slice(j).col(ttt),2);
 					Prob = BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i));
-					mean = 1/(1+exp(-Prob));
+					Prob = 1/(1+exp(-Prob));
 					uu= arma::randu();
 					if(uu<Prob) {
 						Y(i,j,ttt) = 1;
 					} else {
 						Y(i,j,ttt) = 0;
 					}
-  /*  if(std::find(MM.begin(),MM.end(),j) ==MM.end())
-{
-  Prob = BIN*(1-dx/ww(i))+BOUT*(1-dx/ww(j));
-  Prob = 1/(1+exp(-Prob));
-  uu= arma::randu();
-  if(uu<Prob)
-{
-  Y(j,i,ttt) = 1;
-}else{
-  Y(j,i,ttt) = 0;
-}
-}*/
-  
 				}
 			}
 		}

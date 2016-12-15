@@ -252,24 +252,21 @@ lsmdn <- function(
     # Step 4
     if(missData){
       for(t in 1:T){
-        if(family = 'binomial'){
+        if(family == 'binomial'){
         Y <- imputeMissingBinomial(
           X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
           BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it]
           )}
-        if(family = 'poisson'){
+        if(family == 'poisson'){
         Y <- imputeMissingPoisson(
           X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
           BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it]
           )}
-        if(family = 'gaussian'){
+        if(family == 'gaussian'){
         Y <- imputeMissingGaussian(
           X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
           BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it], g2 = g2[it]
           )}
-
-
-
       }
     }
 
