@@ -273,12 +273,12 @@ lsmdn <- function(
     # save results
     if(it > burnin){
       if(saveResults){
-      if( it %in% round(quantile(1:(N-burnin), probs=seq(0,1,savePoints))[-1] ) ){
+      if( it %in% round( quantile( (burnin+1):N, probs=seq(0,1,savePoints)) ) ){
         result <- list( Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
           shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
           shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
           xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate )
-        save( result , file=fileName ) ; rm(result)
+        save( result , file=fileName ) ; if(it!=N){ rm(result) }
       }
       }      
     } 
