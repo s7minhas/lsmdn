@@ -5,12 +5,12 @@ using namespace arma;
 using namespace Rcpp; 
 
 //' update weights and accprob for binomial data using log-likelihood approximation
-//' @param X data cube
-//' @param dims vector of dims
+//' @param X  an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time 
+//' @param dims vector of dimensions of X
 //' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
 //' @param BIN betaIn value
 //' @param BOUT betaOut value
-//' @param tuneW
+//' @param tuneW variance of the proposal distribution for w
 //' @param wwOld old vector of weights
 //' @param wwNew new vector of weights
 //' @param ELout array

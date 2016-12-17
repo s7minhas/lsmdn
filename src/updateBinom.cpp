@@ -5,28 +5,28 @@ using namespace arma;
 using namespace Rcpp; 
 
 //' update lat positions, beta params, and accrate for binomial data
-//' @param Xitm1 data cube
-//' @param dims vector of dims
-//' @param tunex
+//' @param Xitm1 an n x p x T array of the current latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time 
+//' @param dims vector of dimensions of Xitm1
+//' @param tunex Variance of the normal random walk proposal for the latent space
 //' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
 //' @param BIN betaIn value
 //' @param BOUT betaOut value
-//' @param tuneBIO
-//' @param ww vector of weights
-//' @param t2
-//' @param s2
-//' @param xiBin
-//' @param xiBout
-//' @param nuBin
-//' @param nuBout
-//' @param Cauchy
-//' @param rnormsVec vector
-//' @param rnormsBIO vector
+//' @param tuneBIO Variance of the normal random walk proposal for betaIn and betaOut
+//' @param ww vector of radius/weights
+//' @param t2 variance of initial latent positions
+//' @param s2 variance of change in latent positions
+//' @param xiBin mean of prior for betaIn
+//' @param xiBout mean of prior for betaOut
+//' @param nuBin variance of prior for betaIn
+//' @param nuBout variance of prior for betaOut
+//' @param Cauchy use a cauchy proposal or not
+//' @param rnormsVec Vector of noise for random walks for X
+//' @param rnormsBIO Vector of noise for random walks for betaIn/betaOut
 //' @return returns list of:
-//' \item{Xnew}{add desc}
-//' \item{BinNew}{add desc}
-//' \item{BoutNew}{add desc}
-//' \item{AccRate}{add desc}
+//' \item{Xnew}{New array of latent positions}
+//' \item{BinNew}{New values for $\beta_{IN}$}
+//' \item{BoutNew}{New values for $\beta_{OUT}}
+//' \item{AccRate}{Updated acceptance rate}
 //' @export
 // [[Rcpp::export]]
 

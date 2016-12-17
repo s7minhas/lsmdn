@@ -4,18 +4,18 @@
 using namespace arma; 
 using namespace Rcpp; 
 
-//' update t2 and s2
-//' @param X data cube
-//' @param dims vector of dims
+//' generate shape and scale parameters to update t2 and s2 for all types of data
+//' @param X  an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time 
+//' @param dims vector of dimensions of X
 //' @param thetaT shape parameter for t
 //' @param thetaS shape parameter for s
 //' @param phiT scale parameter for t
 //' @param phiS scale parameter for s
 //' @return returns list of:
-//' \item{shapeT}{add desc}
-//' \item{scaleT}{add desc}
-//' \item{shapeS}{add desc}
-//' \item{scaleS}{add desc}
+//' \item{shapeT}{Shape Parameter for $\tau^2$}
+//' \item{scaleT}{Scale Parameter for $\tau^2$}
+//' \item{shapeS}{Shape Parameter for $\sigma^2$}
+//' \item{scaleS}{Scale Parameter for $\sigma^2$}
 //' @export
 // [[Rcpp::export]]
 

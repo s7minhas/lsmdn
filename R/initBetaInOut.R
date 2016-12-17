@@ -4,11 +4,11 @@
 #' where the third dimension corresponds to different time periods.
 #' @param xLatPos Latent space position of actors
 #' @param p number of latent dimensions
-#' @param w weights
+#' @param w weights or radii
 #' @usage gmds( Y ) 
 #' @return returns list:
-#' \item{betaInInit}{Initial value for beta in}
-#' \item{betaOutInit}{Initial value for beta out}
+#' \item{betaInInit}{Initial value for $\beta_{IN}$}
+#' \item{betaOutInit}{Initial value for $\beta_{OUT}$}
 #' \item{xLatPos}{Scaled latent space}
 #' @export
 #' 

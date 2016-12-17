@@ -4,17 +4,18 @@
 using namespace arma; 
 using namespace Rcpp; 
 
-//' get predictions for yhat
-//' @param Ex matrix
-//' @param sig2 vector
-//' @param x1 matrix
-//' @param x2 matrix
-//' @param Bin betaIn vector
-//' @param Bout betaOut vector
-//' @param ww weights matrix
-//' @return yhat
+//' get get predicted values for Y with continuous data
+//' @param Ex matrix of expected positions for X at time T
+//' @param sig2 vector of values for sigma^2 from different iterations
+//' @param x1 matrix of values for the first dimension of X from different iterations
+//' @param x2 matrix of values for the second dimention of X from different iterations
+//' @param Bin  vector of values for betaIn from different iterations
+//' @param Bout  vector of values for betaOut from different iterations
+//' @param ww  matrix of weights/radii from different iterations
+//' @return Matrix with expected values of Y
 //' @export
 // [[Rcpp::export]]
+
 
 Rcpp::NumericMatrix predictionGaussian(
 	Rcpp::NumericMatrix Ex, Rcpp::NumericVector sig2, 

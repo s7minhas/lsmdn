@@ -4,28 +4,27 @@
 using namespace arma; 
 using namespace Rcpp; 
 
-//' update weights and accprob for non-negative normal data
-//' @param X data cube
-//' @param dims vector of dims
+//' update weights and accprob for binary data
+//' @param X  an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time 
+//' @param dims vector of dimensions of X
 //' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
 //' @param BIN betaIn value
 //' @param BOUT betaOut value
-//' @param tuneW
+//' @param tuneW variance of the proposal distribution for w
 //' @param wwOld old vector of weights
 //' @param wwNew new vector of weights
-//' @param g2
 //' @return returns list of:
-//' \item{wwNew}{add desc}
-//' \item{AccRate}{add desc}
+//' \item{wwNew}{New weights/radius}
+//' \item{AccRate}{Updated acceptance probability}
 //' @export
 // [[Rcpp::export]]
 
-List wAccProb_gaussian(
+List wAccProbBinom(
 	arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, 
 	double BIN, double BOUT, double tuneW,
-	arma::colvec wwOld, arma::colvec wwNew, double g2
+	arma::colvec wwOld, arma::colvec wwNew
 	) {
-  
+	
   double AccProb =0,dx=0, uu=0;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
@@ -42,10 +41,10 @@ List wAccProb_gaussian(
   if(i != j)
 {
   dx = arma::norm(X.slice(i).col(tt)-X.slice(j).col(tt),2);
-  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/wwNew(i)) + BOUT*(1 - dx/wwNew(j)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/wwOld(i)) + BOUT*(1 - dx/wwOld(j)) ),2)/g2 ;
-  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/wwNew(j)) + BOUT*(1 - dx/wwNew(i)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (BIN*( 1 - dx/wwOld(j)) + BOUT*(1 - dx/wwOld(i)) ),2)/g2  ;
+  AccProb += Y.slice(tt)(i,j)*dx*(BIN*(1/wwOld(j)-1/wwNew(j)) + 
+  BOUT*(1/wwOld(i)-1/wwNew(i))) +
+  log(1+exp(BIN*(1-dx/wwOld(j))+BOUT*(1-dx/wwOld(i)))) -
+  log(1+exp(BIN*(1-dx/wwNew(j))+BOUT*(1-dx/wwNew(i))));
 }
 }
 }

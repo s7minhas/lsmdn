@@ -4,17 +4,17 @@
 using namespace arma; 
 using namespace Rcpp; 
 
-//' Draw from inv gamma and adjust acceptance rate, for non-negative normal data
-//' @param X data cube
-//' @param dims vector of dims
+//' Draw from Metropolis Hasting acceptance probability for Gamma^2, for non-negative continuous data
+//' @param X  an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time 
+//' @param dims vector of dimensions of X
 //' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
 //' @param BIN betaIn value
 //' @param BOUT betaOut value
-//' @param alph
-//' @param bta
-//' @param ww vector of weights
-//' @param g2 current value
-//' @param g2new new value
+//' @param alph Shape parameter for Gamma^2 value
+//' @param bta Scale parameter for Gamma^2 value
+//' @param ww vector of weights/radius
+//' @param g2 current value of Gamma^2
+//' @param g2new proposed new value of Gamma^2
 //' @return returns list of starting values:
 //' \item{g2New}{new g2 value}
 //' \item{AccRate}{updated accRate}

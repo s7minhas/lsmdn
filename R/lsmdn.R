@@ -5,18 +5,18 @@
 #' @param p number of latent dimensions
 #' @param family type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'. 
 #' @param llApprox logical indicating whether or not to utilize log-likelihood 
-#' approximationg. Only available for binomial model types.
+#' approximation. Only available for binomial model types.
 #' @param missData logical indicating whether to impute missing data.
 #' @param N number of MCMC iterations.
 #' @param seed random seed
-#' @param burnin burnin
+#' @param burnin Number of iterations to discard as burn-in
 #' @param progressBar include progress bar to show mcmc status
-#' @param saveResults save results to rda
+#' @param saveResults save results as an rda file
 #' @param savePoints chain intervals to save at 
 #' @param fileName "lsmdn.rda" or wtv you want, make sure to specify a path as well
-#' @param tuneX tuneX
-#' @param tuneBIO tuneBIO
-#' @param kappa kappa
+#' @param tuneX variance of latent space proposal
+#' @param tuneBIO variance of proposals for betaIn and betaOut
+#' @param kappa variance of proposals for w
 #' @param startVals Fitted result from previous model run.
 #' @param s2Init starting value for s2
 #' @param t2Init starting value for t2
@@ -24,10 +24,10 @@
 #' @param xLatPos starting actor positions in latent space
 #' @param betaInInit starting value for betaIn
 #' @param betaOutInit starting value for betaOut
-#' @param nuIn starting value for nuIn
-#' @param nuOut starting value for nuOut
-#' @param xiIn starting value for xiIn
-#' @param xiOut starting value for xiOut
+#' @param nuIn prior mean of betaIn
+#' @param nuOut prior mean of betaOut
+#' @param xiIn prior variance of betaIn
+#' @param xiOut prior variance of betaOut
 #' @param shapeT2 shape parameter for t2
 #' @param scaleT2 scale parameter for t2
 #' @param shapeS2 shape parameter for s2
@@ -36,20 +36,20 @@
 #' @param scaleG2 shape parameter for g2
 #' @usage lsmdn( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6886) 
 #' @return returns list of starting values:
-#' \item{w}{weights}
-#' \item{X}{initial actor latent space positions calculated via GMDS}
-#' \item{betaIn}{add desc}
-#' \item{betaOut}{add desc}
-#' \item{nuIn}{add desc}
-#' \item{nuOut}{add desc}
-#' \item{xiIn}{add desc}
-#' \item{xiOut}{add desc}
-#' \item{t2}{add desc}
-#' \item{shapeT2}{add desc}
-#' \item{scaleT2}{add desc}
-#' \item{s2}{add desc}
-#' \item{shapeS2}{add desc}
-#' \item{scaleS2}{add desc}
+#' \item{w}{weights or radius for each actor}
+#' \item{X}{actor latent space positions}
+#' \item{betaIn}{relative value of popularity}
+#' \item{betaOut}{relative value of activity}
+#' \item{nuIn}{Prior mean for $\beta_{IN}$}
+#' \item{nuOut}{Prior mean for $\beta_{OUT}$}
+#' \item{xiIn}{Prior variance for $beta_{IN}$}
+#' \item{xiOut}{Prior varianerce for $beta_{OUT}$}
+#' \item{t2}{Variance for latent positions in initial time period}
+#' \item{shapeT2}{Shape parameter for prior distribution of $\tau^2$}
+#' \item{scaleT2}{Scale parameter for prior distribution of $\tau^2$}
+#' \item{s2}{Variance of movement in the latent space in subsequent periods}
+#' \item{shapeS2}{Shape parameter for prior distribution of $\sigma^2$}
+#' \item{scaleS2}{Scale parameter for prior distribution of $\sigma^2$}
 #' if llApprox=TRUE, also returns
 #' \item{dInMax}{add desc}
 #' \item{dOutMax}{add desc}

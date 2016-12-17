@@ -4,19 +4,20 @@
 using namespace arma; 
 using namespace Rcpp; 
 
-//' update weights and accprob for non-negative normal data
-//' @param X data cube
-//' @param dims vector of dims
+
+//' update weights and accprob for non-negative continuous normal data
+//' @param X  an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time 
+//' @param dims vector of dimensions of X
 //' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
 //' @param BIN betaIn value
 //' @param BOUT betaOut value
-//' @param tuneW
+//' @param tuneW variance of the proposal distribution for w
 //' @param wwOld old vector of weights
 //' @param wwNew new vector of weights
-//' @param g2
+//' @param g2 Variance of eta
 //' @return returns list of:
-//' \item{wwNew}{add desc}
-//' \item{AccRate}{add desc}
+//' \item{wwNew}{New weights/radius}
+//' \item{AccRate}{Updated acceptance probability}
 //' @export
 // [[Rcpp::export]]
 

@@ -4,7 +4,7 @@
 #' where the third dimension corresponds to different time periods.
 #' @param N number of MCMC iterations
 #' @usage initWeights( Y, N ) 
-#' @return returns n x N matrix of weights
+#' @return returns n x N matrix of weights or radii
 #' @export
 #' 
 

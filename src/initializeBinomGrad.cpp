@@ -4,14 +4,14 @@
 using namespace arma; 
 using namespace Rcpp; 
 
-//' initialize beta values for binomial data using gradient
-//' @param X data cube
-//' @param dims vector of dims
+//' initialize beta values for binomial data using a conjugate gradient method
+//' @param X n x p x T array of initial values for the latent space
+//' @param dims vector of dimentions for X
 //' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
-//' @param Xscale
+//' @param Xscale 1/n where n is the number of actors
 //' @param BIN betaIn value
 //' @param BOUT betaOut value
-//' @param ww vector of weights
+//' @param ww vector of radiuses/weights
 //' @export
 // [[Rcpp::export]]
 

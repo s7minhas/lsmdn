@@ -4,15 +4,15 @@
 using namespace arma; 
 using namespace Rcpp; 
 
-//' Impute missingness in Y
-//' @param X data cube
-//' @param dims vector of dims
-//' @param MM 
+//' Impute missing values in Y for binary data
+//' @param X  an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time 
+//' @param dims vector of dimensions of X
+//' @param MM n x n x T array with 1s where Y is missing
 //' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
-//' @param Ttt
+//' @param Ttt time period value
 //' @param BIN betaIn value
 //' @param BOUT betaOut value
-//' @param ww vector of weights
+//' @param ww vector of weights/radius
 //' @return Y with imputed values
 //' @export
 // [[Rcpp::export]]

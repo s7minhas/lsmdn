@@ -1,7 +1,7 @@
 #' Initial Latent Positions (GMDS, Sarkar and Moore, 2005)
 #' 
 #' @param Y an n x n x T array of relational matrices, where the third dimension corresponds to different time periods
-#' @param w weights
+#' @param w weights or radii
 #' @param p number of latent dimensions
 #' @param family type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'. 
 #' @usage gmds( Y ) 
