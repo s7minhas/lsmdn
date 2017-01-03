@@ -18,6 +18,7 @@
 #' @param tuneBIO variance of proposals for betaIn and betaOut
 #' @param kappa variance of proposals for w
 #' @param startVals Fitted result from previous model run.
+#' @param odens How much to thin the posterior.
 #' @param s2Init starting value for s2
 #' @param t2Init starting value for t2
 #' @param t2Init starting value for g2
@@ -67,7 +68,7 @@ lsmdn <- function(
   progressBar=TRUE,
   saveResults=TRUE, savePoints=.10, fileName='lsmdnModel.rda',
   tuneX=0.0075, tuneBIO=0.1, kappa=175000, 
-  startVals=NULL, 
+  startVals=NULL, odens = 25,
   s2Init=NULL, t2Init=NULL, g2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
   nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
   shapeS2=NULL, scaleS2=NULL, shapeG2=NULL, scaleG2=NULL
@@ -96,20 +97,34 @@ lsmdn <- function(
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
     t2<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
     s2<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
-    n0<-tmp$n0 ; accRate<-tmp$accRate ; g2 <- NULL ; shapeG2 <- NULL ; scaleG2 <- NULL
+     accRate<-tmp$accRate ; g2 <- NULL ; shapeG2 <- NULL ; scaleG2 <- NULL
 
-    if( family=='nonNegNormal' ){
+    if( family=='nonNegNormal' | family == "gaussian" ){
       g2<-tmp$g2 ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
 
     if( llApprox & family=='binomial' ){
       dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax ; elOut<-tmp$elOut ; elIn<-tmp$elIn
-      degree<-tmp$degree ; edgeList<-tmp$edgeList }
+      degree<-tmp$degree ; edgeList<-tmp$edgeList; n0<-tmp$n0 }
 
     rm(tmp) # cleanup
   }
 
   if( !is.null( startVals ) ){
-    print('need to add code for unpacking')
+    tmp = startVals
+    nIter = length(tmp$X)
+    Y<-tmp$Y ; w<-tmp$w[,nIter] ; X <-tmp$X[[nIter]] ; betaIn<-tmp$betaIn[[nIter]] ; betaOut<-tmp$betaOut[[nIter]] ; 
+    nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
+    t2<-tmp$t2[[nIter]] ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
+    s2<-tmp$s2[[nIter]] ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
+    n0<-tmp$n0 ; accRate<-tmp$accRate ; g2 <- NULL ; shapeG2 <- NULL ; scaleG2 <- NULL
+
+    if( family=='nonNegNormal' | family == "gaussian" ){
+      g2<-tmp$g2[[nIter]] ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
+
+    if( llApprox & family=='binomial' ){
+      dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax ; elOut<-tmp$elOut ; elIn<-tmp$elIn
+      degree<-tmp$degree ; edgeList<-tmp$edgeList; n0<-tmp$n0 }
+
   }
 
   # start mcmc
@@ -270,14 +285,15 @@ lsmdn <- function(
       }
     }
 
+    keeps = seq(burnin + 1, N, odens)
     # save results
     if(it > burnin){
       if(saveResults){
       if( it %in% round( quantile( (burnin+1):N, probs=seq(0,1,savePoints)) ) ){
-        result <- list( Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
+        result <- list( Y=ifelse(missData, Y[keeps], Y), X=X[keeps], p=p, betaIn=betaIn[keeps], betaOut=betaOut[keeps], t2=t2[keeps], s2=s2[keeps], g2=g2[keeps],
           shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
           shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-          xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate )
+          xiIn=xiIn, xiOut=xiOut, w=w[,keeps], accRate=accRate )
         save( result , file=fileName ) ; if(it!=N){ rm(result) }
       }
       }      
@@ -289,10 +305,10 @@ lsmdn <- function(
   })
 
   # output
-  result <- list(Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2, 
-    shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
-    shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-    xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate )
+        result <- list( Y=ifelse(missData, Y[keeps], Y), X=X[keeps], p=p, betaIn=betaIn[keeps], betaOut=betaOut[keeps], t2=t2[keeps], s2=s2[keeps], g2=g2[keeps],
+          shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
+          shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
+          xiIn=xiIn, xiOut=xiOut, w=w[,keeps], accRate=accRate )
   return( result )
 
 } # end function
