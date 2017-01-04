@@ -2,29 +2,31 @@
 % Please edit documentation in R/RcppExports.R
 \name{imputeMissingBinomial}
 \alias{imputeMissingBinomial}
-\title{Impute missingness in Y}
+\title{Impute missing values in Y for binary data}
 \usage{
 imputeMissingBinomial(X, dims, MM, Y, Ttt, BIN, BOUT, ww)
 }
 \arguments{
-\item{X}{data cube}
+\item{X}{an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
 
-\item{dims}{vector of dims}
+\item{dims}{vector of dimensions of X}
 
-\item{MM}{}
+\item{MM}{n x n x T array with 1s where Y is missing}
 
 \item{Y}{an n x n x T array of relational matrices, where the third dimension corresponds to different time periods}
+
+\item{Ttt}{time period value}
 
 \item{BIN}{betaIn value}
 
 \item{BOUT}{betaOut value}
 
-\item{ww}{vector of weights}
+\item{ww}{vector of weights/radius}
 }
 \value{
 Y with imputed values
 }
 \description{
-Impute missingness in Y
+Impute missing values in Y for binary data
 }
 

@@ -7,17 +7,19 @@
 initializeBinom(X, dims, Y, Xscale, BIN, BOUT, ww)
 }
 \arguments{
-\item{X}{data cube}
+\item{X}{n x p x T array of initial values for the latent space}
 
-\item{dims}{vector of dims}
+\item{dims}{vector of dimentions for X}
 
 \item{Y}{an n x n x T array of relational matrices, where the third dimension corresponds to different time periods}
+
+\item{Xscale}{1/n where n is the number of actors}
 
 \item{BIN}{betaIn value}
 
 \item{BOUT}{betaOut value}
 
-\item{ww}{vector of weights}
+\item{ww}{vector of radiuses/weights}
 }
 \description{
 initialize beta values for binomial data

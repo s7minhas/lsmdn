@@ -33,13 +33,13 @@ approximationg. Only available for binomial model types.}
 
 \item{betaOutInit}{starting value for betaOut}
 
-\item{nuIn}{starting value for nuIn}
+\item{nuIn}{prior mean for betaIn}
 
-\item{nuOut}{starting value for nuOut}
+\item{nuOut}{prior variance for betaOut}
 
-\item{xiIn}{starting value for xiIn}
+\item{xiIn}{prior variance for betaIn}
 
-\item{xiOut}{starting value for xiOut}
+\item{xiOut}{prior variance for betaOut}
 
 \item{shapeT2}{shape parameter for t2}
 
@@ -53,17 +53,18 @@ approximationg. Only available for binomial model types.}
 returns list of starting values:
 \item{w}{weights}
 \item{X}{initial actor latent space positions calculated via GMDS}
-\item{betaIn}{add desc}
-\item{betaOut}{add desc}
-\item{nuIn}{add desc}
-\item{nuOut}{add desc}
-\item{xiIn}{add desc}
-\item{t2}{add desc}
-\item{shapeT2}{add desc}
-\item{scaleT2}{add desc}
-\item{s2}{add desc}
-\item{shapeS2}{add desc}
-\item{scaleS2}{add desc}
+\item{betaIn}{Starting value for importance of popularity}
+\item{betaOut}{Relative value for importance of activity }
+\item{nuIn}{Prior mean for $\beta_{IN}$}
+\item{nuOut}{Prior mean for $\beta_{OUT}$}
+\item{xiIn}{Prior variance for $beta_{IN}$}
+\item{xiOut}{Prior varianerce for $beta_{OUT}$}
+\item{t2}{Variance for latent positions in initial time period}
+\item{shapeT2}{Shape parameter for prior distribution of $\tau^2$}
+\item{scaleT2}{Scale parameter for prior distribution of $\tau^2$}
+\item{s2}{Variance of movement in the latent space in subsequent periods}
+\item{shapeS2}{Shape parameter for prior distribution of $\sigma^2$}
+\item{scaleS2}{Scale parameter for prior distribution of $\sigma^2$}
 if llApprox=TRUE, also returns
 \item{dInMax}{add desc}
 \item{dOutMax}{add desc}

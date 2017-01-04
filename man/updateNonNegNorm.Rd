@@ -2,15 +2,17 @@
 % Please edit documentation in R/RcppExports.R
 \name{updateNonNegNorm}
 \alias{updateNonNegNorm}
-\title{update lat positions, beta params, and accrate for non-negative normal data}
+\title{update lat positions, beta params, and accrate for non-negative continuous data}
 \usage{
 updateNonNegNorm(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2,
   xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
 }
 \arguments{
-\item{Xitm1}{data cube}
+\item{Xitm1}{an n x p x T array of the current latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
 
-\item{dims}{vector of dims}
+\item{dims}{vector of dimensions of Xitm1}
+
+\item{tunex}{Variance of the normal random walk proposal for the latent space}
 
 \item{Y}{an n x n x T array of relational matrices, where the third dimension corresponds to different time periods}
 
@@ -18,20 +20,38 @@ updateNonNegNorm(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2,
 
 \item{BOUT}{betaOut value}
 
-\item{ww}{vector of weights}
+\item{tuneBIO}{Variance of the normal random walk proposal for betaIn and betaOut}
 
-\item{rnormsVec}{vector}
+\item{ww}{vector of radius/weights}
 
-\item{rnormsBIO}{vector}
+\item{t2}{variance of initial latent positions}
+
+\item{s2}{variance of change in latent positions}
+
+\item{g2}{variance of eta}
+
+\item{xiBin}{mean of prior for betaIn}
+
+\item{xiBout}{mean of prior for betaOut}
+
+\item{nuBin}{variance of prior for betaIn}
+
+\item{nuBout}{variance of prior for betaOut}
+
+\item{Cauchy}{use a cauchy proposal or not}
+
+\item{rnormsVec}{Vector of noise for random walks for X}
+
+\item{rnormsBIO}{Vector of noise for random walks for betaIn/betaOut}
 }
 \value{
 returns list of:
-\item{Xnew}{add desc}
-\item{BinNew}{add desc}
-\item{BoutNew}{add desc}
-\item{AccRate}{add desc}
+\item{Xnew}{New array of latent positions}
+\item{BinNew}{New values for $\beta_{IN}$}
+\item{BoutNew}{New values for $\beta_{OUT}}
+\item{AccRate}{Updated acceptance rate}
 }
 \description{
-update lat positions, beta params, and accrate for non-negative normal data
+update lat positions, beta params, and accrate for non-negative continuous data
 }
 

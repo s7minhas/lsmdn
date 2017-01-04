@@ -2,14 +2,14 @@
 % Please edit documentation in R/RcppExports.R
 \name{t2s2Parms}
 \alias{t2s2Parms}
-\title{update t2 and s2}
+\title{generate shape and scale parameters to update t2 and s2 for all types of data}
 \usage{
 t2s2Parms(X, dims, thetaT, thetaS, phiT, phiS)
 }
 \arguments{
-\item{X}{data cube}
+\item{X}{an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
 
-\item{dims}{vector of dims}
+\item{dims}{vector of dimensions of X}
 
 \item{thetaT}{shape parameter for t}
 
@@ -21,12 +21,12 @@ t2s2Parms(X, dims, thetaT, thetaS, phiT, phiS)
 }
 \value{
 returns list of:
-\item{shapeT}{add desc}
-\item{scaleT}{add desc}
-\item{shapeS}{add desc}
-\item{scaleS}{add desc}
+\item{shapeT}{Shape Parameter for $\tau^2$}
+\item{scaleT}{Scale Parameter for $\tau^2$}
+\item{shapeS}{Shape Parameter for $\sigma^2$}
+\item{scaleS}{Scale Parameter for $\sigma^2$}
 }
 \description{
-update t2 and s2
+generate shape and scale parameters to update t2 and s2 for all types of data
 }
 

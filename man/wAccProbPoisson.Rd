@@ -2,14 +2,14 @@
 % Please edit documentation in R/RcppExports.R
 \name{wAccProbPoisson}
 \alias{wAccProbPoisson}
-\title{update weights and accprob for binomial data}
+\title{update weights and accprob for count data}
 \usage{
 wAccProbPoisson(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew)
 }
 \arguments{
-\item{X}{data cube}
+\item{X}{an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
 
-\item{dims}{vector of dims}
+\item{dims}{vector of dimensions of X}
 
 \item{Y}{an n x n x T array of relational matrices, where the third dimension corresponds to different time periods}
 
@@ -17,16 +17,18 @@ wAccProbPoisson(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew)
 
 \item{BOUT}{betaOut value}
 
+\item{tuneW}{variance of the proposal distribution for w}
+
 \item{wwOld}{old vector of weights}
 
 \item{wwNew}{new vector of weights}
 }
 \value{
 returns list of:
-\item{wwNew}{add desc}
-\item{AccRate}{add desc}
+\item{wwNew}{New weights/radius}
+\item{AccRate}{Updated acceptance probability}
 }
 \description{
-update weights and accprob for binomial data
+update weights and accprob for count data
 }
 

@@ -360,9 +360,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// wAccProb_gaussian
-List wAccProb_gaussian(arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double BIN, double BOUT, double tuneW, arma::colvec wwOld, arma::colvec wwNew, double g2);
-RcppExport SEXP lsmdn_wAccProb_gaussian(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneWSEXP, SEXP wwOldSEXP, SEXP wwNewSEXP, SEXP g2SEXP) {
+// wAccProb_nnn
+List wAccProb_nnn(arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double BIN, double BOUT, double tuneW, arma::colvec wwOld, arma::colvec wwNew, double g2);
+RcppExport SEXP lsmdn_wAccProb_nnn(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneWSEXP, SEXP wwOldSEXP, SEXP wwNewSEXP, SEXP g2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -375,7 +375,44 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::colvec >::type wwOld(wwOldSEXP);
     Rcpp::traits::input_parameter< arma::colvec >::type wwNew(wwNewSEXP);
     Rcpp::traits::input_parameter< double >::type g2(g2SEXP);
-    rcpp_result_gen = Rcpp::wrap(wAccProb_gaussian(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2));
+    rcpp_result_gen = Rcpp::wrap(wAccProb_nnn(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// wAccProbBinom
+List wAccProbBinom(arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double BIN, double BOUT, double tuneW, arma::colvec wwOld, arma::colvec wwNew);
+RcppExport SEXP lsmdn_wAccProbBinom(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneWSEXP, SEXP wwOldSEXP, SEXP wwNewSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
+    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
+    Rcpp::traits::input_parameter< double >::type tuneW(tuneWSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type wwOld(wwOldSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type wwNew(wwNewSEXP);
+    rcpp_result_gen = Rcpp::wrap(wAccProbBinom(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew));
+    return rcpp_result_gen;
+END_RCPP
+}
+// wAccProbGaussian
+List wAccProbGaussian(arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double BIN, double BOUT, double tuneW, arma::colvec wwOld, arma::colvec wwNew, double g2);
+RcppExport SEXP lsmdn_wAccProbGaussian(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneWSEXP, SEXP wwOldSEXP, SEXP wwNewSEXP, SEXP g2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
+    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
+    Rcpp::traits::input_parameter< double >::type tuneW(tuneWSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type wwOld(wwOldSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type wwNew(wwNewSEXP);
+    Rcpp::traits::input_parameter< double >::type g2(g2SEXP);
+    rcpp_result_gen = Rcpp::wrap(wAccProbGaussian(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -398,62 +435,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::IntegerMatrix >::type subseq(subseqSEXP);
     Rcpp::traits::input_parameter< arma::cube >::type degr(degrSEXP);
     rcpp_result_gen = Rcpp::wrap(wAccProb_llApprox(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, ELout, ELin, subseq, degr));
-    return rcpp_result_gen;
-END_RCPP
-}
-// wAccProb_nnn
-List wAccProb_nnn(arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double BIN, double BOUT, double tuneW, arma::colvec wwOld, arma::colvec wwNew, double g2);
-RcppExport SEXP lsmdn_wAccProb_nnn(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneWSEXP, SEXP wwOldSEXP, SEXP wwNewSEXP, SEXP g2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
-    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneW(tuneWSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type wwOld(wwOldSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type wwNew(wwNewSEXP);
-    Rcpp::traits::input_parameter< double >::type g2(g2SEXP);
-    rcpp_result_gen = Rcpp::wrap(wAccProb_nnn(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2));
-    return rcpp_result_gen;
-END_RCPP
-}
-// wAccProb
-List wAccProb(arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double BIN, double BOUT, double tuneW, arma::colvec wwOld, arma::colvec wwNew);
-RcppExport SEXP lsmdn_wAccProb(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneWSEXP, SEXP wwOldSEXP, SEXP wwNewSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
-    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneW(tuneWSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type wwOld(wwOldSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type wwNew(wwNewSEXP);
-    rcpp_result_gen = Rcpp::wrap(wAccProb(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew));
-    return rcpp_result_gen;
-END_RCPP
-}
-// wAccProbGaussian
-List wAccProbGaussian(arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, double BIN, double BOUT, double tuneW, arma::colvec wwOld, arma::colvec wwNew, double g2);
-RcppExport SEXP lsmdn_wAccProbGaussian(SEXP XSEXP, SEXP dimsSEXP, SEXP YSEXP, SEXP BINSEXP, SEXP BOUTSEXP, SEXP tuneWSEXP, SEXP wwOldSEXP, SEXP wwNewSEXP, SEXP g2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::cube >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type dims(dimsSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< double >::type BIN(BINSEXP);
-    Rcpp::traits::input_parameter< double >::type BOUT(BOUTSEXP);
-    Rcpp::traits::input_parameter< double >::type tuneW(tuneWSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type wwOld(wwOldSEXP);
-    Rcpp::traits::input_parameter< arma::colvec >::type wwNew(wwNewSEXP);
-    Rcpp::traits::input_parameter< double >::type g2(g2SEXP);
-    rcpp_result_gen = Rcpp::wrap(wAccProbGaussian(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2));
     return rcpp_result_gen;
 END_RCPP
 }

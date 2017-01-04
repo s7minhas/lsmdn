@@ -17,7 +17,7 @@ where the third dimension corresponds to different time periods.}
 \item{family}{type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'.}
 
 \item{llApprox}{logical indicating whether or not to utilize log-likelihood 
-approximationg. Only available for binomial model types.}
+approximation. Only available for binomial model types.}
 
 \item{missData}{logical indicating whether to impute missing data.}
 
@@ -25,23 +25,25 @@ approximationg. Only available for binomial model types.}
 
 \item{seed}{random seed}
 
-\item{burnin}{burnin}
+\item{burnin}{Number of iterations to discard as burn-in}
 
 \item{progressBar}{include progress bar to show mcmc status}
 
-\item{saveResults}{save results to rda}
+\item{saveResults}{save results as an rda file}
 
 \item{savePoints}{chain intervals to save at}
 
 \item{fileName}{"lsmdn.rda" or wtv you want, make sure to specify a path as well}
 
-\item{tuneX}{tuneX}
+\item{tuneX}{variance of latent space proposal}
 
-\item{tuneBIO}{tuneBIO}
+\item{tuneBIO}{variance of proposals for betaIn and betaOut}
 
-\item{kappa}{kappa}
+\item{kappa}{variance of proposals for w}
 
 \item{startVals}{Fitted result from previous model run.}
+
+\item{odens}{How much to thin the posterior.}
 
 \item{s2Init}{starting value for s2}
 
@@ -53,13 +55,13 @@ approximationg. Only available for binomial model types.}
 
 \item{betaOutInit}{starting value for betaOut}
 
-\item{nuIn}{starting value for nuIn}
+\item{nuIn}{prior mean of betaIn}
 
-\item{nuOut}{starting value for nuOut}
+\item{nuOut}{prior mean of betaOut}
 
-\item{xiIn}{starting value for xiIn}
+\item{xiIn}{prior variance of betaIn}
 
-\item{xiOut}{starting value for xiOut}
+\item{xiOut}{prior variance of betaOut}
 
 \item{shapeT2}{shape parameter for t2}
 
@@ -77,20 +79,20 @@ approximationg. Only available for binomial model types.}
 }
 \value{
 returns list of starting values:
-\item{w}{weights}
-\item{X}{initial actor latent space positions calculated via GMDS}
-\item{betaIn}{add desc}
-\item{betaOut}{add desc}
-\item{nuIn}{add desc}
-\item{nuOut}{add desc}
-\item{xiIn}{add desc}
-\item{xiOut}{add desc}
-\item{t2}{add desc}
-\item{shapeT2}{add desc}
-\item{scaleT2}{add desc}
-\item{s2}{add desc}
-\item{shapeS2}{add desc}
-\item{scaleS2}{add desc}
+\item{w}{weights or radius for each actor}
+\item{X}{actor latent space positions}
+\item{betaIn}{relative value of popularity}
+\item{betaOut}{relative value of activity}
+\item{nuIn}{Prior mean for $\beta_{IN}$}
+\item{nuOut}{Prior mean for $\beta_{OUT}$}
+\item{xiIn}{Prior variance for $beta_{IN}$}
+\item{xiOut}{Prior varianerce for $beta_{OUT}$}
+\item{t2}{Variance for latent positions in initial time period}
+\item{shapeT2}{Shape parameter for prior distribution of $\tau^2$}
+\item{scaleT2}{Scale parameter for prior distribution of $\tau^2$}
+\item{s2}{Variance of movement in the latent space in subsequent periods}
+\item{shapeS2}{Shape parameter for prior distribution of $\sigma^2$}
+\item{scaleS2}{Scale parameter for prior distribution of $\sigma^2$}
 if llApprox=TRUE, also returns
 \item{dInMax}{add desc}
 \item{dOutMax}{add desc}

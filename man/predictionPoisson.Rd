@@ -2,29 +2,29 @@
 % Please edit documentation in R/RcppExports.R
 \name{predictionPoisson}
 \alias{predictionPoisson}
-\title{get predictions for yhat}
+\title{get get predicted values for Y with count data}
 \usage{
 predictionPoisson(Ex, sig2, x1, x2, Bin, Bout, ww)
 }
 \arguments{
-\item{Ex}{matrix}
+\item{Ex}{matrix of expected positions for X at time T}
 
-\item{sig2}{vector}
+\item{sig2}{vector of values for sigma^2 from different iterations}
 
-\item{x1}{matrix}
+\item{x1}{matrix of values for the first dimension of X from different iterations}
 
-\item{x2}{matrix}
+\item{x2}{matrix of values for the second dimention of X from different iterations}
 
-\item{Bin}{betaIn vector}
+\item{Bin}{vector of values for betaIn from different iterations}
 
-\item{Bout}{betaOut vector}
+\item{Bout}{vector of values for betaOut from different iterations}
 
-\item{ww}{weights matrix}
+\item{ww}{matrix of weights/radii from different iterations}
 }
 \value{
-yhat
+Matrix with expected values of Y
 }
 \description{
-get predictions for yhat
+get get predicted values for Y with count data
 }
 

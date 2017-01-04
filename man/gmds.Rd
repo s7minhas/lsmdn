@@ -9,7 +9,7 @@ gmds( Y )
 \arguments{
 \item{Y}{an n x n x T array of relational matrices, where the third dimension corresponds to different time periods}
 
-\item{w}{weights}
+\item{w}{weights or radii}
 
 \item{p}{number of latent dimensions}
 

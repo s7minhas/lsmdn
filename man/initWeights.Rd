@@ -13,7 +13,7 @@ where the third dimension corresponds to different time periods.}
 \item{N}{number of MCMC iterations}
 }
 \value{
-returns n x N matrix of weights
+returns n x N matrix of weights or radii
 }
 \description{
 Initial weights

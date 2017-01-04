@@ -2,14 +2,14 @@
 % Please edit documentation in R/RcppExports.R
 \name{gammaAccProb}
 \alias{gammaAccProb}
-\title{Draw from inv gamma and adjust acceptance rate, for non-negative normal data}
+\title{Draw from Metropolis Hasting acceptance probability for Gamma^2, for non-negative continuous data}
 \usage{
 gammaAccProb(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new)
 }
 \arguments{
-\item{X}{data cube}
+\item{X}{an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
 
-\item{dims}{vector of dims}
+\item{dims}{vector of dimensions of X}
 
 \item{Y}{an n x n x T array of relational matrices, where the third dimension corresponds to different time periods}
 
@@ -17,11 +17,15 @@ gammaAccProb(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new)
 
 \item{BOUT}{betaOut value}
 
-\item{ww}{vector of weights}
+\item{alph}{Shape parameter for Gamma^2 value}
 
-\item{g2}{current value}
+\item{bta}{Scale parameter for Gamma^2 value}
 
-\item{g2new}{new value}
+\item{ww}{vector of weights/radius}
+
+\item{g2}{current value of Gamma^2}
+
+\item{g2new}{proposed new value of Gamma^2}
 }
 \value{
 returns list of starting values:
@@ -29,6 +33,6 @@ returns list of starting values:
 \item{AccRate}{updated accRate}
 }
 \description{
-Draw from inv gamma and adjust acceptance rate, for non-negative normal data
+Draw from Metropolis Hasting acceptance probability for Gamma^2, for non-negative continuous data
 }
 
