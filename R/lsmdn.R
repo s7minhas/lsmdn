@@ -112,6 +112,7 @@ lsmdn <- function(
   if( !is.null( startVals ) ){
     tmp = startVals
     nIter = length(tmp$X)
+    w = matrix(0,n,N)
     Y<-tmp$Y ; w<-tmp$w[,nIter] ; X <-tmp$X[[nIter]] ; betaIn<-tmp$betaIn[[nIter]] ; betaOut<-tmp$betaOut[[nIter]] ; 
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
     t2<-tmp$t2[[nIter]] ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
