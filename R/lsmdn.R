@@ -113,14 +113,14 @@ lsmdn <- function(
     tmp = startVals
     nIter = length(tmp$X)
     w = matrix(0,n,N)
-    Y<-tmp$Y ; w<-tmp$w[,nIter] ; X <-tmp$X[[nIter]] ; betaIn<-tmp$betaIn[[nIter]] ; betaOut<-tmp$betaOut[[nIter]] ; 
+    Y<-tmp$Y ; w[,1]<-tmp$w[,nIter] ; X <-list(tmp$X[[nIter]]) ; betaIn<-c(tmp$betaIn[nIter]) ; betaOut<-tmp$betaOut[nIter] ; 
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
-    t2<-tmp$t2[[nIter]] ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
-    s2<-tmp$s2[[nIter]] ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
+    t2<-tmp$t2[nIter] ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
+    s2<-tmp$s2[nIter] ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
     n0<-tmp$n0 ; accRate<-tmp$accRate ; g2 <- NULL ; shapeG2 <- NULL ; scaleG2 <- NULL
 
     if( family=='nonNegNormal' | family == "gaussian" ){
-      g2<-tmp$g2[[nIter]] ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
+      g2<-tmp$g2[nIter] ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
 
     if( llApprox & family=='binomial' ){
       dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax ; elOut<-tmp$elOut ; elIn<-tmp$elIn
