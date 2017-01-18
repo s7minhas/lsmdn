@@ -111,7 +111,11 @@ lsmdn <- function(
 
   if( !is.null( startVals ) ){
     tmp = startVals
-    nIter = length(tmp$X)
+    if( is.null(tmp$X[[length(tmp$X)]]) ){
+      nIter <- min( which( unlist( lapply( tmp$X, is.null ) ) ) ) - 1
+    } else {
+      nIter <- length(tmp$X)
+    }
     w = matrix(0,n,N)
     Y<-tmp$Y ; w[,1]<-tmp$w[,nIter] ; X <-list(tmp$X[[nIter]]) ; betaIn<-c(tmp$betaIn[nIter]) ; betaOut<-tmp$betaOut[nIter] ; 
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
