@@ -116,8 +116,9 @@ lsmdn <- function(
     } else {
       nIter <- length(tmp$X)
     }
+    if(missData){ Y<-tmp$Y }
     w = matrix(0,n,N)
-    Y<-tmp$Y ; w[,1]<-tmp$w[,nIter] ; X <-list(tmp$X[[nIter]]) ; betaIn<-c(tmp$betaIn[nIter]) ; betaOut<-tmp$betaOut[nIter] ; 
+    w[,1]<-tmp$w[,nIter] ; X <-list(tmp$X[[nIter]]) ; betaIn<-c(tmp$betaIn[nIter]) ; betaOut<-tmp$betaOut[nIter] ; 
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
     t2<-tmp$t2[nIter] ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
     s2<-tmp$s2[nIter] ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
@@ -295,7 +296,8 @@ lsmdn <- function(
     if(it > burnin){
       if(saveResults){
       if( it %in% round( quantile( (burnin+1):N, probs=seq(0,1,savePoints)) ) ){
-        result <- list( Y=ifelse(missData, Y[keeps], Y), X=X[keeps], p=p, betaIn=betaIn[keeps], betaOut=betaOut[keeps], t2=t2[keeps], s2=s2[keeps], g2=g2[keeps],
+        result <- list( Y=Y, X=X[keeps], p=p, betaIn=betaIn[keeps], betaOut=betaOut[keeps], 
+          t2=t2[keeps], s2=s2[keeps], g2=g2[keeps],
           shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
           shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
           xiIn=xiIn, xiOut=xiOut, w=w[,keeps], accRate=accRate )
@@ -310,10 +312,11 @@ lsmdn <- function(
   })
 
   # output
-        result <- list( Y=ifelse(missData, Y[keeps], Y), X=X[keeps], p=p, betaIn=betaIn[keeps], betaOut=betaOut[keeps], t2=t2[keeps], s2=s2[keeps], g2=g2[keeps],
-          shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
-          shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-          xiIn=xiIn, xiOut=xiOut, w=w[,keeps], accRate=accRate )
+  result <- list( Y=Y, X=X[keeps], p=p, betaIn=betaIn[keeps], betaOut=betaOut[keeps], 
+    t2=t2[keeps], s2=s2[keeps], g2=g2[keeps],
+    shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
+    shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
+    xiIn=xiIn, xiOut=xiOut, w=w[,keeps], accRate=accRate )
   return( result )
 
 } # end function
