@@ -10,6 +10,7 @@
 #' @param N number of MCMC iterations.
 #' @param seed random seed
 #' @param burnin Number of iterations to discard as burn-in
+#' @param odens thinning parameter
 #' @param progressBar include progress bar to show mcmc status
 #' @param saveResults save results as an rda file
 #' @param savePoints chain intervals to save at 
@@ -112,7 +113,7 @@ lsmdn <- function(
   if( !is.null( startVals ) ){
     tmp = startVals
     if( is.null(tmp$X[[length(tmp$X)]]) ){
-      nIter <- min( which( unlist( lapply( tmp$X, is.null ) ) ) ) - 1
+      nIter <- min( which( unlist( lapply( tmp$X, is.null ) ) ) ) - 2
     } else {
       nIter <- length(tmp$X)
     }
