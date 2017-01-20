@@ -83,6 +83,7 @@ lsmdn <- function(
   set.seed(seed)  
   n <- dim(Y)[1]
   T <- dim(Y)[3]    
+  burnin <- ifelse(burnin<2,2,burnin)
 
   # get init values if no fitted values provided
   if( is.null( startVals ) ){

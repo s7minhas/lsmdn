@@ -200,7 +200,7 @@ lsmdn <- function(
     accRate <- accRate + draws[[4]] 
     if((it - burnin) %% odens == 0){
        ind = (it - burnin)/odens + 1
-       X[[ind]] <- X0] ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0
+       X[[ind]] <- X0 ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0
        }
     rm(draws)
     #
