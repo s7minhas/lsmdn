@@ -18,15 +18,6 @@ lsmdnSv <- function(
   set.seed(seed)  
   n <- dim(Y)[1]
   T <- dim(Y)[3]    
-  keep = length(seq(burnin + 1, N, odens)) + 1
-  w = matrix(0,keep,N)
-  X = list()
-  t2 = numeric(keep)
-  s2 = numeric(keep)
-      if( family=='nonNegNormal' | family == "gaussian" ){
-  g2 = numeric(keep)}
-  betaIn = numeric(keep)
-  betaOut = numeric(keep)
   # get init values if no fitted values provided
   if( is.null( startVals ) ){
 
@@ -37,7 +28,7 @@ lsmdnSv <- function(
       )
 
     # unpack
-    Y<-tmp$Y ; w0<-tmp$w[,1] ; X0 <-tmp$X ; betaIn0<-tmp$betaIn ; betaOut0<-tmp$betaOut ; 
+    Y0<-tmp$Y[[1]] ; w0<-tmp$w[,1] ; X0 <-tmp$X ; betaIn0<-tmp$betaIn ; betaOut0<-tmp$betaOut ; 
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
     t20<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
     s20<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
@@ -56,7 +47,7 @@ lsmdnSv <- function(
   if( !is.null( startVals ) ){
     tmp = startVals
     nIter = length(tmp$X)
-    Y<-tmp$Y ; w0<-tmp$w[,nIter] ; X0 <-tmp$X[[nIter]] ; betaIn0<-tmp$betaIn[nIter] ; betaOut0<-tmp$betaOut[nIter] ; 
+    Y0<-tmp$Y[[nIter]] ; w0<-tmp$w[,nIter] ; X0 <-tmp$X[[nIter]] ; betaIn0<-tmp$betaIn[nIter] ; betaOut0<-tmp$betaOut[nIter] ; 
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
     t20<-tmp$t2[nIter] ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
     s20<-tmp$s2[nIter] ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
@@ -70,6 +61,16 @@ lsmdnSv <- function(
       degree<-tmp$degree ; edgeList<-tmp$edgeList; n0<-tmp$n0 }
 
   }
+  keep = length(seq(burnin + 1, N, odens)) + 1
+  w = matrix(0,keep,N)
+  X = list()
+  Y = list()
+  t2 = numeric(keep)
+  s2 = numeric(keep)
+      if( family=='nonNegNormal' | family == "gaussian" ){
+  g2 = numeric(keep)}
+  betaIn = numeric(keep)
+  betaOut = numeric(keep)
 
   # start mcmc
   pb <- txtProgressBar(min=2,max=N,style=3)
@@ -93,7 +94,7 @@ lsmdnSv <- function(
         } }
 
       draws <- updateBinomLogLikeApprox(
-        X0,c(n,p,T,dInMax,dOutMax),tuneX,Y, 
+        X0,c(n,p,T,dInMax,dOutMax),tuneX,Y0, 
         betaIn0,betaOut0,tuneBIO,w0,
         t20,s20,xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO,elOut,elIn,subseq,degree
@@ -101,7 +102,7 @@ lsmdnSv <- function(
 
     if( !llApprox & family=='binomial' ){
       draws <- updateBinom(
-        X0,c(n,p,T,1),tuneX,Y, 
+        X0,c(n,p,T,1),tuneX,Y0, 
         betaIn0,betaOut0,tuneBIO,w0,
         t20,s20,xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO
@@ -109,7 +110,7 @@ lsmdnSv <- function(
 
     if( family=='nonNegNormal' ){
       draws <- updateNonNegNorm(
-        X0,c(n,p,T,1),tuneX,Y, 
+        X0,c(n,p,T,1),tuneX,Y0, 
         betaIn0,betaOut0,tuneBIO,w0,
         t20,s20,g20,xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO
@@ -117,7 +118,7 @@ lsmdnSv <- function(
 
     if( family=='gaussian' ){
       draws <- updateGaussian(
-        X0,c(n,p,T,1),tuneX,Y, 
+        X0,c(n,p,T,1),tuneX,Y0, 
         betaIn0,betaOut0,tuneBIO,w0,
         t20,s20,g20,xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO
@@ -125,7 +126,7 @@ lsmdnSv <- function(
 
     if( family=='poisson' ){
       draws <- updatePoisson(
-        X0,c(n,p,T,1),tuneX,Y, 
+        X0,c(n,p,T,1),tuneX,Y0, 
         betaIn0,betaOut0,tuneBIO,w0,
         t20,s20,xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO
@@ -134,22 +135,11 @@ lsmdnSv <- function(
     #
     X0 <- draws[[1]] ; betaIn0 <- draws[[2]] ; betaOut0 <- draws[[3]]
     accRate <- accRate + draws[[4]] 
-    if((it - burnin) %% odens == 0){
-       ind = (it - burnin)/odens + 1
-       X[[ind]] <- X0 ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0
-       }
     rm(draws)
     #
     if(it==burnin){
       xIter0 <- t(X[[1]][,1,])
       for(t in 2:T) xIter0 <- rbind(xIter0,t(X[[1]][,t,])) }
-
-    if(it>burnin & ((it - burnin) %% odens == 0)){
-      ind = (it - burnin)/odens + 1
-      xIterCentered <- t(X[[ind]][,1,])
-      for(t in 2:T){ xIterCentered <- rbind(xIterCentered,t(X[[ind]][,t,])) }
-      procr <- vegan::procrustes(X=xIter0,Y=xIterCentered,scale=FALSE)$Yrot
-      for(t in 1:T){ X[[ind]][,t,] <- t(procr[((t-1)*n+1):(t*n),]) } }
 
     if(it< (length(seq(burnin + 1, N, odens)) * odens + burnin) & it>burnin & ((it - burnin) %% odens == 0)){ 
       ind = (it - burnin)/odens + 1
@@ -159,100 +149,97 @@ lsmdnSv <- function(
     draws <- t2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
     t20 <- MCMCpack::rinvgamma(1,shape=draws[[1]],scale=draws[[2]])
     s20 <- MCMCpack::rinvgamma(1,shape=draws[[3]],scale=draws[[4]]) ; rm(draws)
-    if((it - burnin) %% odens == 0){
-       ind = (it - burnin)/odens + 1
-       t2[ind] <- t20 ; s2[ind] <- s20
-       }
 
 
     # Step 3
     wProp <- MCMCpack::rdirichlet(1,alpha=kappa*w0)
     if(llApprox & family=='binomial'){
       draws <- wAccProb_llApprox(
-        X0,c(n,p,T,dInMax,dOutMax),Y,
+        X0,c(n,p,T,dInMax,dOutMax),Y0,
         betaIn0, betaOut0, kappa, w0, wProp,
         elOut, elIn, subseq, degree
         ) }
 
     if( !llApprox & family=='binomial' ){
       draws <- wAccProb(
-        X0,c(n,p,T,1),Y,
+        X0,c(n,p,T,1),Y0,
         betaIn0, betaOut0, kappa, w0, wProp
         ) }
 
     if( family=='nonNegNormal' ){
       draws <- wAccProbNonNegNormal(
-        X0,c(n,p,T,1),Y,
+        X0,c(n,p,T,1),Y0,
         betaIn0, betaOut0, kappa, w0, wProp, g20
         ) }
 
     if( family=='gaussian' ){
       draws <- wAccProbGaussian(
-        X0,c(n,p,T,1),Y,
+        X0,c(n,p,T,1),Y0,
         betaIn0, betaOut0, kappa, w0, wProp, g20
         ) }
 
     if( family=='poisson' ){
       draws <- wAccProbPoisson(
-        X0,c(n,p,T,1),Y,
+        X0,c(n,p,T,1),Y0,
         betaIn0, betaOut0, kappa, w0, wProp
         ) }
 
     w0 <- draws[[1]] ; accRate[3] <- accRate[3] + draws[[2]] ; rm(draws)
-    if((it - burnin) %% odens == 0){
-       ind = (it - burnin)/odens + 1
-       w[,ind] <- w0
-       }
 
     if( family=='nonNegNormal' ){
       g2Prop <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
       draws <- gammaAccProb(
-        X0,c(n,p,T,1),Y, 
+        X0,c(n,p,T,1),Y0, 
         betaIn0,betaOut0,shapeG2,scaleG2, 
         w0,g20, g2Prop
         )
       g20 <- draws[[1]] ; accRate[4] <- accRate[4] + draws[[2]] ; rm(draws)
-        if((it - burnin) %% odens == 0){
-       ind = (it - burnin)/odens + 1
-       g2[ind] <- g20
-       }
-
     }
 
     if( family=='gaussian' ){
       g2Prop <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
       draws <- gammaAccProbGaussian(
-        X0,c(n,p,T,1),Y, 
+        X0,c(n,p,T,1),Y0, 
         betaIn0,betaOut0,shapeG2,scaleG2, 
         w0,g20, g2Prop
         )
       g20 <- draws[[1]] ; accRate[4] <- accRate[4] + draws[[2]] ; rm(draws)
-        if((it - burnin) %% odens == 0){
-       ind = (it - burnin)/odens + 1
-       g2[ind] <- g20
-       }
     }
 
     # Step 4
     if(missData){
       for(t in 1:T){
         if(family == 'binomial'){
-        Y <- imputeMissingBinomial(
-          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
+        Y0 <- imputeMissingBinomial(
+          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y0, Ttt=t,
           BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it]
           )}
         if(family == 'poisson'){
-        Y <- imputeMissingPoisson(
-          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
+        Y0 <- imputeMissingPoisson(
+          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y0, Ttt=t,
           BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it]
           )}
         if(family == 'gaussian'){
-        Y <- imputeMissingGaussian(
-          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
+        Y0 <- imputeMissingGaussian(
+          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y0, Ttt=t,
           BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it], g2 = g2[it]
           )}
       }
     }
+    if(it>burnin & ((it - burnin) %% odens == 0)){
+      ind = (it - burnin)/odens + 1
+      xIterCentered <- t(X[[ind]][,1,])
+      for(t in 2:T){ xIterCentered <- rbind(xIterCentered,t(X[[ind]][,t,])) }
+      procr <- vegan::procrustes(X=xIter0,Y=xIterCentered,scale=FALSE)$Yrot
+      for(t in 1:T){ X[[ind]][,t,] <- t(procr[((t-1)*n+1):(t*n),]) } }
+
+
+
+    if((it - burnin) %% odens == 0){
+       ind = (it - burnin)/odens + 1
+       X[[ind]] <- X0 ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0; t2[ind] = t20; s2[ind] = s20; Y[ind] = Y0; w[,ind] = w0 
+       if(family %in% c("gaussian", "nonNegNormal")){g2[ind] = g20}
+       }
 
     # save results
     if(it > burnin){
@@ -266,7 +253,6 @@ lsmdnSv <- function(
       }
       }      
     } 
-
   if(progressBar){ setTxtProgressBar(pb,it) }
   } # end mcmc
   close(pb)

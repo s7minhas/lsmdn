@@ -70,6 +70,7 @@ getStartingValues <- function(
 		missing <- lapply( 1:T, function(t){ return( unique(tmp[which(tmp[,3]==t),1]) ) } )
 		Y[tmp] = 0; rm(tmp)					
 		Y <- initNetMissVals( Y, missing )
+		Y = Y
 	}
 
 	# Weights

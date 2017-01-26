@@ -8,9 +8,9 @@ Authors@R: c(
 	person('Shahryar', 'Minhas',role=c('cre'), email='sfm12@duke.edu')
 	)
 Description: simulates latent space models for dynamic networks ...
-Depends: 
+Depends:
     R (>= 3.1)
-Imports: 
+Imports:
     igraph,
     ggplot2,
     reshape2,
@@ -18,14 +18,13 @@ Imports:
     RcppArmadillo,
     vegan,
     Rcpp
-LinkingTo: 
-    Rcpp,
+LinkingTo: Rcpp,
     RcppArmadillo
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 5.0.1.9000
-Suggests: 
+RoxygenNote: 5.0.1
+Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
