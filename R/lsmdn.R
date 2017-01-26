@@ -20,22 +20,6 @@
 #' @param kappa variance of proposals for w
 #' @param startVals Fitted result from previous model run.
 #' @param odens How much to thin the posterior.
-#' @param s2Init starting value for s2
-#' @param t2Init starting value for t2
-#' @param t2Init starting value for g2
-#' @param xLatPos starting actor positions in latent space
-#' @param betaInInit starting value for betaIn
-#' @param betaOutInit starting value for betaOut
-#' @param nuIn prior mean of betaIn
-#' @param nuOut prior mean of betaOut
-#' @param xiIn prior variance of betaIn
-#' @param xiOut prior variance of betaOut
-#' @param shapeT2 shape parameter for t2
-#' @param scaleT2 scale parameter for t2
-#' @param shapeS2 shape parameter for s2
-#' @param scaleS2 shape parameter for s2
-#' @param shapeG2 shape parameter for g2
-#' @param scaleG2 shape parameter for g2
 #' @usage lsmdn( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6886) 
 #' @return returns list of starting values:
 #' \item{w}{weights or radius for each actor}
@@ -69,10 +53,7 @@ lsmdn <- function(
   progressBar=TRUE,
   saveResults=TRUE, savePoints=.10, fileName='lsmdnModel.rda',
   tuneX=0.0075, tuneBIO=0.1, kappa=175000, 
-  startVals=NULL, odens = 25,
-  s2Init=NULL, t2Init=NULL, g2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
-  nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
-  shapeS2=NULL, scaleS2=NULL, shapeG2=NULL, scaleG2=NULL
+  startVals=NULL, odens = 25
   ){
 
   # add in some warnings
@@ -133,6 +114,7 @@ lsmdn <- function(
       dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax ; elOut<-tmp$elOut ; elIn<-tmp$elIn
       degree<-tmp$degree ; edgeList<-tmp$edgeList; n0<-tmp$n0 }
 
+    rm(tmp) # cleanup
   }
 
   # start mcmc

@@ -45,39 +45,7 @@ approximation. Only available for binomial model types.}
 
 \item{odens}{thinning parameter}
 
-\item{s2Init}{starting value for s2}
-
-\item{t2Init}{starting value for t2}
-
-\item{xLatPos}{starting actor positions in latent space}
-
-\item{betaInInit}{starting value for betaIn}
-
-\item{betaOutInit}{starting value for betaOut}
-
-\item{nuIn}{prior mean of betaIn}
-
-\item{nuOut}{prior mean of betaOut}
-
-\item{xiIn}{prior variance of betaIn}
-
-\item{xiOut}{prior variance of betaOut}
-
-\item{shapeT2}{shape parameter for t2}
-
-\item{scaleT2}{scale parameter for t2}
-
-\item{shapeS2}{shape parameter for s2}
-
-\item{scaleS2}{shape parameter for s2}
-
-\item{shapeG2}{shape parameter for g2}
-
-\item{scaleG2}{shape parameter for g2}
-
 \item{odens}{How much to thin the posterior.}
-
-\item{t2Init}{starting value for g2}
 }
 \value{
 returns list of starting values:
