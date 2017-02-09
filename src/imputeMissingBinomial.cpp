@@ -20,14 +20,14 @@ using namespace Rcpp;
 arma::cube imputeMissingBinomial(
   arma::cube X, Rcpp::IntegerVector dims, Rcpp::IntegerVector MM, 
   arma::cube Y, int Ttt, 
-  double BIN, double BOUT, arma::colvec ww
+  double BIN, double alpha, arma::colvec ww, arma::cube WL
   ) {
 
   int ttt = Ttt-1;  
   double dx=0, uu=0, Prob=0;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
-  
+  double BOUT = abs(alpha) - BIN
   /*---------------------------------------*/
   
   for(int i = 0; i < dims(0); i++) {
@@ -35,7 +35,7 @@ arma::cube imputeMissingBinomial(
 			for(int j = 0; j < dims(0); j++) {
 				if(i != j) {
 					dx = arma::norm(X.slice(i).col(ttt)-X.slice(j).col(ttt),2);
-					Prob = BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i));
+					Prob = alpha + WL.slice(tt)(i,j) + BIN*(-dx/ww(j))+BOUT*(-dx/ww(i));
 					Prob = 1/(1+exp(-Prob));
 					uu= arma::randu();
 					if(uu<Prob) {

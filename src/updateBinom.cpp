@@ -15,7 +15,7 @@ using namespace Rcpp;
 //' @param ww vector of radius/weights
 //' @param t2 variance of initial latent positions
 //' @param s2 variance of change in latent positions
-//' @param xiBin mean of prior for betaIn
+//' @param xiBin mean of prioxr for betaIn
 //' @param xiBout mean of prior for betaOut
 //' @param nuBin variance of prior for betaIn
 //' @param nuBout variance of prior for betaOut
@@ -32,16 +32,18 @@ using namespace Rcpp;
 
 List updateBinom(
   arma::cube Xitm1, Rcpp::IntegerVector dims, double tunex, arma::cube Y,
-  double BIN, double BOUT, double tuneBIO,
+  double BIN, double alpha, double tuneBIO,
   arma::colvec ww, double t2, double s2,
   double xiBin, double xiBout, double nuBin,
   double nuBout, int Cauchy,
-  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO
+  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO, arma::cube WL, arma::cube WLnew, arma::colvec lamb
+  double sdLambda, arma::colvec lambNew
   ) {
   
   arma::cube Xold(Xitm1);
   arma::cube Xnew = arma::zeros(dims[1],dims[2],dims[0]);
-  
+  double BOUT = abs(alpha) - BIN
+
   for(int i=0;i<dims(0);i++) {
     Xnew.slice(i)=Xold.slice(i);
   }
@@ -51,13 +53,14 @@ List updateBinom(
   
   arma::cube rnorms(rnormsVec.begin(),dims(1),dims(2),dims(0));
   
-  double BinNew =0, BoutNew =0;
+  double BinNew =0, BoutNew =0, alphaNew = 0;
   
   double AccProb =0;
   double dz=0, dx=0, uu=0;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
   arma::colvec AccRate = arma::zeros(dims(0)*dims(2)+3,1);
+  arma::colvec lambdaNew = arma::zeros(dimL)
   
   /*-------------------- Latent Positions-------------------*/
   
@@ -88,10 +91,10 @@ List updateBinom(
   dx = arma::norm(Xold.slice(i).col(tt)-Xold.slice(j).col(tt),2);
   AccProb += (dx-dz)*(Y.slice(tt)(j,i)*(BIN/ww(i)+BOUT/ww(j))+
   Y.slice(tt)(i,j)*(BIN/ww(j)+BOUT/ww(i)));
-  AccProb += log(1+exp(BIN*(1-dx/ww(i))+BOUT*(1-dx/ww(j))));
-  AccProb += log(1+exp(BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i))));
-  AccProb -= log(1+exp(BIN*(1-dz/ww(i))+BOUT*(1-dz/ww(j))));
-  AccProb -= log(1+exp(BIN*(1-dz/ww(j))+BOUT*(1-dz/ww(i))));
+  AccProb += log(1+exp(alpha + WL.slice(tt)(i,j) + BIN*(-dx/ww(i))+BOUT*(-dx/ww(j))));
+  AccProb += log(1+exp(alpha + WL.slice(tt)(i,j) + BIN*(-dx/ww(j))+BOUT*(-dx/ww(i))));
+  AccProb -= log(1+exp(alpha + WL.slice(tt)(i,j) + BIN*(-dz/ww(i))+BOUT*(-dz/ww(j))));
+  AccProb -= log(1+exp(alpha + WL.slice(tt)(i,j) + BIN*(-dz/ww(j))+BOUT*(-dz/ww(i))));
   }
 }
   if(tt==0)
@@ -156,16 +159,21 @@ List updateBinom(
   
   
   /*-------------------- BetaIn and BetaOut-------------------*/
+  double absAlpha = BIN + BOUT
   AccProb=0;
   if(Cauchy<0.5)
 {
   //  BinNew = BIN + tuneBIO*arma::randn();
   BinNew = BIN + tuneBIO*rnormsBIO(0);
+  alphaNew = alpha + tuneBIO*rnormsBIO(1);
+  BoutNew = abs(alphaNew) - BinNew;
 }else{
   uu = arma::randu();
   BinNew = BIN + tuneBIO*tan(PI*(uu-0.5));
+  uu = arma::randu();
+  BoutNew = BOUT + tuneBIO*tan(PI*(uu-0.5));
 }
-  
+
   for(int tt=0;tt<dims(2);tt++)
 {
   for(int i = 0; i < dims(0); i++)
@@ -175,16 +183,16 @@ List updateBinom(
   if(i != j)
 {
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
-  AccProb += Y.slice(tt)(i,j)*(BinNew-BIN)*(1-dx/ww(j)) + 
-  log(1+exp(BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i)))) -
-  log(1+exp(BinNew*(1-dx/ww(j))+BOUT*(1-dx/ww(i))));
+  AccProb += Y.slice(tt)(i,j)*(WL.slice(tt)(i,j) - WLnew.slice(tt)(i,j) + alpha - alphaNew - dx/ww(j)*(BIN - BinNew) - (abs(alpha) - abs(alphaNew) + BinNew - BIN)*dx/ww(i)) + 
+  log(1+exp(WLnew.slice(tt)(i,j) + alphaNew - BinNew*dz/ww(j) - (abs(alphaNew) - BinNew)*dz/ww(i))) -
+  log(1+exp(WL.slice(tt)(i,j) + alpha - BIN*dz/ww(j) - (abs(alpha) - BIN)*dz/ww(i)));
 }
 }
 }
 }
   
-  AccProb += -0.5*(BinNew-nuBin)*(BinNew-nuBin)/xiBin;
-  AccProb -= -0.5*(BIN-nuBin)*(BIN-nuBin)/xiBin;
+  AccProb += -0.5*((BinNew-abs(alphaNew)/2)*(BinNew-abs(alphaNew)/2)/xiBin + abs(alphaNew)*abs(alphaNew)/(xiBin + xiBout) + inner_product(lambNew, lambNew)/(sdLambda*sdLambda);
+  AccProb -= -0.5*((BIN-abs(alpha)/2)*(BIN-abs(alpha)/2)/xiBin + abs(alpha)*abs(alpha)/(xiBin + xiBout) + inner_product(lambNew, lambNew)/(sdLambda*sdLambda);
   
   uu= arma::randu();
   if(uu<exp(AccProb))
@@ -193,47 +201,12 @@ List updateBinom(
 }else
 {
   BinNew = BIN;
+  BoutNew = BOUT
+  alphaNew = alpha
+  lambNew = lamb
 }
   
-  AccProb=0;
-  if(Cauchy<0.5)
-{
-  //  BoutNew = BOUT + tuneBIO*arma::randn();
-  BoutNew = BOUT + tuneBIO*rnormsBIO(1);
-}else{
-  uu = arma::randu();
-  BoutNew = BOUT + tuneBIO*tan(PI*(uu-0.5));
-}
+
   
-  
-  for(int tt=0;tt<dims(2);tt++)
-{
-  for(int i = 0; i < dims(0); i++)
-{
-  for(int j = 0; j < dims(0); j++)
-{
-  if(i != j)
-{
-  dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
-  AccProb += Y.slice(tt)(i,j)*(BoutNew-BOUT)*(1-dx/ww(i)) + 
-  log(1+exp(BinNew*(1-dx/ww(j))+BOUT*(1-dx/ww(i)))) -
-  log(1+exp(BinNew*(1-dx/ww(j))+BoutNew*(1-dx/ww(i))));
-}
-}
-}
-}
-  
-  AccProb += -0.5*(BoutNew-nuBout)*(BoutNew-nuBout)/xiBout;
-  AccProb -= -0.5*(BOUT-nuBout)*(BOUT-nuBout)/xiBout;
-  
-  uu= arma::randu();
-  if(uu<exp(AccProb))
-{
-  AccRate(1) = 1;
-}else
-{
-  BoutNew = BOUT;
-}
-  
-return(Rcpp::List::create(Xnew,BinNew,BoutNew,AccRate)); 
+return(Rcpp::List::create(Xnew,BinNew,BoutNew,lambNew,alpha, AccRate)); 
 }

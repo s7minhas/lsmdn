@@ -50,10 +50,10 @@
 #' 
 
 getStartingValues <- function(
-	Y, p, family, llApprox, missData, N, seed,
+	Y, W = array(0, c(1,1,1,1)), p, family, llApprox, missData, N, seed,
 	s2Init=NULL, t2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
 	nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
-	shapeS2=NULL, scaleS2=NULL, g2=NULL, shapeG2=NULL, scaleG2=NULL
+	shapeS2=NULL, scaleS2=NULL, g2=NULL, shapeG2=NULL, scaleG2=NULL, sdLambda = NULL
 	){
 
 	# Starting values for parameters
@@ -73,6 +73,9 @@ getStartingValues <- function(
 		Y = Y
 	}
 
+	lambda = matrix(0, ncol = 1, nrow = dim(W)[4])
+	sdLambda = 50
+
 	# Weights
 	w <- initWeights(Y, N)
 
@@ -91,7 +94,7 @@ getStartingValues <- function(
 		betaIn[1] <- 10
 		betaOut[1] <- 10
 	}
-
+	alpha = (betaIn[1] + betaOut[1])*(1 - 2*rbinom(1,1,.5))
 	# Priors and further initializations
 	nuIn <- betaIn[1]
 	nuOut <- betaOut[1]
@@ -124,7 +127,7 @@ getStartingValues <- function(
 				s2=s2, shapeS2=shapeS2, scaleS2=scaleS2, 
 				dInMax=tmp$dInMax, dOutMax=tmp$dOutMax, n0=tmp$n0, 
 				elOut=tmp$elOut, elIn=tmp$elIn, degree=tmp$degree,
-				edgeList=tmp$edgeList, accRate=tmp$accRate
+				edgeList=tmp$edgeList, accRate=tmp$accRate, alpha = alpha
 				)
 			)
 	} else { # could condition this on dist
@@ -135,7 +138,7 @@ getStartingValues <- function(
 				t2=t2, shapeT2=shapeT2, scaleT2=scaleT2,
 				s2=s2, shapeS2=shapeS2, scaleS2=scaleS2, 
 				g2=g2, shapeG2=shapeG2, scaleG2=scaleG2, 
-				accRate=accRate
+				accRate=accRate, lambda = lambda, sdLambda = sdLambda, alpha = alpha
 				)
 			)
 	}

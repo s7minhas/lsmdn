@@ -21,14 +21,15 @@ using namespace Rcpp;
 
 List wAccProbBinom(
 	arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, 
-	double BIN, double BOUT, double tuneW,
-	arma::colvec wwOld, arma::colvec wwNew
+	double BIN, double alpha, double tuneW,
+	arma::colvec wwOld, arma::colvec wwNew, arma::cube WL
 	) {
 	
   double AccProb =0,dx=0, uu=0;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
   int AccRate = 0;
+  double BOUT = abs(alpha) - BIN
     
   /*---------------------------------------*/
   
@@ -43,8 +44,8 @@ List wAccProbBinom(
   dx = arma::norm(X.slice(i).col(tt)-X.slice(j).col(tt),2);
   AccProb += Y.slice(tt)(i,j)*dx*(BIN*(1/wwOld(j)-1/wwNew(j)) + 
   BOUT*(1/wwOld(i)-1/wwNew(i))) +
-  log(1+exp(BIN*(1-dx/wwOld(j))+BOUT*(1-dx/wwOld(i)))) -
-  log(1+exp(BIN*(1-dx/wwNew(j))+BOUT*(1-dx/wwNew(i))));
+  log(1+exp(alpha + WL.slice(tt)(i,j) + BIN*(-dx/wwOld(j))+BOUT*(-dx/wwOld(i)))) -
+  log(1+exp(alpha + WL.slice(tt)(i,j) + BIN*(-dx/wwNew(j))+BOUT*(-dx/wwNew(i))));
 }
 }
 }
