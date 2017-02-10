@@ -71,9 +71,9 @@ lsmdnSv <- function(
 
   }
   keep = length(seq(burnin + 1, N, odens)) + 1
-  w = matrix(0,keep,N)
+  w = matrix(0,ncol = keep, nrow = N)
   X = list()
-  lambda = matrix(0, keep, dim(W)[4])
+  lambda = matrix(0, ncol = keep, nrow = dim(W)[4])
   Y = list()
   t2 = numeric(keep)
   s2 = numeric(keep)
@@ -117,7 +117,7 @@ lsmdnSv <- function(
         X0,c(n,p,T,1),tuneX,Y0, 
         betaIn0,alpha,tuneBIO,w0,
         t20,s20,xiIn,xiOut,nuIn,
-        nuOut,Cauchy=0,RN,RNBIO, Wl, Wlnew, lambda, sdLambda, lNew
+        nuOut,Cauchy=0,RN,RNBIO, Wl, Wlnew, lambda0, sdLambda, lambdaNew
         ) }
 
     if( family=='nonNegNormal' ){

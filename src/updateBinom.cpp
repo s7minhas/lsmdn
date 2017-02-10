@@ -183,16 +183,16 @@ List updateBinom(
   if(i != j)
 {
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
-  AccProb += Y.slice(tt)(i,j)*(WL.slice(tt)(i,j) - WLnew.slice(tt)(i,j) + alpha - alphaNew - dx/ww(j)*(BIN - BinNew) - (abs(alpha) - abs(alphaNew) + BinNew - BIN)*dx/ww(i)) + 
-  log(1+exp(WLnew.slice(tt)(i,j) + alphaNew - BinNew*dz/ww(j) - (abs(alphaNew) - BinNew)*dz/ww(i))) -
-  log(1+exp(WL.slice(tt)(i,j) + alpha - BIN*dz/ww(j) - (abs(alpha) - BIN)*dz/ww(i)));
+  AccProb += Y.slice(tt)(i,j)*(WL.slice(tt)(i,j) - WLnew.slice(tt)(i,j) + alpha - alphaNew - dx/ww(j)*(BIN - BinNew) - (BOUT - BoutNew)*dx/ww(i)) + 
+  log(1+exp(WLnew.slice(tt)(i,j) + alphaNew - BinNew*dz/ww(j) - BoutNew*dz/ww(i))) -
+  log(1+exp(WL.slice(tt)(i,j) + alpha - BIN*dz/ww(j) - BOUT*dz/ww(i)));
 }
 }
 }
 }
   
   AccProb += -0.5*((BinNew-abs(alphaNew)/2)*(BinNew-abs(alphaNew)/2)/xiBin + abs(alphaNew)*abs(alphaNew)/(xiBin + xiBout) + inner_product(lambNew, lambNew)/(sdLambda*sdLambda);
-  AccProb -= -0.5*((BIN-abs(alpha)/2)*(BIN-abs(alpha)/2)/xiBin + abs(alpha)*abs(alpha)/(xiBin + xiBout) + inner_product(lambNew, lambNew)/(sdLambda*sdLambda);
+  AccProb -= -0.5*((BIN-abs(alpha)/2)*(BIN-abs(alpha)/2)/xiBin + abs(alpha)*abs(alpha)/(xiBin + xiBout) + inner_product(lamb, lamb)/(sdLambda*sdLambda);
   
   uu= arma::randu();
   if(uu<exp(AccProb))

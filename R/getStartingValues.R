@@ -50,7 +50,7 @@
 #' 
 
 getStartingValues <- function(
-	Y, W = array(0, c(1,1,1,1)), p, family, llApprox, missData, N, seed,
+	Y, W, p, family, llApprox, missData, N, seed,
 	s2Init=NULL, t2Init=NULL, xLatPos=NULL, betaInInit=NULL, betaOutInit=NULL,
 	nuIn=NULL, nuOut=NULL, xiIn=NULL, xiOut=NULL, shapeT2=NULL, scaleT2=NULL, 
 	shapeS2=NULL, scaleS2=NULL, g2=NULL, shapeG2=NULL, scaleG2=NULL, sdLambda = NULL
