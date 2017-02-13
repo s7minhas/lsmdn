@@ -12,10 +12,10 @@ using namespace Rcpp;
 //' @param phiT scale parameter for t
 //' @param phiS scale parameter for s
 //' @return returns list of:
-//' \item{shapeT}{Shape Parameter for $\tau^2$}
-//' \item{scaleT}{Scale Parameter for $\tau^2$}
-//' \item{shapeS}{Shape Parameter for $\sigma^2$}
-//' \item{scaleS}{Scale Parameter for $\sigma^2$}
+//' \item{shapeT}{Shape Parameter for tau2}
+//' \item{scaleT}{Scale Parameter for tau2}
+//' \item{shapeS}{Shape Parameter for sigma2}
+//' \item{scaleS}{Scale Parameter for sigma2}
 //' @export
 // [[Rcpp::export]]
 

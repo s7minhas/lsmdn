@@ -18,8 +18,8 @@ where the third dimension corresponds to different time periods.}
 }
 \value{
 returns list:
-\item{betaInInit}{Initial value for $\beta_{IN}$}
-\item{betaOutInit}{Initial value for $\beta_{OUT}$}
+\item{betaInInit}{Initial value for beta-in}
+\item{betaOutInit}{Initial value for beta-out}
 \item{xLatPos}{Scaled latent space}
 }
 \description{

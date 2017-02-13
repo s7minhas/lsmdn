@@ -21,10 +21,10 @@ t2s2Parms(X, dims, thetaT, thetaS, phiT, phiS)
 }
 \value{
 returns list of:
-\item{shapeT}{Shape Parameter for $\tau^2$}
-\item{scaleT}{Scale Parameter for $\tau^2$}
-\item{shapeS}{Shape Parameter for $\sigma^2$}
-\item{scaleS}{Scale Parameter for $\sigma^2$}
+\item{shapeT}{Shape Parameter for tau2}
+\item{scaleT}{Scale Parameter for tau2}
+\item{shapeS}{Shape Parameter for sigma2}
+\item{scaleS}{Scale Parameter for sigma2}
 }
 \description{
 generate shape and scale parameters to update t2 and s2 for all types of data

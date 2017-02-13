@@ -12,6 +12,9 @@ lsmdn( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6
 \item{Y}{an n x n x T array of relational matrices, 
 where the third dimension corresponds to different time periods.}
 
+\item{W}{an n x n x T x p design array, where the third dimension corresponds to
+time and the fourth to different covariates.}
+
 \item{p}{number of latent dimensions}
 
 \item{family}{type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'.}
@@ -27,11 +30,15 @@ approximation. Only available for binomial model types.}
 
 \item{burnin}{Number of iterations to discard as burn-in}
 
-\item{progressBar}{include progress bar to show mcmc status}
+\item{odens}{thinning parameter}
 
 \item{saveResults}{save results as an rda file}
 
 \item{savePoints}{chain intervals to save at}
+
+\item{startVals}{Fitted result from previous model run.}
+
+\item{progressBar}{include progress bar to show mcmc status}
 
 \item{fileName}{"lsmdn.rda" or wtv you want, make sure to specify a path as well}
 
@@ -39,13 +46,9 @@ approximation. Only available for binomial model types.}
 
 \item{tuneBIO}{variance of proposals for betaIn and betaOut}
 
+\item{tuneLAMBDA}{variance of proposals for lambda}
+
 \item{kappa}{variance of proposals for w}
-
-\item{startVals}{Fitted result from previous model run.}
-
-\item{odens}{thinning parameter}
-
-\item{odens}{How much to thin the posterior.}
 }
 \value{
 returns list of starting values:
@@ -53,16 +56,16 @@ returns list of starting values:
 \item{X}{actor latent space positions}
 \item{betaIn}{relative value of popularity}
 \item{betaOut}{relative value of activity}
-\item{nuIn}{Prior mean for $\beta_{IN}$}
-\item{nuOut}{Prior mean for $\beta_{OUT}$}
-\item{xiIn}{Prior variance for $beta_{IN}$}
-\item{xiOut}{Prior varianerce for $beta_{OUT}$}
+\item{nuIn}{Prior mean for beta-in}
+\item{nuOut}{Prior mean for beta-out}
+\item{xiIn}{Prior variance for beta-in}
+\item{xiOut}{Prior varianerce for $beta-out}
 \item{t2}{Variance for latent positions in initial time period}
-\item{shapeT2}{Shape parameter for prior distribution of $\tau^2$}
-\item{scaleT2}{Scale parameter for prior distribution of $\tau^2$}
+\item{shapeT2}{Shape parameter for prior distribution of tau2}
+\item{scaleT2}{Scale parameter for prior distribution of tau2}
 \item{s2}{Variance of movement in the latent space in subsequent periods}
-\item{shapeS2}{Shape parameter for prior distribution of $\sigma^2$}
-\item{scaleS2}{Scale parameter for prior distribution of $\sigma^2$}
+\item{shapeS2}{Shape parameter for prior distribution of sigma2}
+\item{scaleS2}{Scale parameter for prior distribution of sigma2}
 if llApprox=TRUE, also returns
 \item{dInMax}{add desc}
 \item{dOutMax}{add desc}

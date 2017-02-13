@@ -25,8 +25,8 @@ using namespace Rcpp;
 //' @param rnormsBIO Vector of noise for random walks for betaIn/betaOut
 //' @return returns list of:
 //' \item{Xnew}{New array of latent positions}
-//' \item{BinNew}{New values for $\beta_{IN}$}
-//' \item{BoutNew}{New values for $\beta_{OUT}}
+//' \item{BinNew}{New values for betaIn}
+//' \item{BoutNew}{New values for betaOut}
 //' \item{AccRate}{Updated acceptance rate}
 //' @export
 // [[Rcpp::export]]

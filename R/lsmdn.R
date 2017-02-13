@@ -2,6 +2,8 @@
 #' 
 #' @param Y an n x n x T array of relational matrices, 
 #' where the third dimension corresponds to different time periods.
+#' @param W an n x n x T x p design array, where the third dimension corresponds to
+#' time and the fourth to different covariates.
 #' @param p number of latent dimensions
 #' @param family type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'. 
 #' @param llApprox logical indicating whether or not to utilize log-likelihood 
@@ -11,31 +13,31 @@
 #' @param seed random seed
 #' @param burnin Number of iterations to discard as burn-in
 #' @param odens thinning parameter
-#' @param progressBar include progress bar to show mcmc status
 #' @param saveResults save results as an rda file
 #' @param savePoints chain intervals to save at 
+#' @param startVals Fitted result from previous model run.
+#' @param progressBar include progress bar to show mcmc status
 #' @param fileName "lsmdn.rda" or wtv you want, make sure to specify a path as well
 #' @param tuneX variance of latent space proposal
 #' @param tuneBIO variance of proposals for betaIn and betaOut
+#' @param tuneLAMBDA variance of proposals for lambda
 #' @param kappa variance of proposals for w
-#' @param startVals Fitted result from previous model run.
-#' @param odens How much to thin the posterior.
 #' @usage lsmdn( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6886) 
 #' @return returns list of starting values:
 #' \item{w}{weights or radius for each actor}
 #' \item{X}{actor latent space positions}
 #' \item{betaIn}{relative value of popularity}
 #' \item{betaOut}{relative value of activity}
-#' \item{nuIn}{Prior mean for $\beta_{IN}$}
-#' \item{nuOut}{Prior mean for $\beta_{OUT}$}
-#' \item{xiIn}{Prior variance for $beta_{IN}$}
-#' \item{xiOut}{Prior varianerce for $beta_{OUT}$}
+#' \item{nuIn}{Prior mean for beta-in}
+#' \item{nuOut}{Prior mean for beta-out}
+#' \item{xiIn}{Prior variance for beta-in}
+#' \item{xiOut}{Prior varianerce for $beta-out}
 #' \item{t2}{Variance for latent positions in initial time period}
-#' \item{shapeT2}{Shape parameter for prior distribution of $\tau^2$}
-#' \item{scaleT2}{Scale parameter for prior distribution of $\tau^2$}
+#' \item{shapeT2}{Shape parameter for prior distribution of tau2}
+#' \item{scaleT2}{Scale parameter for prior distribution of tau2}
 #' \item{s2}{Variance of movement in the latent space in subsequent periods}
-#' \item{shapeS2}{Shape parameter for prior distribution of $\sigma^2$}
-#' \item{scaleS2}{Scale parameter for prior distribution of $\sigma^2$}
+#' \item{shapeS2}{Shape parameter for prior distribution of sigma2}
+#' \item{scaleS2}{Scale parameter for prior distribution of sigma2}
 #' if llApprox=TRUE, also returns
 #' \item{dInMax}{add desc}
 #' \item{dOutMax}{add desc}
@@ -48,17 +50,17 @@
 #'
 
 lsmdn <- function(
-  Y, p=2, family, llApprox=FALSE, missData=FALSE, 
-  N, seed=6886, burnin=round(N/10),
-  progressBar=TRUE,
-  saveResults=TRUE, savePoints=.10, fileName='lsmdnModel.rda',
-  tuneX=0.0075, tuneBIO=0.1, kappa=175000, 
-  startVals=NULL, odens = 25
+  Y, W = array(0, dim = c(dim(Y), 1)), p=2, 
+  family, llApprox=FALSE, missData=FALSE, 
+  N, seed=6886, burnin=round(N/10), odens = 25,
+  saveResults=TRUE, savePoints=.10, startVals=NULL, 
+  progressBar=TRUE, fileName='lsmdnModel.rda',
+  tuneX=0.0075, tuneBIO=0.1,tuneLAMBDA = 0.1, kappa=175000
   ){
 
-  # add in some warnings
-  ## llApprox only works for binomial family
-  ## 
+  # input checks
+  if(llApprox & family!='binomial'){ stop('Log-likelihood approximation only available for binomial family.') }
+  if(llApprox & family!='binomial' & W!=array(0,dim=c(dim(Y),1))){ stop('Log-likelihood approximation only available for binomial family with no exogenous covariates.') }
 
   #
   set.seed(seed)  
@@ -66,9 +68,14 @@ lsmdn <- function(
   T <- dim(Y)[3]    
   burnin <- ifelse(burnin<2,2,burnin)
 
+  # stdz design array
+  for(i in 1:dim(W)[3]){
+    W[,,,i] <- ( W[,,,i] - mean(c(W[,,,i]), na.rm=TRUE) )/sd(c(W[,,,i]), na.rm=TRUE) }
+
   # get init values if no fitted values provided
   if( is.null( startVals ) ){
 
+    # run startval
     tmp <- getStartingValues(
       Y=Y, p=p, family=family, 
       llApprox=llApprox, missData=missData, 
@@ -76,14 +83,16 @@ lsmdn <- function(
       )
 
     # unpack
-    Y<-tmp$Y ; w<-tmp$w ; X <-tmp$X ; betaIn<-tmp$betaIn ; betaOut<-tmp$betaOut ; 
+    Y0<-tmp$Y ; lambda0 <- tmp$lambda[,1] ; w0<-tmp$w[,1]
+    X0 <-tmp$X ; betaIn0<-tmp$betaIn ; betaOut0<-tmp$betaOut
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
-    t2<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
-    s2<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
-     accRate<-tmp$accRate ; g2 <- NULL ; shapeG2 <- NULL ; scaleG2 <- NULL
+    t20<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
+    s20<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
+    accRate<-tmp$accRate ; g20 <- NULL ; shapeG2 <- NULL
+    scaleG2 <- NULL; sdLambda <- tmp$sdLambda; alpha <- tmp$alpha
 
     if( family=='nonNegNormal' | family == "gaussian" ){
-      g2<-tmp$g2 ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
+      g20<-tmp$g2 ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
 
     if( llApprox & family=='binomial' ){
       dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax ; elOut<-tmp$elOut ; elIn<-tmp$elIn
@@ -93,40 +102,54 @@ lsmdn <- function(
   }
 
   if( !is.null( startVals ) ){
-    tmp = startVals
+    tmp <- startVals
+
+    # find last iter with data
     if( is.null(tmp$X[[length(tmp$X)]]) ){
       nIter <- min( which( unlist( lapply( tmp$X, is.null ) ) ) ) - 2
-    } else {
-      nIter <- length(tmp$X)
-    }
-    if(missData){ Y<-tmp$Y }
-    w = matrix(0,n,N)
-    w[,1]<-tmp$w[,nIter] ; X <-list(tmp$X[[nIter]]) ; betaIn<-c(tmp$betaIn[nIter]) ; betaOut<-tmp$betaOut[nIter] ; 
+    } else { nIter <- length(tmp$X) }
+    
+    # if missData
+    if(missData){ Y<-tmp$Y } else { Y0<-Y }
+
+    lambda0 <- tmp$lambda[,nIter]; w0<-tmp$w[,nIter]
+    X0 <-tmp$X[[nIter]] ; betaIn0<-tmp$betaIn[nIter] ; betaOut0<-tmp$betaOut[nIter]
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
-    t2<-tmp$t2[nIter] ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
-    s2<-tmp$s2[nIter] ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
-    n0<-tmp$n0 ; accRate<-tmp$accRate ; g2 <- NULL ; shapeG2 <- NULL ; scaleG2 <- NULL
+    t20<-tmp$t2[nIter] ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
+    s20<-tmp$s2[nIter] ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
+    n0<-tmp$n0 ; accRate<-tmp$accRate ; sdlambda <- tmp$sdLambda
+    g20 <- NULL ; shapeG2 <- NULL ; scaleG2 <- NULL; alpha <- tmp$alpha
 
     if( family=='nonNegNormal' | family == "gaussian" ){
-      g2<-tmp$g2[nIter] ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
+      g20<-tmp$g2[nIter] ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
 
     if( llApprox & family=='binomial' ){
       dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax ; elOut<-tmp$elOut ; elIn<-tmp$elIn
       degree<-tmp$degree ; edgeList<-tmp$edgeList; n0<-tmp$n0 }
-
-    rm(tmp) # cleanup
+    rm(c('tmp','startVals'))
   }
+
+  # set up mcmc params
+  keep <- length(seq(burnin + 1, N, odens)) + 1
+  w <- matrix(0,ncol = keep, nrow = N) ; X <- list()
+  lambda <- matrix(0, ncol = keep, nrow = dim(W)[4])
+  Y <- list() ; t2 <- numeric(keep) ; s2 <- numeric(keep)
+  if( family=='nonNegNormal' | family == "gaussian" ){ g2 <- numeric(keep) }
+  betaIn <- numeric(keep) ; betaOut <- numeric(keep)
 
   # start mcmc
   pb <- txtProgressBar(min=2,max=N,style=3)
-  system.time({
   set.seed(seed)
   for(it in 2:N){
 
     #
     RN <- rnorm(n*T*p)
-    RNBIO <- rnorm(2)
+    RNBIO <- rnorm(2 + length(lambda))
+    lNew <- lambda0 + RNBIO[3:length(RNBIO)]*tuneLAMBDA
+    Wl <- array(apply(W, 3, function(z) Xbeta(z, lambda0)), dim(W)[-4])
+    Wlnew <- array(apply(W, 3, function(z) Xbeta(z, lNew)), dim(W)[-4])
 
+    ######################################################################
     # Step 1
     if(llApprox & family=='binomial'){
       if(it%%100==0){
@@ -139,168 +162,189 @@ lsmdn <- function(
         } }
 
       draws <- updateBinomLogLikeApprox(
-        X[[it-1]],c(n,p,T,dInMax,dOutMax),tuneX,Y, 
-        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
-        t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
+        X0,c(n,p,T,dInMax,dOutMax),tuneX,Y0, 
+        betaIn0,betaOut0,tuneBIO,w0,
+        t20,s20,xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO,elOut,elIn,subseq,degree
         ) }
 
     if( !llApprox & family=='binomial' ){
       draws <- updateBinom(
-        X[[it-1]],c(n,p,T,1),tuneX,Y, 
-        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
-        t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
-        nuOut,Cauchy=0,RN,RNBIO
+        X0,c(n,p,T,1),tuneX,Y0, 
+        betaIn0,alpha,tuneBIO,w0,
+        t20,s20,xiIn,xiOut,nuIn,
+        nuOut,Cauchy=0,RN,RNBIO,
+        Wl, Wlnew, lambda0, sdLambda, lambdaNew
         ) }
 
     if( family=='nonNegNormal' ){
       draws <- updateNonNegNorm(
-        X[[it-1]],c(n,p,T,1),tuneX,Y, 
-        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
-        t2[it-1],s2[it-1],g2[it-1],xiIn,xiOut,nuIn,
+        X0,c(n,p,T,1),tuneX,Y0, 
+        betaIn0,betaOut0,tuneBIO,w0,
+        t20,s20,g20,xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO
         ) }
 
     if( family=='gaussian' ){
       draws <- updateGaussian(
-        X[[it-1]],c(n,p,T,1),tuneX,Y, 
-        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
-        t2[it-1],s2[it-1],g2[it-1],xiIn,xiOut,nuIn,
+        X0,c(n,p,T,1),tuneX,Y0, 
+        betaIn0,betaOut0,tuneBIO,w0,
+        t20,s20,g20,xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO
         ) }
 
     if( family=='poisson' ){
       draws <- updatePoisson(
-        X[[it-1]],c(n,p,T,1),tuneX,Y, 
-        betaIn[it-1],betaOut[it-1],tuneBIO,w[,it-1],
-        t2[it-1],s2[it-1],xiIn,xiOut,nuIn,
+        X0,c(n,p,T,1),tuneX,Y0, 
+        betaIn0,betaOut0,tuneBIO,w0,
+        t20,s20,xiIn,xiOut,nuIn,
         nuOut,Cauchy=0,RN,RNBIO
         ) }
 
     #
-    X[[it]] <- draws[[1]] ; betaIn[it] <- draws[[2]] ; betaOut[it] <- draws[[3]]
-    accRate <- accRate + draws[[4]] ; rm(draws)
+    X0 <- draws$X ; betaIn0 <- draws$betaIn ; betaOut0 <- draws$betaOut
+    lambda0 <- draws$lambda; Wl <- array(apply(W, 3, function(z) Xbeta(z, lambda0)), dim(W)[-4])
+    alpha <- draws$alpha ; accRate <- accRate + draws$accRate ; rm(draws)
+    ######################################################################
 
-    #
-    if(it==burnin){
-      xIter0 <- t(X[[it]][,1,])
-      for(t in 2:T) xIter0 <- rbind(xIter0,t(X[[it]][,t,])) }
-
-    if(it>burnin){
-      xIterCentered <- t(X[[it]][,1,])
-      for(t in 2:T){ xIterCentered <- rbind(xIterCentered,t(X[[it]][,t,])) }
-      procr <- vegan::procrustes(X=xIter0,Y=xIterCentered,scale=FALSE)$Yrot
-      for(t in 1:T){ X[[it]][,t,] <- t(procr[((t-1)*n+1):(t*n),]) } }
-
-    if(it<N){ X[[it+1]] <- X[[it]] }
-
+    ######################################################################
     # Step 2
     draws <- t2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
-    t2[it] <- MCMCpack::rinvgamma(1,shape=draws[[1]],scale=draws[[2]])
-    s2[it] <- MCMCpack::rinvgamma(1,shape=draws[[3]],scale=draws[[4]]) ; rm(draws)
+    t20 <- MCMCpack::rinvgamma(1,shape=draws$shapeT,scale=draws$scaleT)
+    s20 <- MCMCpack::rinvgamma(1,shape=draws$shapeS,scale=draws$scaleS) ; rm(draws)
+    ######################################################################    
 
+    ######################################################################
     # Step 3
-    w[,it] <- MCMCpack::rdirichlet(1,alpha=kappa*w[,it-1])
+    wProp <- MCMCpack::rdirichlet(1,alpha=kappa*w0)
     if(llApprox & family=='binomial'){
       draws <- wAccProb_llApprox(
-        X[[it]],c(n,p,T,dInMax,dOutMax),Y,
-        betaIn[it], betaOut[it], kappa, w[,it-1], w[it],
+        X0,c(n,p,T,dInMax,dOutMax),Y0,
+        betaIn0, betaOut0, kappa, w0, wProp,
         elOut, elIn, subseq, degree
         ) }
 
     if( !llApprox & family=='binomial' ){
       draws <- wAccProb(
-        X[[it]],c(n,p,T,1),Y,
-        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it]
+        X0,c(n,p,T,1),Y0,
+        betaIn0, alpha, kappa, w0, wProp, Wl
         ) }
 
     if( family=='nonNegNormal' ){
       draws <- wAccProbNonNegNormal(
-        X[[it]],c(n,p,T,1),Y,
-        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]
+        X0,c(n,p,T,1),Y0,
+        betaIn0, betaOut0, kappa, w0, wProp, g20
         ) }
 
     if( family=='gaussian' ){
       draws <- wAccProbGaussian(
-        X[[it]],c(n,p,T,1),Y,
-        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it], g2[it-1]
+        X0,c(n,p,T,1),Y0,
+        betaIn0, betaOut0, kappa, w0, wProp, g20
         ) }
 
     if( family=='poisson' ){
       draws <- wAccProbPoisson(
-        X[[it]],c(n,p,T,1),Y,
-        betaIn[it], betaOut[it], kappa, w[,it-1], w[,it]
+        X0,c(n,p,T,1),Y0,
+        betaIn0, betaOut0, kappa, w0, wProp
         ) }
 
-    w[,it] <- draws[[1]] ; accRate[3] <- accRate[3] + draws[[2]] ; rm(draws)
+    w0 <- draws$ww ; accRate[3] <- accRate[3] + draws$accRate ; rm(draws)
 
     if( family=='nonNegNormal' ){
-      g2[it] <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
+      g2Prop <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
       draws <- gammaAccProb(
-        X[[it]],c(n,p,T,1),Y, 
-        betaIn[it],betaOut[it],shapeG2,scaleG2, 
-        w[,it],g2[it-1], g2[it]
+        X0,c(n,p,T,1),Y0, 
+        betaIn0,betaOut0,shapeG2,scaleG2, 
+        w0,g20, g2Prop
         )
-      g2[it] <- draws[[1]] ; accRate[4] <- accRate[4] + draws[[2]] ; rm(draws)
+      g20 <- draws$g2 ; accRate[4] <- accRate[4] + draws$accRate ; rm(draws)
     }
 
     if( family=='gaussian' ){
-      g2[it] <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
+      g2Prop <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
       draws <- gammaAccProbGaussian(
-        X[[it]],c(n,p,T,1),Y, 
-        betaIn[it],betaOut[it],shapeG2,scaleG2, 
-        w[,it],g2[it-1], g2[it]
+        X0,c(n,p,T,1),Y0, 
+        betaIn0,betaOut0,shapeG2,scaleG2, 
+        w0,g20, g2Prop
         )
-      g2[it] <- draws[[1]] ; accRate[4] <- accRate[4] + draws[[2]] ; rm(draws)
+      g20 <- draws$g2 ; accRate[4] <- accRate[4] + draws$accRate ; rm(draws)
     }
+    ######################################################################    
 
+    ######################################################################
     # Step 4
     if(missData){
       for(t in 1:T){
         if(family == 'binomial'){
-        Y <- imputeMissingBinomial(
-          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
-          BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it]
+        Y0 <- imputeMissingBinomial(
+          X0, c(n,p,T), MM=missing[[t]]-1, Y0, Ttt=t,
+          BIN=betaIn0, alpha=alpha, ww=w0, WL = Wl
           )}
         if(family == 'poisson'){
-        Y <- imputeMissingPoisson(
-          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
-          BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it]
+        Y0 <- imputeMissingPoisson(
+          X0, c(n,p,T), MM=missing[[t]]-1, Y0, Ttt=t,
+          BIN=betaIn0, BOUT=betaOut0, ww=w0
           )}
         if(family == 'gaussian'){
-        Y <- imputeMissingGaussian(
-          X[[it]], c(n,p,T), MM=missing[[t]]-1, Y, Ttt=t,
-          BIN=betaIn[it], BOUT=betaOut[it], ww=w[,it], g2 = g2[it]
+        Y0 <- imputeMissingGaussian(
+          X0, c(n,p,T), MM=missing[[t]]-1, Y0, Ttt=t,
+          BIN=betaIn0, BOUT=betaOut0, ww=w0, g2 = g20
           )}
       }
     }
+    ######################################################################    
 
-    keeps = seq(burnin + 1, N, odens)
+    ######################################################################
+    if(it==burnin){
+      xIter0 <- t(X[[1]][,1,])
+      for(t in 2:T) xIter0 <- rbind(xIter0,t(X[[1]][,t,]))
+    }
+
+    if(it>burnin & ((it - burnin) %% odens == 0)){
+      ind = (it - burnin)/odens + 1
+      xIterCentered <- t(X[[ind]][,1,])
+      for(t in 2:T){ xIterCentered <- rbind(xIterCentered,t(X[[ind]][,t,])) }
+      procr <- vegan::procrustes(X=xIter0,Y=xIterCentered,scale=FALSE)$Yrot
+      for(t in 1:T){ X[[ind]][,t,] <- t(procr[((t-1)*n+1):(t*n),]) }
+    }
+
+    if((it - burnin) %% odens == 0){
+       ind = (it - burnin)/odens + 1
+       X[[ind]] <- X0 ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0
+       t2[ind] = t20; s2[ind] = s20; Y[ind] = Y0
+       w[,ind] = w0; lambda[,ind] = lambda0
+       if(family %in% c("gaussian", "nonNegNormal")){g2[ind] = g20}
+     }
+    ######################################################################       
+
+    ######################################################################       
     # save results
     if(it > burnin){
       if(saveResults){
-      if( it %in% round( quantile( (burnin+1):N, probs=seq(0,1,savePoints)) ) ){
-        result <- list( Y=Y, X=X[keeps], p=p, betaIn=betaIn[keeps], betaOut=betaOut[keeps], 
-          t2=t2[keeps], s2=s2[keeps], g2=g2[keeps],
-          shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
-          shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-          xiIn=xiIn, xiOut=xiOut, w=w[,keeps], accRate=accRate )
-        save( result , file=fileName ) ; if(it!=N){ rm(result) }
+        if( it %in% round( quantile( (burnin+1):N, probs=seq(0,1,savePoints)) ) ){
+          result <- list( 
+            Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
+            shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
+            shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
+            xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, alpha = alpha )
+          save( result , file=fileName ) ; if(it!=N){ rm(result) }
+        }
       }
-      }      
-    } 
+    }
 
-  if(progressBar){ setTxtProgressBar(pb,it) }
-  } # end mcmc
-  close(pb)
-  })
+    if(progressBar){ setTxtProgressBar(pb,it) }
+    ######################################################################       
 
+  } ; close(pb) # end mcmc
+
+  ######################################################################       
   # output
-  result <- list( Y=Y, X=X[keeps], p=p, betaIn=betaIn[keeps], betaOut=betaOut[keeps], 
-    t2=t2[keeps], s2=s2[keeps], g2=g2[keeps],
+  result <- list(
+    Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
     shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
     shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-    xiIn=xiIn, xiOut=xiOut, w=w[,keeps], accRate=accRate )
+    xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, alpha = alpha )
   return( result )
+  ######################################################################       
 
 } # end function

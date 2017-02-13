@@ -28,16 +28,16 @@
 #' \item{X}{initial actor latent space positions calculated via GMDS}
 #' \item{betaIn}{Starting value for importance of popularity}
 #' \item{betaOut}{Relative value for importance of activity }
-#' \item{nuIn}{Prior mean for $\beta_{IN}$}
-#' \item{nuOut}{Prior mean for $\beta_{OUT}$}
-#' \item{xiIn}{Prior variance for $beta_{IN}$}
-#' \item{xiOut}{Prior varianerce for $beta_{OUT}$}
+#' \item{nuIn}{Prior mean for beta-in}
+#' \item{nuOut}{Prior mean for beta-out}
+#' \item{xiIn}{Prior variance for beta-in}
+#' \item{xiOut}{Prior varianerce for beta-out}
 #' \item{t2}{Variance for latent positions in initial time period}
-#' \item{shapeT2}{Shape parameter for prior distribution of $\tau^2$}
-#' \item{scaleT2}{Scale parameter for prior distribution of $\tau^2$}
+#' \item{shapeT2}{Shape parameter for prior distribution of tau2}
+#' \item{scaleT2}{Scale parameter for prior distribution of tau2}
 #' \item{s2}{Variance of movement in the latent space in subsequent periods}
-#' \item{shapeS2}{Shape parameter for prior distribution of $\sigma^2$}
-#' \item{scaleS2}{Scale parameter for prior distribution of $\sigma^2$}
+#' \item{shapeS2}{Shape parameter for prior distribution of sigma2}
+#' \item{scaleS2}{Scale parameter for prior distribution of sigma2}
 #' if llApprox=TRUE, also returns
 #' \item{dInMax}{add desc}
 #' \item{dOutMax}{add desc}
@@ -70,11 +70,12 @@ getStartingValues <- function(
 		missing <- lapply( 1:T, function(t){ return( unique(tmp[which(tmp[,3]==t),1]) ) } )
 		Y[tmp] = 0; rm(tmp)					
 		Y <- initNetMissVals( Y, missing )
-		Y = Y
+		Y <- Y
 	}
 
-	lambda = matrix(0, ncol = 1, nrow = dim(W)[4])
-	sdLambda = 50
+	# set up lambda obj for covars
+	lambda <- matrix(0, ncol = 1, nrow = dim(W)[4])
+	sdLambda <- 50
 
 	# Weights
 	w <- initWeights(Y, N)

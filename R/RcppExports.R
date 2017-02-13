@@ -174,10 +174,10 @@ predictionPoisson <- function(Ex, sig2, x1, x2, Bin, Bout, ww) {
 #' @param phiT scale parameter for t
 #' @param phiS scale parameter for s
 #' @return returns list of:
-#' \item{shapeT}{Shape Parameter for $\tau^2$}
-#' \item{scaleT}{Scale Parameter for $\tau^2$}
-#' \item{shapeS}{Shape Parameter for $\sigma^2$}
-#' \item{scaleS}{Scale Parameter for $\sigma^2$}
+#' \item{shapeT}{Shape Parameter for tau2}
+#' \item{scaleT}{Scale Parameter for tau2}
+#' \item{shapeS}{Shape Parameter for sigma2}
+#' \item{scaleS}{Scale Parameter for sigma2}
 #' @export
 t2s2Parms <- function(X, dims, thetaT, thetaS, phiT, phiS) {
     .Call('lsmdn_t2s2Parms', PACKAGE = 'lsmdn', X, dims, thetaT, thetaS, phiT, phiS)
@@ -203,8 +203,8 @@ t2s2Parms <- function(X, dims, thetaT, thetaS, phiT, phiS) {
 #' @param rnormsBIO Vector of noise for random walks for betaIn/betaOut
 #' @return returns list of:
 #' \item{Xnew}{New array of latent positions}
-#' \item{BinNew}{New values for $\beta_{IN}$}
-#' \item{BoutNew}{New values for $\beta_{OUT}}
+#' \item{BinNew}{New values for betaIn}
+#' \item{BoutNew}{New values for betaOut}
 #' \item{AccRate}{Updated acceptance rate}
 #' @export
 updateBinom <- function(Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb, sdLambda, lambNew) {
@@ -235,8 +235,8 @@ updateBinom <- function(Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, 
 #' @param degr array
 #' @return returns list of:
 #' \item{Xnew}{New array of latent positions}
-#' \item{BinNew}{New values for $\beta_{IN}$}
-#' \item{BoutNew}{New values for $\beta_{OUT}}
+#' \item{BinNew}{New values for betaIn}
+#' \item{BoutNew}{New values for betaOut}
 #' \item{AccRate}{Updated acceptance rate}
 #' @export
 updateBinomLogLikeApprox <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, ELout, ELin, subseq, degr) {
@@ -264,8 +264,8 @@ updateBinomLogLikeApprox <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, 
 #' @param rnormsBIO Vector of noise for random walks for betaIn/betaOut
 #' @return returns list of:
 #' \item{Xnew}{New array of latent positions}
-#' \item{BinNew}{New values for $\beta_{IN}$}
-#' \item{BoutNew}{New values for $\beta_{OUT}}
+#' \item{BinNew}{New values for betaIn}
+#' \item{BoutNew}{New values for betaOut}
 #' \item{AccRate}{Updated acceptance rate}
 #' @export
 updateGaussian <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
@@ -293,8 +293,8 @@ updateGaussian <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2
 #' @param rnormsBIO Vector of noise for random walks for betaIn/betaOut
 #' @return returns list of:
 #' \item{Xnew}{New array of latent positions}
-#' \item{BinNew}{New values for $\beta_{IN}$}
-#' \item{BoutNew}{New values for $\beta_{OUT}}
+#' \item{BinNew}{New values for betaIn}
+#' \item{BoutNew}{New values for betaOut}
 #' \item{AccRate}{Updated acceptance rate}
 #' @export
 updateNonNegNorm <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
@@ -321,8 +321,8 @@ updateNonNegNorm <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, 
 #' @param rnormsBIO Vector of noise for random walks for betaIn/betaOut
 #' @return returns list of:
 #' \item{Xnew}{New array of latent positions}
-#' \item{BinNew}{New values for $\beta_{IN}$}
-#' \item{BoutNew}{New values for $\beta_{OUT}}
+#' \item{BinNew}{New values for betaIn}
+#' \item{BoutNew}{New values for betaOut}
 #' \item{AccRate}{Updated acceptance rate}
 #' @export
 updatePoisson <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {

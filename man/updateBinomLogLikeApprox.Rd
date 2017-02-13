@@ -54,8 +54,8 @@ updateBinomLogLikeApprox(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2,
 \value{
 returns list of:
 \item{Xnew}{New array of latent positions}
-\item{BinNew}{New values for $\beta_{IN}$}
-\item{BoutNew}{New values for $\beta_{OUT}}
+\item{BinNew}{New values for betaIn}
+\item{BoutNew}{New values for betaOut}
 \item{AccRate}{Updated acceptance rate}
 }
 \description{

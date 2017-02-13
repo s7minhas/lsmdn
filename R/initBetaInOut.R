@@ -7,8 +7,8 @@
 #' @param w weights or radii
 #' @usage gmds( Y ) 
 #' @return returns list:
-#' \item{betaInInit}{Initial value for $\beta_{IN}$}
-#' \item{betaOutInit}{Initial value for $\beta_{OUT}$}
+#' \item{betaInInit}{Initial value for beta-in}
+#' \item{betaOutInit}{Initial value for beta-out}
 #' \item{xLatPos}{Scaled latent space}
 #' @export
 #' 
