@@ -55,7 +55,7 @@ lsmdn <- function(
   N, seed=6886, burnin=round(N/10), odens = 25,
   saveResults=TRUE, savePoints=.10, startVals=NULL, 
   progressBar=TRUE, fileName='lsmdnModel.rda',
-  tuneX=0.0075, tuneBIO=0.1,tuneLAMBDA = 0.1, kappa=175000
+  tuneX=0.0075, tuneBIO=0.1, tuneLAMBDA=0.1, kappa=175000
   ){
 
   # input checks
