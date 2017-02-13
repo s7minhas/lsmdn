@@ -19,6 +19,6 @@ Computes a matrix of expected values based on an array X of predictors and a
 vector beta of regression coefficients.
 }
 \author{
-Peter Hoff
+Peter Hoff, Shahryar Minhas
 }
 

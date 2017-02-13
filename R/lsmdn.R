@@ -60,7 +60,7 @@ lsmdn <- function(
 
   # input checks
   if(llApprox & family!='binomial'){ stop('Log-likelihood approximation only available for binomial family.') }
-  if(llApprox & family!='binomial' & W!=array(0,dim=c(dim(Y),1))){ stop('Log-likelihood approximation only available for binomial family with no exogenous covariates.') }
+  if(llApprox & family!='binomial' & !identical(W,array(0,dim=c(dim(Y),1)))){ stop('Log-likelihood approximation only available for binomial family with no exogenous covariates.') }
 
   #
   set.seed(seed)  
@@ -69,15 +69,17 @@ lsmdn <- function(
   burnin <- ifelse(burnin<2,2,burnin)
 
   # stdz design array
-  for(i in 1:dim(W)[3]){
+  for(i in 1:dim(W)[4]){
     W[,,,i] <- ( W[,,,i] - mean(c(W[,,,i]), na.rm=TRUE) )/sd(c(W[,,,i]), na.rm=TRUE) }
+  # replace NAs with zero
+  W[is.na(W)] <- 0
 
   # get init values if no fitted values provided
   if( is.null( startVals ) ){
 
     # run startval
     tmp <- getStartingValues(
-      Y=Y, p=p, family=family, 
+      Y=Y, W=W, p=p, family=family, 
       llApprox=llApprox, missData=missData, 
       N=N, seed=seed
       )
@@ -326,7 +328,7 @@ lsmdn <- function(
             Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
             shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
             shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-            xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, alpha = alpha )
+            xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, alpha=alpha, lambda=lambda )
           save( result , file=fileName ) ; if(it!=N){ rm(result) }
         }
       }
@@ -343,7 +345,7 @@ lsmdn <- function(
     Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
     shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
     shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-    xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, alpha = alpha )
+    xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, alpha=alpha, lambda=lambda )
   return( result )
   ######################################################################       
 

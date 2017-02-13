@@ -2,6 +2,8 @@
 #' 
 #' @param Y an n x n x T array of relational matrices, 
 #' where the third dimension corresponds to different time periods.
+#' @param W an n x n x T x p design array, where the third dimension corresponds to
+#' time and the fourth to different covariates.
 #' @param p number of latent dimensions
 #' @param family type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'. 
 #' @param llApprox logical indicating whether or not to utilize log-likelihood 

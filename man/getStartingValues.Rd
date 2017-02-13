@@ -10,6 +10,9 @@ getStartingValues( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=
 \item{Y}{an n x n x T array of relational matrices, 
 where the third dimension corresponds to different time periods.}
 
+\item{W}{an n x n x T x p design array, where the third dimension corresponds to
+time and the fourth to different covariates.}
+
 \item{p}{number of latent dimensions}
 
 \item{family}{type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'.}
