@@ -64,6 +64,9 @@ List gammaAccProbGaussian(
   g2new = g2;
 }
    
-return(Rcpp::List::create(g2new,AccRate));
+return(Rcpp::List::create(
+  Rcpp::Named("g2")=g2new,
+  Rcpp::Named("accRate")=AccRate
+  ));
 
 }

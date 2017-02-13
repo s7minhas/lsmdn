@@ -45,6 +45,10 @@ List t2s2Parms(
 }
 }
    
- return(Rcpp::List::create(shapeT,scaleT,shapeS,scaleS));
+ return(Rcpp::List::create(
+  Rcpp::Named("shapeT")=shapeT,
+  Rcpp::Named("scaleT")=scaleT,
+  Rcpp::Named("shapeS")=shapeS,
+  Rcpp::Named("scaleS")=scaleS
+  ));
  }
- 

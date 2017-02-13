@@ -79,5 +79,8 @@ List wAccProb_nnn(
   wwNew = wwOld;
 }
    
-return(Rcpp::List::create(wwNew,AccRate));
+return(Rcpp::List::create(
+  Rcpp::Named("ww")=wwNew,
+  Rcpp::Named("accRate")=AccRate
+  ));
 }

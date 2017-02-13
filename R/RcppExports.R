@@ -50,8 +50,8 @@ gammaAccProbGaussian <- function(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new
 #' @param ww vector of weights/radius
 #' @return Y with imputed values
 #' @export
-imputeMissingBinomial <- function(X, dims, MM, Y, Ttt, BIN, BOUT, ww) {
-    .Call('lsmdn_imputeMissingBinomial', PACKAGE = 'lsmdn', X, dims, MM, Y, Ttt, BIN, BOUT, ww)
+imputeMissingBinomial <- function(X, dims, MM, Y, Ttt, BIN, alpha, ww, WL) {
+    .Call('lsmdn_imputeMissingBinomial', PACKAGE = 'lsmdn', X, dims, MM, Y, Ttt, BIN, alpha, ww, WL)
 }
 
 #' Impute missingness in Y for continuous data
@@ -194,7 +194,7 @@ t2s2Parms <- function(X, dims, thetaT, thetaS, phiT, phiS) {
 #' @param ww vector of radius/weights
 #' @param t2 variance of initial latent positions
 #' @param s2 variance of change in latent positions
-#' @param xiBin mean of prior for betaIn
+#' @param xiBin mean of prioxr for betaIn
 #' @param xiBout mean of prior for betaOut
 #' @param nuBin variance of prior for betaIn
 #' @param nuBout variance of prior for betaOut
@@ -207,8 +207,8 @@ t2s2Parms <- function(X, dims, thetaT, thetaS, phiT, phiS) {
 #' \item{BoutNew}{New values for $\beta_{OUT}}
 #' \item{AccRate}{Updated acceptance rate}
 #' @export
-updateBinom <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
-    .Call('lsmdn_updateBinom', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
+updateBinom <- function(Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb, sdLambda, lambNew) {
+    .Call('lsmdn_updateBinom', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb, sdLambda, lambNew)
 }
 
 #' update lat positions, beta params, and accrate for binomial data with a LL approximation
@@ -360,8 +360,8 @@ wAccProb_nnn <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2) {
 #' \item{wwNew}{New weights/radius}
 #' \item{AccRate}{Updated acceptance probability}
 #' @export
-wAccProbBinom <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew) {
-    .Call('lsmdn_wAccProbBinom', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew)
+wAccProbBinom <- function(X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, WL) {
+    .Call('lsmdn_wAccProbBinom', PACKAGE = 'lsmdn', X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, WL)
 }
 
 #' update weights and accprob for continuous normal data

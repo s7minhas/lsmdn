@@ -36,13 +36,14 @@ List updateBinom(
   arma::colvec ww, double t2, double s2,
   double xiBin, double xiBout, double nuBin,
   double nuBout, int Cauchy,
-  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO, arma::cube WL, arma::cube WLnew, arma::colvec lamb
+  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO, 
+  arma::cube WL, arma::cube WLnew, arma::colvec lamb,
   double sdLambda, arma::colvec lambNew
   ) {
   
   arma::cube Xold(Xitm1);
   arma::cube Xnew = arma::zeros(dims[1],dims[2],dims[0]);
-  double BOUT = abs(alpha) - BIN
+  double BOUT = fabs(alpha) - BIN;
 
   for(int i=0;i<dims(0);i++) {
     Xnew.slice(i)=Xold.slice(i);
@@ -60,7 +61,6 @@ List updateBinom(
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
   arma::colvec AccRate = arma::zeros(dims(0)*dims(2)+3,1);
-  arma::colvec lambdaNew = arma::zeros(dimL)
   
   /*-------------------- Latent Positions-------------------*/
   
@@ -159,14 +159,14 @@ List updateBinom(
   
   
   /*-------------------- BetaIn and BetaOut-------------------*/
-  double absAlpha = BIN + BOUT
+  double absAlpha = BIN + BOUT;
   AccProb=0;
   if(Cauchy<0.5)
 {
   //  BinNew = BIN + tuneBIO*arma::randn();
   BinNew = BIN + tuneBIO*rnormsBIO(0);
   alphaNew = alpha + tuneBIO*rnormsBIO(1);
-  BoutNew = abs(alphaNew) - BinNew;
+  BoutNew = fabs(alphaNew) - BinNew;
 }else{
   uu = arma::randu();
   BinNew = BIN + tuneBIO*tan(PI*(uu-0.5));
@@ -191,8 +191,10 @@ List updateBinom(
 }
 }
   
-  AccProb += -0.5*((BinNew-abs(alphaNew)/2)*(BinNew-abs(alphaNew)/2)/xiBin + abs(alphaNew)*abs(alphaNew)/(xiBin + xiBout) + inner_product(lambNew, lambNew)/(sdLambda*sdLambda);
-  AccProb -= -0.5*((BIN-abs(alpha)/2)*(BIN-abs(alpha)/2)/xiBin + abs(alpha)*abs(alpha)/(xiBin + xiBout) + inner_product(lamb, lamb)/(sdLambda*sdLambda);
+  double ipLambdaNew = arma::as_scalar( lambNew.t() * lambNew );
+  double ipLambda = arma::as_scalar( lamb.t() * lamb ); 
+  AccProb += -0.5*((BinNew-fabs(alphaNew)/2)*(BinNew-fabs(alphaNew)/2)/xiBin + fabs(alphaNew)*fabs(alphaNew)/(xiBin + xiBout) + ipLambdaNew/(sdLambda*sdLambda));
+  AccProb -= -0.5*((BIN-fabs(alpha)/2)*(BIN-fabs(alpha)/2)/xiBin + fabs(alpha)*fabs(alpha)/(xiBin + xiBout) + ipLambda/(sdLambda*sdLambda));
   
   uu= arma::randu();
   if(uu<exp(AccProb))
@@ -201,12 +203,18 @@ List updateBinom(
 }else
 {
   BinNew = BIN;
-  BoutNew = BOUT
-  alphaNew = alpha
-  lambNew = lamb
+  BoutNew = BOUT;
+  alphaNew = alpha;
+  lambNew = lamb;
 }
   
+return(Rcpp::List::create(
+  Rcpp::Named("X")=Xnew,
+  Rcpp::Named("betaIn")=BinNew,
+  Rcpp::Named("betaOut")=BoutNew,
+  Rcpp::Named("lambda")=lambNew,
+  Rcpp::Named("alpha")=alpha,
+  Rcpp::Named("accRate")=AccRate
+  )); 
 
-  
-return(Rcpp::List::create(Xnew,BinNew,BoutNew,lambNew,alpha, AccRate)); 
 }

@@ -29,7 +29,7 @@ List wAccProbBinom(
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
   int AccRate = 0;
-  double BOUT = abs(alpha) - BIN
+  double BOUT = fabs(alpha) - BIN;
     
   /*---------------------------------------*/
   
@@ -67,5 +67,8 @@ List wAccProbBinom(
   wwNew = wwOld;
 }
    
-return(Rcpp::List::create(wwNew,AccRate));
+return(Rcpp::List::create(
+  Rcpp::Named("ww")=wwNew,
+  Rcpp::Named("accRate")=AccRate
+  ));
 }

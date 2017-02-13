@@ -86,5 +86,8 @@ for(int j=0;j<n0;j++)
   wwNew = wwOld;
 }
    
-  return(Rcpp::List::create(wwNew,AccRate));
+return(Rcpp::List::create(
+  Rcpp::Named("ww")=wwNew,
+  Rcpp::Named("accRate")=AccRate
+  ));
 }

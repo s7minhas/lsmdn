@@ -4,7 +4,7 @@
 \alias{imputeMissingBinomial}
 \title{Impute missing values in Y for binary data}
 \usage{
-imputeMissingBinomial(X, dims, MM, Y, Ttt, BIN, BOUT, ww)
+imputeMissingBinomial(X, dims, MM, Y, Ttt, BIN, alpha, ww, WL)
 }
 \arguments{
 \item{X}{an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
@@ -19,9 +19,9 @@ imputeMissingBinomial(X, dims, MM, Y, Ttt, BIN, BOUT, ww)
 
 \item{BIN}{betaIn value}
 
-\item{BOUT}{betaOut value}
-
 \item{ww}{vector of weights/radius}
+
+\item{BOUT}{betaOut value}
 }
 \value{
 Y with imputed values

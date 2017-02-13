@@ -232,5 +232,12 @@ List updateGaussian(
   BoutNew = BOUT;
 }
   
-return(Rcpp::List::create(Xnew,BinNew,BoutNew,AccRate)); 
+return(Rcpp::List::create(
+  Rcpp::Named("X")=Xnew,
+  Rcpp::Named("betaIn")=BinNew,
+  Rcpp::Named("betaOut")=BoutNew,
+  // Rcpp::Named("lambda")=lambNew, # max comment these out once incorp exo into rest of update fns
+  // Rcpp::Named("alpha")=alpha, # max comment these out once incorp exo into rest of update fns
+  Rcpp::Named("accRate")=AccRate
+  )); 
 }

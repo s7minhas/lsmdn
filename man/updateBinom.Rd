@@ -4,8 +4,9 @@
 \alias{updateBinom}
 \title{update lat positions, beta params, and accrate for binomial data}
 \usage{
-updateBinom(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin,
-  xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
+updateBinom(Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, xiBin,
+  xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb,
+  sdLambda, lambNew)
 }
 \arguments{
 \item{Xitm1}{an n x p x T array of the current latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
@@ -18,8 +19,6 @@ updateBinom(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin,
 
 \item{BIN}{betaIn value}
 
-\item{BOUT}{betaOut value}
-
 \item{tuneBIO}{Variance of the normal random walk proposal for betaIn and betaOut}
 
 \item{ww}{vector of radius/weights}
@@ -28,7 +27,7 @@ updateBinom(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin,
 
 \item{s2}{variance of change in latent positions}
 
-\item{xiBin}{mean of prior for betaIn}
+\item{xiBin}{mean of prioxr for betaIn}
 
 \item{xiBout}{mean of prior for betaOut}
 
@@ -41,6 +40,8 @@ updateBinom(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin,
 \item{rnormsVec}{Vector of noise for random walks for X}
 
 \item{rnormsBIO}{Vector of noise for random walks for betaIn/betaOut}
+
+\item{BOUT}{betaOut value}
 }
 \value{
 returns list of:
