@@ -146,7 +146,7 @@ lsmdn <- function(
 
     #
     RN <- rnorm(n*T*p)
-    RNBIO <- rnorm(2 + length(lambda))
+    RNBIO <- rnorm(2 + length(lambda0))
     lNew <- lambda0 + RNBIO[3:length(RNBIO)]*tuneLAMBDA
     Wl <- array(apply(W, 3, function(z) Xbeta(z, lambda0)), dim(W)[-4])
     Wlnew <- array(apply(W, 3, function(z) Xbeta(z, lNew)), dim(W)[-4])
