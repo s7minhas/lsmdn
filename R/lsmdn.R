@@ -132,9 +132,9 @@ lsmdn <- function(
   }
 
   # set up mcmc params
-  keep <- length(seq(burnin + 1, N, odens)) + 1
-  w <- matrix(0,ncol = keep, nrow = N) ; X <- list()
-  lambda <- matrix(0, ncol = keep, nrow = dim(W)[4])
+  keep <- length(seq(burnin + 1, N, odens)) ; ind <- 1
+  w <- matrix(0, nrow=n, ncol=keep) ; X <- list()
+  lambda <- matrix(0, nrow = dim(W)[4], ncol=keep)
   Y <- list() ; t2 <- numeric(keep) ; s2 <- numeric(keep)
   if( family=='nonNegNormal' | family == "gaussian" ){ g2 <- numeric(keep) }
   betaIn <- numeric(keep) ; betaOut <- numeric(keep)
@@ -297,26 +297,32 @@ lsmdn <- function(
     ######################################################################    
 
     ######################################################################
+    # post burnin calcs
+    
+    # get std orientation for  lat space positions
     if(it==burnin){
       xIter0 <- t(X0[,1,])
-      for(t in 2:T) xIter0 <- rbind( xIter0, t(X0[,t,]) )
+      for(t in 2:T){ xIter0 <- rbind( xIter0, t(X0[,t,]) ) }
     }
 
+    # store params
     if(it>burnin & ((it - burnin) %% odens == 0)){
-      ind = (it - burnin)/odens + 1
+      
+      # rotate lat space positions to common orientation
       xIterCentered <- t( X0[,1,] )
       for(t in 2:T){ xIterCentered <- rbind( xIterCentered, t(X0[,t,]) ) }
       procr <- vegan::procrustes(X=xIter0,Y=xIterCentered,scale=FALSE)$Yrot
       for(t in 1:T){ X0[,t,] <- t(procr[((t-1)*n+1):(t*n),]) }
-    }
 
-    if((it - burnin) %% odens == 0){
-       ind <- (it - burnin)/odens + 1
-       X[[ind]] <- X0 ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0
-       t2[ind] <- t20; s2[ind] <- s20; Y[ind] <- Y0
-       w[,ind] <- w0; lambda[,ind] <- lambda0
-       if(family %in% c("gaussian", "nonNegNormal")){ g2[ind] <- g20 }
-     }
+      # store results if post burnin and falls on oden
+      X[[ind]] <- X0 ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0
+      t2[ind] <- t20; s2[ind] <- s20; Y[ind] <- Y0
+      w[,ind] <- w0; lambda[,ind] <- lambda0
+      if(family %in% c("gaussian", "nonNegNormal")){ g2[ind] <- g20 }
+
+      # reset counter
+      ind <- ind + 1
+    }
     ######################################################################       
 
     ######################################################################       
