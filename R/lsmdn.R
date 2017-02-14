@@ -86,19 +86,19 @@ lsmdn <- function(
 
     # unpack
     Y0<-tmp$Y ; lambda0 <- tmp$lambda[,1] ; w0<-tmp$w[,1]
-    X0 <-tmp$X ; betaIn0<-tmp$betaIn ; betaOut0<-tmp$betaOut
+    X0 <-tmp$X[[1]] ; betaIn0<-tmp$betaIn[1] ; betaOut0<-tmp$betaOut[1]
     nuIn<-tmp$nuIn ; nuOut<-tmp$nuOut ; xiIn<-tmp$xiIn ; xiOut<-tmp$xiOut 
-    t20<-tmp$t2 ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
-    s20<-tmp$s2 ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
+    t20<-tmp$t2[1] ; shapeT2<-tmp$shapeT2 ; scaleT2<-tmp$scaleT2
+    s20<-tmp$s2[1] ; shapeS2<-tmp$shapeS2 ; scaleS2<-tmp$scaleS2
     accRate<-tmp$accRate ; g20 <- NULL ; shapeG2 <- NULL
     scaleG2 <- NULL; sdLambda <- tmp$sdLambda; alpha <- tmp$alpha
 
     if( family=='nonNegNormal' | family == "gaussian" ){
-      g20<-tmp$g2 ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
+      g20<-tmp$g2[1] ; shapeG2<-tmp$shapeG2 ; scaleG2<-tmp$scaleG2 }
 
     if( llApprox & family=='binomial' ){
       dInMax<-tmp$dInMax ; dOutMax<-tmp$dOutMax ; elOut<-tmp$elOut ; elIn<-tmp$elIn
-      degree<-tmp$degree ; edgeList<-tmp$edgeList; n0<-tmp$n0 }
+      degree<-tmp$degree ; edgeList<-tmp$edgeList; n0<-tmp$n0[1] }
 
     rm(tmp) # cleanup
   }
@@ -211,7 +211,7 @@ lsmdn <- function(
 
     ######################################################################
     # Step 2
-    draws <- t2s2Parms(X[[it]], c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
+    draws <- t2s2Parms(X0, c(n,p,T,1), shapeT2, shapeS2, scaleT2, scaleS2)
     t20 <- MCMCpack::rinvgamma(1,shape=draws$shapeT,scale=draws$scaleT)
     s20 <- MCMCpack::rinvgamma(1,shape=draws$shapeS,scale=draws$scaleS) ; rm(draws)
     ######################################################################    
@@ -299,23 +299,23 @@ lsmdn <- function(
     ######################################################################
     if(it==burnin){
       xIter0 <- t(X[[1]][,1,])
-      for(t in 2:T) xIter0 <- rbind(xIter0,t(X[[1]][,t,]))
+      for(t in 2:T) xIter0 <- rbind( xIter0, t(X0[[1]][,t,]) )
     }
 
     if(it>burnin & ((it - burnin) %% odens == 0)){
       ind = (it - burnin)/odens + 1
-      xIterCentered <- t(X[[ind]][,1,])
-      for(t in 2:T){ xIterCentered <- rbind(xIterCentered,t(X[[ind]][,t,])) }
+      xIterCentered <- t( X0[[ind]][,1,] )
+      for(t in 2:T){ xIterCentered <- rbind( xIterCentered, t(X0[[ind]][,t,]) ) }
       procr <- vegan::procrustes(X=xIter0,Y=xIterCentered,scale=FALSE)$Yrot
-      for(t in 1:T){ X[[ind]][,t,] <- t(procr[((t-1)*n+1):(t*n),]) }
+      for(t in 1:T){ X0[[ind]][,t,] <- t(procr[((t-1)*n+1):(t*n),]) }
     }
 
     if((it - burnin) %% odens == 0){
-       ind = (it - burnin)/odens + 1
+       ind <- (it - burnin)/odens + 1
        X[[ind]] <- X0 ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0
-       t2[ind] = t20; s2[ind] = s20; Y[ind] = Y0
-       w[,ind] = w0; lambda[,ind] = lambda0
-       if(family %in% c("gaussian", "nonNegNormal")){g2[ind] = g20}
+       t2[ind] <- t20; s2[ind] <- s20; Y[ind] <- Y0
+       w[,ind] <- w0; lambda[,ind] <- lambda0
+       if(family %in% c("gaussian", "nonNegNormal")){g2[ind] <- g20}
      }
     ######################################################################       
 
