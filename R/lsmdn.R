@@ -298,16 +298,16 @@ lsmdn <- function(
 
     ######################################################################
     if(it==burnin){
-      xIter0 <- t(X[[1]][,1,])
-      for(t in 2:T) xIter0 <- rbind( xIter0, t(X0[[1]][,t,]) )
+      xIter0 <- t(X0[,1,])
+      for(t in 2:T) xIter0 <- rbind( xIter0, t(X0[,t,]) )
     }
 
     if(it>burnin & ((it - burnin) %% odens == 0)){
       ind = (it - burnin)/odens + 1
-      xIterCentered <- t( X0[[ind]][,1,] )
-      for(t in 2:T){ xIterCentered <- rbind( xIterCentered, t(X0[[ind]][,t,]) ) }
+      xIterCentered <- t( X0[,1,] )
+      for(t in 2:T){ xIterCentered <- rbind( xIterCentered, t(X0[,t,]) ) }
       procr <- vegan::procrustes(X=xIter0,Y=xIterCentered,scale=FALSE)$Yrot
-      for(t in 1:T){ X0[[ind]][,t,] <- t(procr[((t-1)*n+1):(t*n),]) }
+      for(t in 1:T){ X0[,t,] <- t(procr[((t-1)*n+1):(t*n),]) }
     }
 
     if((it - burnin) %% odens == 0){
@@ -315,7 +315,7 @@ lsmdn <- function(
        X[[ind]] <- X0 ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0
        t2[ind] <- t20; s2[ind] <- s20; Y[ind] <- Y0
        w[,ind] <- w0; lambda[,ind] <- lambda0
-       if(family %in% c("gaussian", "nonNegNormal")){g2[ind] <- g20}
+       if(family %in% c("gaussian", "nonNegNormal")){ g2[ind] <- g20 }
      }
     ######################################################################       
 
