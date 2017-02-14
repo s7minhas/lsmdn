@@ -22,15 +22,16 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 List wAccProbNonNegNormal(
-	arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, 
-	double BIN, double BOUT, double tuneW,
-	arma::colvec wwOld, arma::colvec wwNew, double g2
-	) {
+  arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, 
+  double BIN, double alpha, double tuneW,
+  arma::colvec wwOld, arma::colvec wwNew, double g2,arma::cube WL
+  ) {
   
   double AccProb =0,dx=0, uu=0;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
   int AccRate = 0;
+  double BOUT = fabs(alpha) - BIN;
     
   /*---------------------------------------*/
   
@@ -44,13 +45,13 @@ List wAccProbNonNegNormal(
 {
   dx = arma::norm(X.slice(i).col(tt)-X.slice(j).col(tt),2);
   if(Y.slice(tt)(i,j) == 0){
-  AccProb += log(1 - 0.5 * erfc(-1*(BIN*(1 - dx/wwNew(i)) + BOUT*(1 - dx/wwNew(j)))/sqrt(g2)*M_SQRT1_2)); 
-  AccProb += - log(1 - 0.5 * erfc(-1*(BIN*(1 - dx/wwOld(i)) + BOUT*(1 - dx/wwOld(j)))/sqrt(g2)*M_SQRT1_2));
+  AccProb += log(1 - 0.5 * erfc(-1*(WL.slice.(tt).(i,j) + alpha +BIN*( - dx/wwNew(i)) + BOUT*( - dx/wwNew(j)))/sqrt(g2)*M_SQRT1_2)); 
+  AccProb += - log(1 - 0.5 * erfc(-1*(WL.slice.(tt).(i,j) + alpha +BIN*( - dx/wwOld(i)) + BOUT*( - dx/wwOld(j)))/sqrt(g2)*M_SQRT1_2));
 
   }
   if(Y.slice(tt)(i,j) > 0){
-  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/wwNew(i)) + BOUT*(1 - dx/wwNew(j)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/wwOld(i)) + BOUT*(1 - dx/wwOld(j)) ),2)/g2 ;
+  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WL.slice.(tt).(i,j) + alpha +BIN*( - dx/wwNew(i)) + BOUT*( - dx/wwNew(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice.(tt).(i,j) + alpha +BIN*( - dx/wwOld(i)) + BOUT*( - dx/wwOld(j)) ),2)/g2 ;
   }
 }
 }

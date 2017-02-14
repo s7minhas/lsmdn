@@ -23,14 +23,16 @@ using namespace Rcpp;
 
 List gammaAccProb(
   arma::cube X, Rcpp::IntegerVector dims, arma::cube Y,
-  double BIN, double BOUT, double alph,
-  double bta, arma::colvec ww, double g2, double g2new
+  double BIN, double alpha, double aa,
+  double bb, arma::colvec ww, double g2, double g2new,arma::cube WL
   ) {
 
   double AccProb =0,dx=0, uu=0;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
   int AccRate = 0;
+  double BOUT = fabs(alpha) - BIN;
+  
     
   /*---------------------------------------*/
   
@@ -44,13 +46,13 @@ List gammaAccProb(
 {
   dx = arma::norm(X.slice(i).col(tt)-X.slice(j).col(tt),2);
   if(Y.slice(tt)(i,j) == 0){
-  AccProb += log(1 - 0.5 * erfc(-1*(BIN*(1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)))/sqrt(g2new)*M_SQRT1_2)); 
-  AccProb += - log(1 - 0.5 * erfc(-1*(BIN*(1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)))/sqrt(g2)*M_SQRT1_2));
+  AccProb += log(1 - 0.5 * erfc(-1*(WL.slice(tt)(i,j) + alpha + BIN*(- dx/ww(i)) + BOUT*( - dx/ww(j)))/sqrt(g2new)*M_SQRT1_2)); 
+  AccProb += - log(1 - 0.5 * erfc(-1*(WL.slice(tt)(i,j) + alpha + BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)))/sqrt(g2)*M_SQRT1_2));
 
   }
   if(Y.slice(tt)(i,j) > 0){
-  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2new ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/ww(i)) + BOUT*(1 - dx/ww(j)) ),2)/g2 ;
+  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha + BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2new ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
   }
 }
 }
@@ -59,7 +61,7 @@ List gammaAccProb(
   
   for(int i =0;i<dims(0);i++)
 {
-  AccProb += - (alph + 1)*(log(g2new/g2)) - bta*(1/g2new - 1/g2);
+  AccProb += - (aa + 1)*(log(g2new/g2)) - bb*(1/g2new - 1/g2);
 }
   
   uu= arma::randu();

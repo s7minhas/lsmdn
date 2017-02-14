@@ -20,7 +20,7 @@ using namespace Rcpp;
 arma::cube imputeMissingGaussian(
   arma::cube X, Rcpp::IntegerVector dims, Rcpp::IntegerVector MM, 
   arma::cube Y, int Ttt, 
-  double BIN, double BOUT, arma::colvec ww, double g2
+  double BIN, double alpha, arma::colvec ww, double g2, arma::cube WL
   ) {
 
   int ttt = Ttt-1;  
@@ -28,7 +28,8 @@ arma::cube imputeMissingGaussian(
   double Mean;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
-  
+  double BOUT = fabs(alpha) - BIN;
+
   /*---------------------------------------*/
   
   for(int i = 0; i < dims(0); i++) {
@@ -36,7 +37,7 @@ arma::cube imputeMissingGaussian(
 			for(int j = 0; j < dims(0); j++) {
 				if(i != j) {
 					dx = arma::norm(X.slice(i).col(ttt)-X.slice(j).col(ttt),2);
-					Mean = BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i));
+					Mean = WL.slice(tt)(i,j) + alpha + BIN*(-dx/ww(j))+BOUT*(-dx/ww(i));
 					Y(i,j,ttt) = Rcpp::rnorm(1, Mean, sqrt(g2))[0];
 				}
 			}

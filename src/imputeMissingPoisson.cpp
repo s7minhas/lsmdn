@@ -20,7 +20,7 @@ using namespace Rcpp;
 arma::cube imputeMissingPoisson(
   arma::cube X, Rcpp::IntegerVector dims, Rcpp::IntegerVector MM, 
   arma::cube Y, int Ttt, 
-  double BIN, double BOUT, arma::colvec ww
+  double BIN, double alpha, arma::colvec ww, arma::cube WL
   ) {
 
   int ttt = Ttt-1;  
@@ -28,6 +28,8 @@ arma::cube imputeMissingPoisson(
   double Mean;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
+  double BOUT = fabs(alpha) - BIN;
+
   
   /*---------------------------------------*/
   
@@ -36,7 +38,7 @@ arma::cube imputeMissingPoisson(
       for(int j = 0; j < dims(0); j++) {
         if(i != j) {
           dx = arma::norm(X.slice(i).col(ttt)-X.slice(j).col(ttt),2);
-          Prob = BIN*(1-dx/ww(j))+BOUT*(1-dx/ww(i));
+          Prob = alpha + WL.slice(ttt)(i,j) + BIN*(-dx/ww(j))+BOUT*(-dx/ww(i));
           Mean = exp(Prob);
           Y(i,j,ttt) = Rcpp::rpois(1, Mean)[0];
         }

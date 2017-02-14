@@ -182,25 +182,25 @@ lsmdn <- function(
     if( family=='nonNegNormal' ){
       draws <- updateNonNegNorm(
         X0,c(n,p,T,1),tuneX,Y0, 
-        betaIn0,betaOut0,tuneBIO,w0,
+        betaIn0,alpha,tuneBIO,w0,
         t20,s20,g20,xiIn,xiOut,nuIn,
-        nuOut,Cauchy=0,RN,RNBIO
+        nuOut,Cauchy=0,RN,RNBIO,Wl, Wlnew, lambda0, sdLambda, lambdaNew
         ) }
-
     if( family=='gaussian' ){
       draws <- updateGaussian(
         X0,c(n,p,T,1),tuneX,Y0, 
-        betaIn0,betaOut0,tuneBIO,w0,
+        betaIn0,alpha,tuneBIO,w0,
         t20,s20,g20,xiIn,xiOut,nuIn,
-        nuOut,Cauchy=0,RN,RNBIO
+        nuOut,Cauchy=0,RN,RNBIO,Wl, Wlnew, lambda0, sdLambda, lambdaNew
         ) }
 
     if( family=='poisson' ){
       draws <- updatePoisson(
         X0,c(n,p,T,1),tuneX,Y0, 
-        betaIn0,betaOut0,tuneBIO,w0,
+        betaIn0,alpha,tuneBIO,w0,
         t20,s20,xiIn,xiOut,nuIn,
-        nuOut,Cauchy=0,RN,RNBIO
+        nuOut,Cauchy=0,RN,RNBIO,
+        Wl, Wlnew, lambda0, sdLambda, lambdaNew
         ) }
 
     #
@@ -241,13 +241,13 @@ lsmdn <- function(
     if( family=='gaussian' ){
       draws <- wAccProbGaussian(
         X0,c(n,p,T,1),Y0,
-        betaIn0, betaOut0, kappa, w0, wProp, g20
+        betaIn0, alpha, kappa, w0, wProp, g20, Wl
         ) }
 
     if( family=='poisson' ){
       draws <- wAccProbPoisson(
         X0,c(n,p,T,1),Y0,
-        betaIn0, betaOut0, kappa, w0, wProp
+        betaIn0, alpha, kappa, w0, wProp, Wl
         ) }
 
     w0 <- draws$ww ; accRate[3] <- accRate[3] + draws$accRate ; rm(draws)
@@ -266,8 +266,8 @@ lsmdn <- function(
       g2Prop <- MCMCpack::rinvgamma(1,shape=shapeG2,scale=scaleG2)
       draws <- gammaAccProbGaussian(
         X0,c(n,p,T,1),Y0, 
-        betaIn0,betaOut0,shapeG2,scaleG2, 
-        w0,g20, g2Prop
+        betaIn0,alpha,shapeG2,scaleG2, 
+        w0,g20, g2Prop, Wl
         )
       g20 <- draws$g2 ; accRate[4] <- accRate[4] + draws$accRate ; rm(draws)
     }
@@ -285,12 +285,12 @@ lsmdn <- function(
         if(family == 'poisson'){
         Y0 <- imputeMissingPoisson(
           X0, c(n,p,T), MM=missing[[t]]-1, Y0, Ttt=t,
-          BIN=betaIn0, BOUT=betaOut0, ww=w0
+          BIN=betaIn0, alpha=alpha, ww=w0, WL = Wl
           )}
         if(family == 'gaussian'){
         Y0 <- imputeMissingGaussian(
           X0, c(n,p,T), MM=missing[[t]]-1, Y0, Ttt=t,
-          BIN=betaIn0, BOUT=betaOut0, ww=w0, g2 = g20
+          BIN=betaIn0, alpha=alpha, ww=w0, g2 = g20, WL = Wl
           )}
       }
     }

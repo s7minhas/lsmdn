@@ -22,14 +22,16 @@ using namespace Rcpp;
 
 List wAccProbGaussian(
 	arma::cube X, Rcpp::IntegerVector dims, arma::cube Y, 
-	double BIN, double BOUT, double tuneW,
-	arma::colvec wwOld, arma::colvec wwNew, double g2
+	double BIN, double alpha, double tuneW,
+	arma::colvec wwOld, arma::colvec wwNew, double g2,arma::cube WL
 	) {
   
   double AccProb =0,dx=0, uu=0;
   arma::mat insides = arma::zeros(1,1);
   arma::colvec muit = arma::zeros(dims[1],1);
   int AccRate = 0;
+  double BOUT = fabs(alpha) - BIN;
+
     
   /*---------------------------------------*/
   
@@ -42,8 +44,8 @@ List wAccProbGaussian(
   if(i != j)
 {
   dx = arma::norm(X.slice(i).col(tt)-X.slice(j).col(tt),2);
-  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/wwNew(i)) + BOUT*(1 - dx/wwNew(j)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (BIN*( 1 - dx/wwOld(i)) + BOUT*(1 - dx/wwOld(j)) ),2)/g2 ;
+  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WL.slice.(tt).(i,j) + alpha + BIN*( - dx/wwNew(i)) + BOUT*( - dx/wwNew(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice.(tt).(i,j) + alpha + BIN*( - dx/wwOld(i)) + BOUT*( - dx/wwOld(j)) ),2)/g2 ;
 }
 }
 }

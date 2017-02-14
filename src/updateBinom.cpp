@@ -159,7 +159,6 @@ List updateBinom(
   
   
   /*-------------------- BetaIn and BetaOut-------------------*/
-  double absAlpha = BIN + BOUT;
   AccProb=0;
   if(Cauchy<0.5)
 {
@@ -170,8 +169,8 @@ List updateBinom(
 }else{
   uu = arma::randu();
   BinNew = BIN + tuneBIO*tan(PI*(uu-0.5));
-  uu = arma::randu();
-  BoutNew = BOUT + tuneBIO*tan(PI*(uu-0.5));
+  alphaNew = alpha + tuneBIO*tan(PI*(uu-0.5));
+  BoutNew = fabs(alphaNew) - BinNew;
 }
 
   for(int tt=0;tt<dims(2);tt++)
