@@ -16,8 +16,8 @@
 #' \item{g2New}{new g2 value}
 #' \item{AccRate}{updated accRate}
 #' @export
-gammaAccProb <- function(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new) {
-    .Call('lsmdn_gammaAccProb', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new)
+gammaAccProb <- function(X, dims, Y, BIN, alpha, aa, bb, ww, g2, g2new, WL) {
+    .Call('lsmdn_gammaAccProb', PACKAGE = 'lsmdn', X, dims, Y, BIN, alpha, aa, bb, ww, g2, g2new, WL)
 }
 
 #' Draw from Metropolis Hasting acceptance probability for Gamma^2, for continuous data
@@ -35,8 +35,8 @@ gammaAccProb <- function(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new) {
 #' \item{g2New}{new g2 value}
 #' \item{AccRate}{updated accRate}
 #' @export
-gammaAccProbGaussian <- function(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new) {
-    .Call('lsmdn_gammaAccProbGaussian', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new)
+gammaAccProbGaussian <- function(X, dims, Y, BIN, alpha, aa, bb, ww, g2, g2new, WL) {
+    .Call('lsmdn_gammaAccProbGaussian', PACKAGE = 'lsmdn', X, dims, Y, BIN, alpha, aa, bb, ww, g2, g2new, WL)
 }
 
 #' Impute missing values in Y for binary data
@@ -65,8 +65,8 @@ imputeMissingBinomial <- function(X, dims, MM, Y, Ttt, BIN, alpha, ww, WL) {
 #' @param ww vector of weights/radius
 #' @return Y with imputed values
 #' @export
-imputeMissingGaussian <- function(X, dims, MM, Y, Ttt, BIN, BOUT, ww, g2) {
-    .Call('lsmdn_imputeMissingGaussian', PACKAGE = 'lsmdn', X, dims, MM, Y, Ttt, BIN, BOUT, ww, g2)
+imputeMissingGaussian <- function(X, dims, MM, Y, Ttt, BIN, alpha, ww, g2, WL) {
+    .Call('lsmdn_imputeMissingGaussian', PACKAGE = 'lsmdn', X, dims, MM, Y, Ttt, BIN, alpha, ww, g2, WL)
 }
 
 #' Impute missingness in Y for Count Data
@@ -80,8 +80,8 @@ imputeMissingGaussian <- function(X, dims, MM, Y, Ttt, BIN, BOUT, ww, g2) {
 #' @param ww vector of weights/radius
 #' @return Y with imputed values
 #' @export
-imputeMissingPoisson <- function(X, dims, MM, Y, Ttt, BIN, BOUT, ww) {
-    .Call('lsmdn_imputeMissingPoisson', PACKAGE = 'lsmdn', X, dims, MM, Y, Ttt, BIN, BOUT, ww)
+imputeMissingPoisson <- function(X, dims, MM, Y, Ttt, BIN, alpha, ww, WL) {
+    .Call('lsmdn_imputeMissingPoisson', PACKAGE = 'lsmdn', X, dims, MM, Y, Ttt, BIN, alpha, ww, WL)
 }
 
 #' initialize beta values for binomial data
@@ -268,8 +268,8 @@ updateBinomLogLikeApprox <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, 
 #' \item{BoutNew}{New values for betaOut}
 #' \item{AccRate}{Updated acceptance rate}
 #' @export
-updateGaussian <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
-    .Call('lsmdn_updateGaussian', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
+updateGaussian <- function(Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb, sdLambda, lambNew) {
+    .Call('lsmdn_updateGaussian', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb, sdLambda, lambNew)
 }
 
 #' update lat positions, beta params, and accrate for non-negative continuous data
@@ -297,8 +297,8 @@ updateGaussian <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2
 #' \item{BoutNew}{New values for betaOut}
 #' \item{AccRate}{Updated acceptance rate}
 #' @export
-updateNonNegNorm <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
-    .Call('lsmdn_updateNonNegNorm', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
+updateNonNegNorm <- function(Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb, sdLambda, lambNew) {
+    .Call('lsmdn_updateNonNegNorm', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, g2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb, sdLambda, lambNew)
 }
 
 #' update lat positions, beta params, and accrate for count data
@@ -325,8 +325,8 @@ updateNonNegNorm <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, 
 #' \item{BoutNew}{New values for betaOut}
 #' \item{AccRate}{Updated acceptance rate}
 #' @export
-updatePoisson <- function(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO) {
-    .Call('lsmdn_updatePoisson', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
+updatePoisson <- function(Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb, sdLambda, lambNew) {
+    .Call('lsmdn_updatePoisson', PACKAGE = 'lsmdn', Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb, sdLambda, lambNew)
 }
 
 #' update weights and accprob for non-negative normal data
@@ -378,8 +378,8 @@ wAccProbBinom <- function(X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, WL) {
 #' \item{wwNew}{New weights/radius}
 #' \item{AccRate}{Updated acceptance probability}
 #' @export
-wAccProbGaussian <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2) {
-    .Call('lsmdn_wAccProbGaussian', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2)
+wAccProbGaussian <- function(X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, g2, WL) {
+    .Call('lsmdn_wAccProbGaussian', PACKAGE = 'lsmdn', X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, g2, WL)
 }
 
 #' update weights and accprob for binomial data using log-likelihood approximation
@@ -417,8 +417,8 @@ wAccProb_llApprox <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, ELout,
 #' \item{wwNew}{New weights/radius}
 #' \item{AccRate}{Updated acceptance probability}
 #' @export
-wAccProbNonNegNormal <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2) {
-    .Call('lsmdn_wAccProbNonNegNormal', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2)
+wAccProbNonNegNormal <- function(X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, g2, WL) {
+    .Call('lsmdn_wAccProbNonNegNormal', PACKAGE = 'lsmdn', X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, g2, WL)
 }
 
 #' update weights and accprob for count data
@@ -434,7 +434,7 @@ wAccProbNonNegNormal <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew, g2)
 #' \item{wwNew}{New weights/radius}
 #' \item{AccRate}{Updated acceptance probability}
 #' @export
-wAccProbPoisson <- function(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew) {
-    .Call('lsmdn_wAccProbPoisson', PACKAGE = 'lsmdn', X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew)
+wAccProbPoisson <- function(X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, WL) {
+    .Call('lsmdn_wAccProbPoisson', PACKAGE = 'lsmdn', X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, WL)
 }
 

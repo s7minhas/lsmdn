@@ -4,7 +4,7 @@
 \alias{wAccProbPoisson}
 \title{update weights and accprob for count data}
 \usage{
-wAccProbPoisson(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew)
+wAccProbPoisson(X, dims, Y, BIN, alpha, tuneW, wwOld, wwNew, WL)
 }
 \arguments{
 \item{X}{an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
@@ -15,13 +15,13 @@ wAccProbPoisson(X, dims, Y, BIN, BOUT, tuneW, wwOld, wwNew)
 
 \item{BIN}{betaIn value}
 
-\item{BOUT}{betaOut value}
-
 \item{tuneW}{variance of the proposal distribution for w}
 
 \item{wwOld}{old vector of weights}
 
 \item{wwNew}{new vector of weights}
+
+\item{BOUT}{betaOut value}
 }
 \value{
 returns list of:

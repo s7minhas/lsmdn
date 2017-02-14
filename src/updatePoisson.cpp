@@ -215,10 +215,8 @@ return(Rcpp::List::create(
   Rcpp::Named("X")=Xnew,
   Rcpp::Named("betaIn")=BinNew,
   Rcpp::Named("betaOut")=BoutNew,
-  Rcpp::Named("alpha") = alphaNew,
-  Rcpp::Named("lambda") = lambnew,
-  // Rcpp::Named("lambda")=lambNew, # max comment these out once incorp exo into rest of update fns
-  // Rcpp::Named("alpha")=alpha, # max comment these out once incorp exo into rest of update fns
+  Rcpp::Named("lambda")=lambNew,
+  Rcpp::Named("alpha")=alpha,
   Rcpp::Named("accRate")=AccRate
   )); 
 }

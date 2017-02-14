@@ -4,7 +4,7 @@
 \alias{gammaAccProb}
 \title{Draw from Metropolis Hasting acceptance probability for Gamma^2, for non-negative continuous data}
 \usage{
-gammaAccProb(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new)
+gammaAccProb(X, dims, Y, BIN, alpha, aa, bb, ww, g2, g2new, WL)
 }
 \arguments{
 \item{X}{an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
@@ -15,17 +15,17 @@ gammaAccProb(X, dims, Y, BIN, BOUT, alph, bta, ww, g2, g2new)
 
 \item{BIN}{betaIn value}
 
-\item{BOUT}{betaOut value}
-
-\item{alph}{Shape parameter for Gamma^2 value}
-
-\item{bta}{Scale parameter for Gamma^2 value}
-
 \item{ww}{vector of weights/radius}
 
 \item{g2}{current value of Gamma^2}
 
 \item{g2new}{proposed new value of Gamma^2}
+
+\item{BOUT}{betaOut value}
+
+\item{alph}{Shape parameter for Gamma^2 value}
+
+\item{bta}{Scale parameter for Gamma^2 value}
 }
 \value{
 returns list of starting values:

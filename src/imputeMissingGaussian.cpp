@@ -37,7 +37,7 @@ arma::cube imputeMissingGaussian(
 			for(int j = 0; j < dims(0); j++) {
 				if(i != j) {
 					dx = arma::norm(X.slice(i).col(ttt)-X.slice(j).col(ttt),2);
-					Mean = WL.slice(tt)(i,j) + alpha + BIN*(-dx/ww(j))+BOUT*(-dx/ww(i));
+					Mean = WL.slice(ttt)(i,j) + alpha + BIN*(-dx/ww(j))+BOUT*(-dx/ww(i));
 					Y(i,j,ttt) = Rcpp::rnorm(1, Mean, sqrt(g2))[0];
 				}
 			}

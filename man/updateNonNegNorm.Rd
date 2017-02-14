@@ -4,8 +4,9 @@
 \alias{updateNonNegNorm}
 \title{update lat positions, beta params, and accrate for non-negative continuous data}
 \usage{
-updateNonNegNorm(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2,
-  xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO)
+updateNonNegNorm(Xitm1, dims, tunex, Y, BIN, alpha, tuneBIO, ww, t2, s2, g2,
+  xiBin, xiBout, nuBin, nuBout, Cauchy, rnormsVec, rnormsBIO, WL, WLnew, lamb,
+  sdLambda, lambNew)
 }
 \arguments{
 \item{Xitm1}{an n x p x T array of the current latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
@@ -17,8 +18,6 @@ updateNonNegNorm(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2,
 \item{Y}{an n x n x T array of relational matrices, where the third dimension corresponds to different time periods}
 
 \item{BIN}{betaIn value}
-
-\item{BOUT}{betaOut value}
 
 \item{tuneBIO}{Variance of the normal random walk proposal for betaIn and betaOut}
 
@@ -43,6 +42,8 @@ updateNonNegNorm(Xitm1, dims, tunex, Y, BIN, BOUT, tuneBIO, ww, t2, s2, g2,
 \item{rnormsVec}{Vector of noise for random walks for X}
 
 \item{rnormsBIO}{Vector of noise for random walks for betaIn/betaOut}
+
+\item{BOUT}{betaOut value}
 }
 \value{
 returns list of:

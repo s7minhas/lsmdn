@@ -37,7 +37,7 @@ List updateGaussian(
   arma::colvec ww, double t2, double s2, double g2,
   double xiBin, double xiBout, double nuBin,
   double nuBout, int Cauchy,
-  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO
+  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO,
   arma::cube WL, arma::cube WLnew, arma::colvec lamb,
   double sdLambda, arma::colvec lambNew
   ) {
@@ -183,7 +183,7 @@ List updateGaussian(
 {
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
   AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WLnew.slice(tt)(i,j) + alphaNew + BinNew*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice.tt(i,j) + alpha + BIN*(- dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha + BIN*(- dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
 }}
 }
 }

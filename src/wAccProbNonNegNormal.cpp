@@ -45,13 +45,13 @@ List wAccProbNonNegNormal(
 {
   dx = arma::norm(X.slice(i).col(tt)-X.slice(j).col(tt),2);
   if(Y.slice(tt)(i,j) == 0){
-  AccProb += log(1 - 0.5 * erfc(-1*(WL.slice.(tt).(i,j) + alpha +BIN*( - dx/wwNew(i)) + BOUT*( - dx/wwNew(j)))/sqrt(g2)*M_SQRT1_2)); 
-  AccProb += - log(1 - 0.5 * erfc(-1*(WL.slice.(tt).(i,j) + alpha +BIN*( - dx/wwOld(i)) + BOUT*( - dx/wwOld(j)))/sqrt(g2)*M_SQRT1_2));
+  AccProb += log(1 - 0.5 * erfc(-1*(WL.slice(tt)(i,j) + alpha +BIN*( - dx/wwNew(i)) + BOUT*( - dx/wwNew(j)))/sqrt(g2)*M_SQRT1_2)); 
+  AccProb += - log(1 - 0.5 * erfc(-1*(WL.slice(tt)(i,j) + alpha +BIN*( - dx/wwOld(i)) + BOUT*( - dx/wwOld(j)))/sqrt(g2)*M_SQRT1_2));
 
   }
   if(Y.slice(tt)(i,j) > 0){
-  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WL.slice.(tt).(i,j) + alpha +BIN*( - dx/wwNew(i)) + BOUT*( - dx/wwNew(j)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice.(tt).(i,j) + alpha +BIN*( - dx/wwOld(i)) + BOUT*( - dx/wwOld(j)) ),2)/g2 ;
+  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha +BIN*( - dx/wwNew(i)) + BOUT*( - dx/wwNew(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha +BIN*( - dx/wwOld(i)) + BOUT*( - dx/wwOld(j)) ),2)/g2 ;
   }
 }
 }

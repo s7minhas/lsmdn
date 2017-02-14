@@ -4,7 +4,7 @@
 \alias{imputeMissingGaussian}
 \title{Impute missingness in Y for continuous data}
 \usage{
-imputeMissingGaussian(X, dims, MM, Y, Ttt, BIN, BOUT, ww, g2)
+imputeMissingGaussian(X, dims, MM, Y, Ttt, BIN, alpha, ww, g2, WL)
 }
 \arguments{
 \item{X}{an n x p x T array of latent coordinates, where the second dimension is the number dimensions of the latent space, and the third is time}
@@ -19,9 +19,9 @@ imputeMissingGaussian(X, dims, MM, Y, Ttt, BIN, BOUT, ww, g2)
 
 \item{BIN}{betaIn value}
 
-\item{BOUT}{betaOut value}
-
 \item{ww}{vector of weights/radius}
+
+\item{BOUT}{betaOut value}
 }
 \value{
 Y with imputed values

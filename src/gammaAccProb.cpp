@@ -52,7 +52,7 @@ List gammaAccProb(
   }
   if(Y.slice(tt)(i,j) > 0){
   AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha + BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2new ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha + BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
   }
 }
 }

@@ -37,7 +37,7 @@ List updateNonNegNorm(
   arma::colvec ww, double t2, double s2, double g2,
   double xiBin, double xiBout, double nuBin,
   double nuBout, int Cauchy,
-  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO
+  Rcpp::NumericVector rnormsVec, arma::colvec rnormsBIO,
   arma::cube WL, arma::cube WLnew, arma::colvec lamb,
   double sdLambda, arma::colvec lambNew
   ) {  
@@ -54,7 +54,7 @@ List updateNonNegNorm(
   
   arma::cube rnorms(rnormsVec.begin(),dims(1),dims(2),dims(0));
   
-  double BinNew =0, BoutNew =0, double alphaNew = 0;
+  double BinNew=0, BoutNew=0, alphaNew=0;
   
   double AccProb =0;
   double dz=0, dx=0, uu=0;
@@ -90,21 +90,21 @@ List updateNonNegNorm(
   dz = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
   dx = arma::norm(Xold.slice(i).col(tt)-Xold.slice(j).col(tt),2);
   if(Y.slice(tt)(i,j) == 0){
-  AccProb += log(1 - 0.5 * erfc(-1*(WL.slice.new(tt)(i,j) + alpha + BIN*( - dz/ww(i)) + BOUT*( - dz/ww(j)))/sqrt(g2)*M_SQRT1_2)); 
-  AccProb += - log(1 - 0.5 * erfc(-1*(WL.slice.new(tt)(i,j) + alpha + BIN*(- dx/ww(i)) + BOUT*( - dx/ww(j)))/sqrt(g2)*M_SQRT1_2));
+  AccProb += log(1 - 0.5 * erfc(-1*(WLnew.slice(tt)(i,j) + alpha + BIN*( - dz/ww(i)) + BOUT*( - dz/ww(j)))/sqrt(g2)*M_SQRT1_2)); 
+  AccProb += - log(1 - 0.5 * erfc(-1*(WLnew.slice(tt)(i,j) + alpha + BIN*(- dx/ww(i)) + BOUT*( - dx/ww(j)))/sqrt(g2)*M_SQRT1_2));
 
   }
   if(Y.slice(tt)(j,i) == 0){
-  AccProb += log(1 - 0.5 * erfc(-(WL.slice.new(tt)(i,j) + alpha + BIN*( - dz/ww(j)) + BOUT*( - dz/ww(i)))/sqrt(g2)*M_SQRT1_2)) ;
-  AccProb += - log(1 - 0.5 * erfc(-(WL.slice.new(tt)(i,j) + alpha + BIN*( - dx/ww(j)) + BOUT*( - dx/ww(i)))/sqrt(g2)*M_SQRT1_2));
+  AccProb += log(1 - 0.5 * erfc(-(WLnew.slice(tt)(i,j) + alpha + BIN*( - dz/ww(j)) + BOUT*( - dz/ww(i)))/sqrt(g2)*M_SQRT1_2)) ;
+  AccProb += - log(1 - 0.5 * erfc(-(WLnew.slice(tt)(i,j) + alpha + BIN*( - dx/ww(j)) + BOUT*( - dx/ww(i)))/sqrt(g2)*M_SQRT1_2));
   }
   if(Y.slice(tt)(i,j) > 0){
-  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WL.slice.new(tt)(i,j) + alpha + BIN*( - dz/ww(i)) + BOUT*( - dz/ww(j)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice.new(tt)(i,j) + alpha + BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
+  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WLnew.slice(tt)(i,j) + alpha + BIN*( - dz/ww(i)) + BOUT*( - dz/ww(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WLnew.slice(tt)(i,j) + alpha + BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
   }
   if(Y.slice(tt)(j,i) > 0){
-  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (WL.slice.new(tt)(i,j) + alpha + BIN*( - dz/ww(j)) + BOUT*( - dz/ww(i)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (WL.slice.new(tt)(i,j) + alpha + BIN*( - dx/ww(j)) + BOUT*( - dx/ww(i)) ),2)/g2  ;
+  AccProb += -1/2*pow(Y.slice(tt)(j,i) - (WLnew.slice(tt)(i,j) + alpha + BIN*( - dz/ww(j)) + BOUT*( - dz/ww(i)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(j,i) - (WLnew.slice(tt)(i,j) + alpha + BIN*( - dx/ww(j)) + BOUT*( - dx/ww(i)) ),2)/g2  ;
 }
 }
 }
@@ -195,12 +195,12 @@ List updateNonNegNorm(
   dx = arma::norm(Xnew.slice(i).col(tt)-Xnew.slice(j).col(tt),2);
   if(Y.slice(tt)(i,j) == 0){
   AccProb += log(1 - 0.5 * erfc(-1*(WLnew.slice(tt)(i,j) + alphaNew + BinNew*( - dx/ww(i)) + BOUT*( - dx/ww(j)))/sqrt(g2)*M_SQRT1_2)); 
-  AccProb += - log(1 - 0.5 * erfc(-1*(WL.slice.tt(i,j) + alpha + BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)))/sqrt(g2)*M_SQRT1_2));
+  AccProb += - log(1 - 0.5 * erfc(-1*(WL.slice(tt)(i,j) + alpha + BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)))/sqrt(g2)*M_SQRT1_2));
 
   }
   if(Y.slice(tt)(i,j) > 0){
   AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WLnew.slice(tt)(i,j) + alphaNew + BinNew*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice.tt(i,j) + alpha +BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha +BIN*( - dx/ww(i)) + BOUT*( - dx/ww(j)) ),2)/g2 ;
   }
 }
 }

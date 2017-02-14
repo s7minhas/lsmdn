@@ -44,8 +44,8 @@ List wAccProbGaussian(
   if(i != j)
 {
   dx = arma::norm(X.slice(i).col(tt)-X.slice(j).col(tt),2);
-  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WL.slice.(tt).(i,j) + alpha + BIN*( - dx/wwNew(i)) + BOUT*( - dx/wwNew(j)) ),2)/g2 ;
-  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice.(tt).(i,j) + alpha + BIN*( - dx/wwOld(i)) + BOUT*( - dx/wwOld(j)) ),2)/g2 ;
+  AccProb += -1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha + BIN*( - dx/wwNew(i)) + BOUT*( - dx/wwNew(j)) ),2)/g2 ;
+  AccProb += 1/2*pow(Y.slice(tt)(i,j) - (WL.slice(tt)(i,j) + alpha + BIN*( - dx/wwOld(i)) + BOUT*( - dx/wwOld(j)) ),2)/g2 ;
 }
 }
 }
