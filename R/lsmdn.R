@@ -136,7 +136,7 @@ lsmdn <- function(
   w <- matrix(0, nrow=n, ncol=keep) ; X <- list()
   lambda <- matrix(0, nrow = dim(W)[4], ncol=keep)
   Y <- list() ; t2 <- numeric(keep) ; s2 <- numeric(keep)
-  if( family=='nonNegNormal' | family == "gaussian" ){ g2 <- numeric(keep) }
+  if( family=='nonNegNormal' | family == "gaussian" ){ g2 <- numeric(keep) } else { g2 <- NULL }
   betaIn <- numeric(keep) ; betaOut <- numeric(keep)
 
   # start mcmc
@@ -147,9 +147,9 @@ lsmdn <- function(
     #
     RN <- rnorm(n*T*p)
     RNBIO <- rnorm(2 + length(lambda0))
-    lNew <- lambda0 + RNBIO[3:length(RNBIO)]*tuneLAMBDA
+    lambdaNew <- lambda0 + RNBIO[3:length(RNBIO)]*tuneLAMBDA
     Wl <- array(apply(W, 3, function(z) Xbeta(z, lambda0)), dim(W)[-4])
-    Wlnew <- array(apply(W, 3, function(z) Xbeta(z, lNew)), dim(W)[-4])
+    Wlnew <- array(apply(W, 3, function(z) Xbeta(z, lambdaNew)), dim(W)[-4])
 
     ######################################################################
     # Step 1
@@ -227,7 +227,7 @@ lsmdn <- function(
         ) }
 
     if( !llApprox & family=='binomial' ){
-      draws <- wAccProb(
+      draws <- wAccProbBinom(
         X0,c(n,p,T,1),Y0,
         betaIn0, alpha, kappa, w0, wProp, Wl
         ) }
@@ -316,9 +316,10 @@ lsmdn <- function(
 
       # store results if post burnin and falls on oden
       X[[ind]] <- X0 ; betaIn[ind] <- betaIn0 ; betaOut[ind] <- betaOut0
-      t2[ind] <- t20; s2[ind] <- s20; Y[ind] <- Y0
+      t2[ind] <- t20; s2[ind] <- s20
       w[,ind] <- w0; lambda[,ind] <- lambda0
       if(family %in% c("gaussian", "nonNegNormal")){ g2[ind] <- g20 }
+      if(missData){ Y[[ind]] <- Y0 }
 
       # reset counter
       ind <- ind + 1
@@ -334,7 +335,7 @@ lsmdn <- function(
             Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
             shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
             shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-            xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, alpha=alpha, lambda=lambda )
+            xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, lambda=lambda )
           save( result , file=fileName ) ; if(it!=N){ rm(result) }
         }
       }
@@ -351,7 +352,7 @@ lsmdn <- function(
     Y=Y, X=X, p=p, betaIn=betaIn, betaOut=betaOut, t2=t2, s2=s2, g2=g2,
     shapeT2=shapeT2, shapeS2=shapeS2, scaleT2=scaleT2, scaleS2=scaleS2,
     shapeG2=shapeG2, scaleG2=scaleG2, nuIn=nuIn, nuOut=nuOut,
-    xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, alpha=alpha, lambda=lambda )
+    xiIn=xiIn, xiOut=xiOut, w=w, accRate=accRate, lambda=lambda )
   return( result )
   ######################################################################       
 
