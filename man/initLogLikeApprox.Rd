@@ -30,3 +30,4 @@ returns list of starting values for log likelihood approximation:
 \description{
 Log-likelihood approximation subsampling
 }
+

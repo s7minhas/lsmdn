@@ -18,3 +18,4 @@ returns n x N matrix of weights or radii
 \description{
 Initial weights
 }
+

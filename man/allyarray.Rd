@@ -12,3 +12,4 @@ dataset on alliance relationships for 199 countries
 from 1945 to 1989
 }
 \keyword{datasets}
+

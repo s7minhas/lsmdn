@@ -114,7 +114,7 @@ getStartingValues <- function(
 	scaleS2 <- 1.5	
 
 	#Gamma^2
-	if(family=='nonNegNormal'){
+	if(family=='nonNegNormal' | family=='gaussian'){
 		g2 <- numeric(N)
 		g2[1] <- 25
 		shapeG2 <- 2.05

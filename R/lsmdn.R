@@ -5,7 +5,7 @@
 #' @param W an n x n x T x p design array, where the third dimension corresponds to
 #' time and the fourth to different covariates.
 #' @param p number of latent dimensions
-#' @param family type of model to run. Options include 'normal', 'nonNegNormal', 'poisson', 'binomial'. 
+#' @param family type of model to run. Options include 'gaussian', 'nonNegNormal', 'poisson', 'binomial'. 
 #' @param llApprox logical indicating whether or not to utilize log-likelihood 
 #' approximation. Only available for binomial model types.
 #' @param missData logical indicating whether to impute missing data.
@@ -235,7 +235,7 @@ lsmdn <- function(
     if( family=='nonNegNormal' ){
       draws <- wAccProbNonNegNormal(
         X0,c(n,p,T,1),Y0,
-        betaIn0, betaOut0, kappa, w0, wProp, g20
+        betaIn0, betaOut0, kappa, w0, wProp, g20, Wl
         ) }
 
     if( family=='gaussian' ){
@@ -257,7 +257,7 @@ lsmdn <- function(
       draws <- gammaAccProb(
         X0,c(n,p,T,1),Y0, 
         betaIn0,betaOut0,shapeG2,scaleG2, 
-        w0,g20, g2Prop
+        w0,g20, g2Prop,Wl
         )
       g20 <- draws$g2 ; accRate[4] <- accRate[4] + draws$accRate ; rm(draws)
     }

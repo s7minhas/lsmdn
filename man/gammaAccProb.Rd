@@ -35,3 +35,4 @@ returns list of starting values:
 \description{
 Draw from Metropolis Hasting acceptance probability for Gamma^2, for non-negative continuous data
 }
+

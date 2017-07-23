@@ -27,3 +27,4 @@ Matrix with expected values of Y
 \description{
 get get predicted values for Y with count data
 }
+

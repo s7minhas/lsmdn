@@ -12,3 +12,4 @@ list of material cooperation arrays from
 icews dataverse
 }
 \keyword{datasets}
+

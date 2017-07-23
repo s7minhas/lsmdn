@@ -25,3 +25,4 @@ returns list:
 \description{
 Initial betaIn and betaOUT; scale latent positions
 }
+

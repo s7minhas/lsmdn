@@ -21,3 +21,4 @@ vector beta of regression coefficients.
 \author{
 Peter Hoff, Shahryar Minhas
 }
+

@@ -33,3 +33,4 @@ returns list of:
 \description{
 update weights and accprob for non-negative continuous normal data
 }
+

@@ -29,3 +29,4 @@ returns list of:
 \description{
 generate shape and scale parameters to update t2 and s2 for all types of data
 }
+

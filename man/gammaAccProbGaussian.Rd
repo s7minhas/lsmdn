@@ -35,3 +35,4 @@ returns new value for Gamma^2 and updated acceptance rate:
 \description{
 Draw from Metropolis Hasting acceptance probability for Gamma^2, for continuous data
 }
+

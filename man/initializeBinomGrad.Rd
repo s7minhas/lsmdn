@@ -24,3 +24,4 @@ initializeBinomGrad(X, dims, Y, Xscale, BIN, BOUT, ww)
 \description{
 initialize beta values for binomial data using a conjugate gradient method
 }
+
