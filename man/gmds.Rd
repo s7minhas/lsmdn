@@ -21,4 +21,3 @@ Latent positions of actors based on Sarkar and Moore
 \description{
 Initial Latent Positions (GMDS, Sarkar and Moore, 2005)
 }
-

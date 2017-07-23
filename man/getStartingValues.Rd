@@ -80,4 +80,3 @@ if llApprox=TRUE, also returns
 \description{
 Initial parameter values for lsmdn
 }
-

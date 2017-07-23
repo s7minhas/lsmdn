@@ -504,3 +504,35 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
+static const R_CallMethodDef CallEntries[] = {
+    {"lsmdn_gammaAccProb", (DL_FUNC) &lsmdn_gammaAccProb, 11},
+    {"lsmdn_gammaAccProbGaussian", (DL_FUNC) &lsmdn_gammaAccProbGaussian, 11},
+    {"lsmdn_imputeMissingBinomial", (DL_FUNC) &lsmdn_imputeMissingBinomial, 9},
+    {"lsmdn_imputeMissingGaussian", (DL_FUNC) &lsmdn_imputeMissingGaussian, 10},
+    {"lsmdn_imputeMissingPoisson", (DL_FUNC) &lsmdn_imputeMissingPoisson, 9},
+    {"lsmdn_initializeBinom", (DL_FUNC) &lsmdn_initializeBinom, 7},
+    {"lsmdn_initializeBinomGrad", (DL_FUNC) &lsmdn_initializeBinomGrad, 7},
+    {"lsmdn_postZeroProb", (DL_FUNC) &lsmdn_postZeroProb, 7},
+    {"lsmdn_predictionBinomial", (DL_FUNC) &lsmdn_predictionBinomial, 7},
+    {"lsmdn_predictionGaussian", (DL_FUNC) &lsmdn_predictionGaussian, 7},
+    {"lsmdn_predictionPoisson", (DL_FUNC) &lsmdn_predictionPoisson, 7},
+    {"lsmdn_t2s2Parms", (DL_FUNC) &lsmdn_t2s2Parms, 6},
+    {"lsmdn_updateBinom", (DL_FUNC) &lsmdn_updateBinom, 22},
+    {"lsmdn_updateBinomLogLikeApprox", (DL_FUNC) &lsmdn_updateBinomLogLikeApprox, 21},
+    {"lsmdn_updateGaussian", (DL_FUNC) &lsmdn_updateGaussian, 23},
+    {"lsmdn_updateNonNegNorm", (DL_FUNC) &lsmdn_updateNonNegNorm, 23},
+    {"lsmdn_updatePoisson", (DL_FUNC) &lsmdn_updatePoisson, 22},
+    {"lsmdn_wAccProb_nnn", (DL_FUNC) &lsmdn_wAccProb_nnn, 9},
+    {"lsmdn_wAccProbBinom", (DL_FUNC) &lsmdn_wAccProbBinom, 9},
+    {"lsmdn_wAccProbGaussian", (DL_FUNC) &lsmdn_wAccProbGaussian, 10},
+    {"lsmdn_wAccProb_llApprox", (DL_FUNC) &lsmdn_wAccProb_llApprox, 12},
+    {"lsmdn_wAccProbNonNegNormal", (DL_FUNC) &lsmdn_wAccProbNonNegNormal, 10},
+    {"lsmdn_wAccProbPoisson", (DL_FUNC) &lsmdn_wAccProbPoisson, 9},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_lsmdn(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}

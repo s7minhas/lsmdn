@@ -23,4 +23,3 @@ stuff
 \description{
 Posterior zero prob
 }
-

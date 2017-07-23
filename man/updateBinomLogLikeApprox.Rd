@@ -61,4 +61,3 @@ returns list of:
 \description{
 update lat positions, beta params, and accrate for binomial data with a LL approximation
 }
-

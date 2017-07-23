@@ -29,4 +29,3 @@ returns list of:
 \description{
 update weights and accprob for non-negative normal data
 }
-

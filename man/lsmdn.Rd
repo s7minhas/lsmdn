@@ -4,6 +4,8 @@
 \name{lsmdn}
 \alias{lsmdn}
 \alias{lsmdn-package}
+\alias{lsmdn-package}
+\alias{lsmdn}
 \title{lsmdn - latent space model for dynamic networks}
 \usage{
 lsmdn( Y, p=2, family='binomial', llApprox=FALSE, missData=FALSE, N=1000, seed=6886)
@@ -85,4 +87,3 @@ Daniel Sewell <daniel-sewell@uiowa.edu>, Max Gallop <max.gallop@strath.ac.uk>,
 Shahryar Minhas <shahryar.minhas@duke.edu>
 Maintainer: Shahryar Minhas <shahryar.minhas@duke.edu>
 }
-

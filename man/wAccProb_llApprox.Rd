@@ -40,4 +40,3 @@ returns list of:
 \description{
 update weights and accprob for binomial data using log-likelihood approximation
 }
-

@@ -31,4 +31,3 @@ returns list of:
 \description{
 update weights and accprob for count data
 }
-
